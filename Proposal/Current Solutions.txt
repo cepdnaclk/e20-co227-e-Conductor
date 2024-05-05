@@ -7,4 +7,4 @@ Issues with current solutions
 5)Not controlled from a admin level
 6)Database not complete
 7)Cannot check schedule
-7)Bad UX
+8)Bad UX
