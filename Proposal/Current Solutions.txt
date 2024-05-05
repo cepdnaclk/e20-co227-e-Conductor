@@ -1,1 +1,9 @@
 // Enter current solutions and their drawbacks in point form
+Issues with current solutions
+1)Tracking system is not present
+2)Alternative routes or fastest route calculations not available
+3)contact details of bus not available
+4)Payment and booking is not guaranteed
+5)Not controlled from a admin level
+6)Database not complete
+7)Bad UX
