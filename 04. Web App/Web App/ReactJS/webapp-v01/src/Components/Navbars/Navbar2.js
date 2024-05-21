@@ -4,42 +4,40 @@
   Last Modified: 17/05/2024
 */
 
-import Button from 'react-bootstrap/Button';
+import React from 'react';
 import Container from 'react-bootstrap/Container';
-import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import logo from '../../Images/logo - no bkgnd.png';
 import Image from 'react-bootstrap/Image';
-import './Navbar2.css'
+import logo from '../../Images/logo - no bkgnd.png';
+import './Navbar2.css';
+import Header from './Header'
 
 function NavScrollExample() {
   return (
-    <Navbar expand="lg" className="navbar">
+    <Navbar expand="lg" sticky="top" className="navbar">
       <Container fluid>
-        
         <Navbar.Brand href="/">
           <Image 
-            src={logo} rounded c
-            className='logo'
-            />
+            src={logo}
+            rounded
+            className="logo"
+          />
         </Navbar.Brand>
-    
-        <Navbar.Toggle aria-controls="navbarScroll"/>
+        
+        <Navbar.Toggle aria-controls="navbarScroll" />
         
         <Navbar.Collapse id="navbarScroll">
-          <Nav className="pages" navbarScroll>
-            <Nav.Link className='page' href="/">HOME</Nav.Link>
-            <Nav.Link className='page' href="/">ABOUT</Nav.Link>
-            <Nav.Link className='page' href="/">BOOKING</Nav.Link>
-            <Nav.Link className='page' href="/">SCHEDULE</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
-            <Nav.Link className='page' href="/">ADDME</Nav.Link>
+          <Nav className="ml-auto navbar-nav" navbarScroll>
+            <Nav.Link className="tab" href="/">HOME</Nav.Link>
+            <Nav.Link className="tab" href="/">ABOUT</Nav.Link>
+            <Nav.Link className="tab" href="/">BOOKING</Nav.Link>
+            <Nav.Link className="tab" href="/">SCHEDULE</Nav.Link>
+            <Nav.Link className="tab" href="/">PAGE5</Nav.Link>
+            <Nav.Link className="tab" href="/">PAGE6</Nav.Link>
+            <Nav.Link className="tab" href="/">PAGE7</Nav.Link>
+            <Nav.Link className="tab" href="/">PAGE8</Nav.Link>
+            <Nav.Link className="tab" href="/">PAGE9</Nav.Link>
           </Nav>  
         </Navbar.Collapse>
       </Container>

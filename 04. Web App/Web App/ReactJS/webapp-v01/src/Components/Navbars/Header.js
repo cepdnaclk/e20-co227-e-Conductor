@@ -1,30 +1,19 @@
 /*
   Title: Navigation Bar
   Customized by: BG
-  Last Modified: 17/05/2024
+  Last Modified: 21/05/2024
 */
 
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import Image from 'react-bootstrap/Image';
-import logo from '../../Images/logo - no bkgnd.png';
-import './Navbar2.css';
-import Header from './Header'
+import './Header.css';
 
 function NavScrollExample() {
   return (
-    <Navbar expand="lg" sticky="top" className="navbar">
-      <Container fluid>
-        <Navbar.Brand href="/">
-          <Image 
-            src={logo}
-            rounded
-            className="logo"
-          />
-        </Navbar.Brand>
-        
+    <Navbar expand="lg" sticky="top" className="header">
+      <Container fluid>        
         <Navbar.Toggle aria-controls="navbarScroll" />
         
         <Navbar.Collapse id="navbarScroll">
