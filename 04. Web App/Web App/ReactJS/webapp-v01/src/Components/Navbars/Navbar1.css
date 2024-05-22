@@ -1,0 +1,30 @@
+/* src/Navbar2.css */
+
+.navbar {
+    height: 10%;
+    width: 100%;
+    background-color: ghostwhite;
+}
+
+.logo {
+    width: 120px;
+    height: 70px;
+    margin-left: 10px;
+}
+
+.tab {
+    font-family: ROBOTO;
+    color: rgb(109, 108, 108);
+    font-size: 17px;
+    margin-left: 10px;
+    margin-left: 10px;
+}
+
+.tab:hover {
+    color: rgb(0, 0, 0);
+    font-size: 17.5px;
+}
+
+.navbar-nav {
+    margin-left: auto;
+}

@@ -1,20 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+// This is the main code for the web app
+
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./Pages/Home";
+import Signin from "./Pages/Signin";
+import Signup from "./Pages/Signup";
+import About from "./Pages/About";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-        >
-          We are ready to build react app
-        </a>
-      </header>
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route path = "/" element={<Home/>}></Route>
+          <Route path = "/en-about" element={<About/>}></Route>
+          <Route path = "/en-signin" element={<Signin/>}></Route>
+          <Route path = "/en-signup" element={<Signup/>}></Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
