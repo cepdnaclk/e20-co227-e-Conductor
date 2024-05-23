@@ -1,0 +1,19 @@
+.Login-body{
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    min-height: 500px;
+    min-width: auto;
+    background-image: url('../Images/login_bg.jpg');
+    background-size:cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;        /* Vertical Center */
+    justify-content: center;    /* Horizontal Center */
+}

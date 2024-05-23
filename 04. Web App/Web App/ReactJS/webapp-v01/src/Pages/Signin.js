@@ -1,11 +1,12 @@
 import React from 'react'
-import Navbar2 from '../Components/Navbars/Navbar2'
+import Navbar from '../Components/Navbars/Navbar2'
+import Login from '../Components/LoginForm/login1'
+import './Signin.css'
 
 export default function Signin() {
   return (
-    <div>
-      <Navbar2/>
-      <h1>SIGN IN</h1>
+    <div className='Login-body'>
+        <Login/>
     </div>
   )
 }
