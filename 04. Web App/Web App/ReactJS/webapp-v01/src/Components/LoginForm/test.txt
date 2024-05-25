@@ -18,14 +18,13 @@ function Login({ sendResponse }) {
   // Effect to handle user validation after userId state changes
   useEffect(() => {
     if (userId !== '') {
-      //alert('Hello ' + userId);
+      alert('Hello ' + userId);
       sendResponse(userId); // Send userId to the parent component
     }
-    else if(userId === 'invalid') {
+    else if(userId=='invalid') {
       alert('Invalid mobile number!\nTry again!');
-      setNumber('+94');
     }
-  }, [userId, sendResponse]);
+  }, [userId]);
 
 
   // Handling submit 
@@ -41,7 +40,7 @@ function Login({ sendResponse }) {
         Server input: 10 digit mobile number
         Server response: 'invalid' or 'userID'
        */
-      //alert('Mobile Number: ' + number);
+      alert('Mobile Number: ' + number);
       setUserId('p123'); // Set userId to the value of keyID
     }
   };
