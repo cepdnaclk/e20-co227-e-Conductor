@@ -1,0 +1,104 @@
+/* PhoneHolder.css */
+
+.Mobile-box{
+    width: 100%;
+    height: 150px;
+    padding: 0 20px;
+    margin: 0;
+    background-color:#da4214;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+}
+
+.input-box{
+    width: 100%;
+    height: 40px;
+    padding: 0;
+    border: 2px solid black;
+    border-radius: 5px;
+    justify-content: center;
+    align-items: flex-start;
+    display: flex;
+    background-color:transparent;
+}
+
+.continue-button{
+    width: 100%;
+    height: 40px;
+    justify-content: center;
+    padding: 0;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    font-family: Roboto;
+}
+
+.user-with-key{
+    color: black;
+    height: 100%;
+    width: 25px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+/* Customization for whole container */
+.react-tel-input {
+  width: 100%;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: none;
+  background-color: transparent;
+}
+
+/* Customization for input area */
+.react-tel-input .form-control {
+  padding-left: 80px;
+  border-radius: 0;
+  border: none;
+  width: 100%;
+  background-color:transparent;  
+}
+
+/* Customization for flag container */
+.react-tel-input .flag-dropdown {
+  background-color: #ffffff8f;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius:0;
+  width: 70px;
+  justify-content: center;
+}
+
+/* Customization for flag */
+.react-tel-input .selected-flag {
+  padding: 0;
+  padding-left: 20px;
+}
+
+/* Customization for flag list */
+.react-tel-input .country-list {
+  max-height: 500px;
+  width: 200px;
+  overflow-y: auto;
+}
+
+/* Customization for country name list*/
+.react-tel-input .country-list .country {
+  padding: 10px;
+}
+
+.react-tel-input .country-list .country:hover {
+  background-color: #f0f0f0;
+}
+
+.react-tel-input .special-label {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.react-tel-input .invalid-number-message {
+  color: rgb(197, 10, 10);
+  font-size: 12px;
+}

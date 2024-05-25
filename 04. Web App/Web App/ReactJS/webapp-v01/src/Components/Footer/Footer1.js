@@ -1,20 +1,19 @@
 import React from 'react';
 import { Container, Row, Col, Image } from 'react-bootstrap';
 import { FaEnvelope, FaFacebook, FaFacebookMessenger, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhoneAlt, FaWhatsappSquare, FaYoutube } from "react-icons/fa";
-import './Footer.css';
+import './Footer1.css';
 import { FaXTwitter } from 'react-icons/fa6';
 import logo from '../../Images/logo - no bkgnd.png'
 
 function Footer() {
   return (
     <footer className="footer">
-      <Container>
+      <Container fluid>
         <Row className="justify-content-center">
           <Col sm={6} md={3} className="footer-column-logo">
             <Image className='ourlogo' src={logo} rounded />
           </Col>
 
-          <Container className='custom'></Container>
           
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
@@ -27,6 +26,7 @@ function Footer() {
             </ul>
           </Col>
 
+
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Contact Us</b></h5>
             <ul>
@@ -38,7 +38,6 @@ function Footer() {
             </ul>
           </Col>
 
-          <Container className='custom'></Container>
 
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Follow Us</b></h5>

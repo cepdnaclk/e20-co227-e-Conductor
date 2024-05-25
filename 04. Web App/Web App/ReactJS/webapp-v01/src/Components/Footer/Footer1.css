@@ -1,0 +1,85 @@
+.footer {
+    background-color:ghostwhite;
+    padding: 20px 0;
+  }
+  
+  .footer-column {
+    margin-bottom: 20px;
+    padding: 10px;
+    /*background-color: rgb(181, 223, 209);*/
+  }
+  
+  .footer-column h5 {
+    font-size: 19px;
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul li a {
+    color: #343a40;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  
+  .footer-column ul li a:hover {
+    color: black;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
+  .custom {
+    width: 70px;
+    /*background-color: aqua;*/
+  }
+
+  .custom2 {
+    width: 90px;
+    /*background-color: aqua;*/
+  }
+
+  .custom3 {
+    width: 100px;
+    /*background-color: aqua;*/
+  }
+  
+  
+  .footer-column-logo {
+    text-align: center;
+  }
+  
+  .ourlogo {
+    width: 300px;
+    height: 200px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding: 5px;
+  }
+  
+  /* Center columns on small screens and distribute equally on larger screens */
+  @media (max-width: 576px) {
+    .footer-column {
+      text-align: center;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .footer-column {
+      flex: 1;
+      margin-bottom: 5px;
+    }
+  }
+  

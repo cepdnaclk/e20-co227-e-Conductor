@@ -1,0 +1,204 @@
+/* login1.css */
+
+.wrapper {
+    width: 420px;
+    height: auto;
+    border: 3px solid #666666;
+    border-radius: 10px;    
+    background-color: transparent;
+    backdrop-filter: blur(40px);
+    color: #fff;
+    padding: 20px 40px;
+    margin: 0 auto;
+}
+
+.wrapper h1 {
+    font-family: ROBOTO;
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.wrapper label {
+    font-size: 18px;
+    margin-bottom: 2px;
+}
+
+.horizontal-line {
+    width: 1px;
+    height: 500px;
+    background-color: silver;
+}
+
+.wrapper .RememberMe {
+    font-size: 16px;
+    padding: 0;
+    align-items: center;
+}
+
+.RememberMe input {
+    width: 12px;
+}
+
+.custombutton {
+    width: 100%;
+    height: 40px;
+    margin: 10px 0px;
+    justify-content: center;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    font-family: Roboto;
+}
+
+.button-holder {
+    width: 100%;
+    padding: 0;
+}
+
+.text-between-lines {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+
+.text-between-lines hr {
+    width: 130px;
+    margin: 20px 15px;
+    border: none;
+    border-top: 3.5px solid rgb(255, 255, 255);
+}
+
+.custombutton2 {
+    width: 100%;
+    height: 40px;
+    margin: 3px 0px;
+    justify-content: center;
+    font-size: 17px;
+    border: none;
+    border-radius: 4px;
+    font-family: Roboto;
+    align-items: center;
+    background-color: #ffffffbb;
+}
+
+.custombutton2 .icon {
+    margin-right: 9px;
+    font-size: 20px;
+}
+
+.custombutton2 .Button-text {
+    margin-top: 50px;
+}
+
+.wrapper .register {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+.wrapper .register a {
+    font-weight: 700;
+    color: #fff;
+}
+
+/* PhoneHolder.css */
+ 
+.input-box {
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: 3px solid #666666;
+  border-radius: 5px;
+  justify-content: center;
+  align-items: flex-start;
+  display: flex;
+  background-color: #ffffffa2;
+  margin-bottom: 10px;
+}
+  
+.continue-button {
+  width: 100%;
+  height: 40px;
+  justify-content: center;
+  padding: 0;
+  font-size: 18px;
+  border: none;
+  border-radius: 4px;
+  font-family: Roboto;
+}
+  
+.user-with-key {
+  color: black;
+  height: 100%;
+  width: 25px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+  
+/* Customization for whole container */
+.react-tel-input {
+  width: 100%;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: none;
+  background-color: transparent;
+}
+  
+/* Customization for input area */
+.react-tel-input .form-control {
+  padding-left: 60px;
+  border-radius: 0;
+  border: none;
+  width: 100%;
+  background-color: transparent;  
+}
+  
+/* Customization for flag container */
+.react-tel-input .flag-dropdown {
+  background-color: #ffffff8f;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.react-tel-input .button {
+  background-color: turquoise;
+}
+
+/* Customization for flag */
+.react-tel-input .selected-flag {
+  width: 50px;
+  height: 100%;
+  padding-right: 15px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  background-color: transparent;
+}
+
+.react-tel-input .selected-flag:hover {
+  background-color: rgb(255, 255, 255);
+}
+  
+/* Customization for flag list */
+.react-tel-input .country-list {
+  max-height: 500px;
+  width: 200px;
+  overflow-y: auto;
+  color: black;
+}
+  
+/* Customization for country name list*/
+.react-tel-input .country-list .country {
+  padding: 10px;
+}
+  
+.react-tel-input .country-list .country:hover {
+  background-color: #f0f0f0;
+}
+
+/* remove the blue shodow around the input area*/
+.react-tel-input .form-control:focus {
+    box-shadow: none;
+}

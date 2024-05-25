@@ -45,8 +45,7 @@ function NavScrollExample(props) {
                 <Dropdown.Toggle className='dropdwn' variant='light' id="dropdown-basic">
                 <b>English</b>
                 </Dropdown.Toggle>
-                <Dropdown.Menu>
-                
+                <Dropdown.Menu>                
                   <Dropdown.Item href="/">සිංහල</Dropdown.Item>
                   <Dropdown.Item href="/">English</Dropdown.Item>
                   <Dropdown.Item href="/">தமிழ்</Dropdown.Item>
