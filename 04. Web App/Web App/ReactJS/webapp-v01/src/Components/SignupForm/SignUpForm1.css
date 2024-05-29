@@ -1,0 +1,144 @@
+.signup-wrapper{
+    width: 80%;
+    height: auto;
+    min-width: 400px;
+    min-height: 500px;
+    max-width: 500px;
+    max-height: 90%;
+    border-radius: 10px;
+    border: 3px solid #666666 ;
+    backdrop-filter: blur(30px);
+    background-color: transparent;
+    color: white;
+    margin: 0px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.signup-wrapper h1{
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.signupForm{
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.signup-wrapper .btn-container{
+    padding: 0px;
+    padding-top: 15px;
+    margin: 0;
+    width: 100%;
+    height: 70px;
+    min-height: 70px;
+    max-height: 70px;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.signupForm .form-label{
+    margin: 0 0 2px 0;
+}
+
+.signupForm .form-label p{
+    color: white;
+    font-weight: normal;
+}
+
+.signupForm .form-control{
+    border-radius: 4px;
+    border: 3px solid #666666;
+    background-color: #ffffffa2;
+    height: 40px;
+}
+
+.signupForm .form-control:focus{
+    box-shadow: none;
+}
+
+.signupForm .form-select{
+    border-radius: 4px;
+    border: 3px solid #666666;
+    background-color: #ffffffa2;
+    height: 40px;
+}
+
+.signupForm .form-select:focus{
+    box-shadow: none;
+}
+
+.signupForm hr{
+    margin: 5px 0 10px 0;
+    border: none;
+    border-top: 3px solid rgb(255, 255, 255);
+    justify-content: center;
+}
+
+.signupForm .details{
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.signupForm .react-tel-input .flag-dropdown {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  height: 34.5px;
+  border: none;
+  margin: 2.5px 0 2.5px 2.5px;
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.signupForm .form-check{
+    margin: 30px 0 0 0;
+    box-shadow: none;
+}
+
+.signupForm .form-control customfile{
+   background-color: aquamarine;
+}
+
+.signupForm .form-check input[type="checkbox"]:checked {
+    background-color: #000000;
+    border-color: white;
+    box-shadow: none;
+}
+
+.signupForm .termsContainer{
+    height: auto;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    font-size: 16px;
+}
+
+.signupForm .termsContainer a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    margin-left: 6px;
+}
+
+.signupForm .termsContainer .form-check{
+    margin: 0px;
+}
+
+.signupForm p{
+    color: rgb(255, 1, 1);
+    padding: 0;
+    margin: 0;
+    font-size: 13px;
+    font-weight: bold;
+    text-align: justify;
+}
+
+.signupForm .signUpErrorMsg{
+    margin-left: 15px;
+}

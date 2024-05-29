@@ -3,8 +3,10 @@ import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'
 
-export default function OTP({Message, user, sendResponse}) {
+
+export default function OTP({formData, sendResponse}) {
   // Variable for initial count
   let endTime = 120;
 
@@ -40,6 +42,65 @@ export default function OTP({Message, user, sendResponse}) {
   
   */
 
+  // Function to handle notifications
+  const handleNotifications = (e) =>{
+      switch (e) {
+        case 'timeOut':
+          Swal.fire({
+            title: 'Time is out!',
+            text: 'Please click Resend OTP to get a new OTP.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor:'#ff9800'
+          })
+          break;
+
+        case 'wait':
+          Swal.fire({
+            title: 'Wait!',
+            text: 'Wait untill countdown ends.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#ff9800'
+          })
+          break;
+
+        case 'invalid':
+          Swal.fire({
+            title: 'Invalid OTP!',
+            text: 'OTP is invalid. Try Again!',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#f44336'
+          })
+          break;
+
+        case 'resend':
+          Swal.fire({
+            title: 'Resend OTP!', 
+            text: 'New OTP is sent to your mobile number.',
+            icon: 'info',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#2196F3'
+          })
+          break;
+
+        case 'success':
+          Swal.fire({
+            title: 'Registration Successful!', 
+            text: 'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#4CAF50'
+          })
+          break;
+
+        default:
+          break;
+      }      
+  }
+
+
   // Use effect for the countdown
   useEffect(()=>{
     if(time>0){
@@ -50,48 +111,57 @@ export default function OTP({Message, user, sendResponse}) {
     else{
       setIsDissable(true);
       setresendDissable(false);
-      alert("Time is out! \nPlease click Resend OTP to get a new OTP.");      
+      handleNotifications('timeOut');
+      console.log('Time is out');                  // Screen notification
     }
   }, [time])
 
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      alert('Successful Login!');
-      // Add function to send user log
       navigate('/');
+      handleNotifications('success');
+      console.log('Successful Login!');            // Screen notification
+      // Add function to send user log
+      
     }
     else{
-      alert('Invalid OTP! \nTry Again!');
+      handleNotifications('invalid');
+      console.log('Invalid OTP! \nTry Again!');    // Screen notification
       setOtp ('');
     }
   }
 
   // Function to handle back button
   const backHandle = () =>{
-    sendResponse('none');
+    //console.log('Role: ' + formData.role);
+    sendResponse(formData.role);
   }
 
   // Function to handle Resend Option
   const resendHandle = () =>{
     if (resendDissable){
-      alert('Wait till countdown ends!')
-    }
+      //handleShowNotification('Wait!', 'Wait untill countdown ends!', 'warning');
+      handleNotifications('wait');
+      console.log('Wait untill countdown ends!');   // Screen notification
+    } 
     else{
       setTime(endTime);
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server
-      alert('Resend OTP');
+      //handleShowNotification('Resend OTP!', 'New OTP is sent to your mobile number.', 'info');
+      handleNotifications('resend');
+      console.log('Resend OTP');                    // Screen notification
     }
   }
 
   return (
     <div className='OTP-Wrappper'>
+
       <h3>Enter Your OTP</h3>
-      <label>We sent an OTP to your mobile number and the email. It is valid for next {time} seconds.</label>
-      
+      <label>We sent an OTP to your mobile number. <br/> It is valid for next {time} seconds.</label>
       <div className="otp-area">
         <OTPInput
           value={otp}

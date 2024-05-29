@@ -7,7 +7,7 @@ export default function About() {
     <div className='body'>
       <Navbar page = 'About'/>
       <h1>ABOUT</h1>
-      <Footer/>  
+      <Footer/>
     </div>
   )
 }

@@ -1,0 +1,25 @@
+.signup-wrapper2{
+    width: 550px;
+    height: 90%;
+    min-width: 400px;
+    min-height: 500px;
+    border-radius: 10px;
+    border: 3px solid #666666 ;
+    backdrop-filter: blur(30px);
+    background-color: transparent;
+    color: white;
+    margin: 0px;
+    padding: 20px;
+}
+
+.signup-wrapper2 h1{
+    font-size: 50px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.signupForm2{
+    max-height: 450px;
+    overflow-y: auto;
+    width: 100%;
+}

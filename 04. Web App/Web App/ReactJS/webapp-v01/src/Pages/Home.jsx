@@ -5,7 +5,7 @@ import Footer from '../Components/Footer/Footer2'
 
 export default function Home() {
   return (
-    <div>
+    <div >
       <Navbar page = 'Home'/>
       <h1>1. HOME</h1>
       <h1>HOME</h1>

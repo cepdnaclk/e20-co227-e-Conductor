@@ -3,10 +3,11 @@ import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import Notification from '../MyNotifications/FloatingNotifications'
 
-export default function OTP({Message, user, sendResponse}) {
+export default function OTP({formData, sendResponse}) {
   // Variable for initial count
-  let endTime = 120;
+  let endTime = 10;
 
   // Variable for server OTP
   const [serverOTP, setServerOTP] = useState('abc123');
@@ -40,6 +41,22 @@ export default function OTP({Message, user, sendResponse}) {
   
   */
 
+  // Notification Handler
+  const [showNotification, setShowNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState({
+    title: 'Notification',
+    text: '',
+    icon: 'info'
+  });
+
+  const handleShowNotification = (title, text, icon) => {
+    setNotificationData({ title, text, icon });
+    setShowNotification(true);
+  };
+
+  const handleCloseNotification = () => setShowNotification(false);
+
+
   // Use effect for the countdown
   useEffect(()=>{
     if(time>0){
@@ -50,48 +67,68 @@ export default function OTP({Message, user, sendResponse}) {
     else{
       setIsDissable(true);
       setresendDissable(false);
-      alert("Time is out! \nPlease click Resend OTP to get a new OTP.");      
+      //handleShowNotification('Time is out!', 'Please click Resend OTP to get a new OTP.', 'warning');
+      console.log('Time is out');
     }
   }, [time])
 
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      alert('Successful Login!');
-      // Add function to send user log
+      //handleShowNotification('Registration Successful!', 'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.', 'success');
       navigate('/');
+      
+      console.log('Successful Login!');                                             // Screen notification
+      // Add function to send user log
+      
     }
     else{
-      alert('Invalid OTP! \nTry Again!');
+      //handleShowNotification('Invalid OTP!', 'Try Again!', 'error');
+      console.log('Invalid OTP! \nTry Again!');                                     // Screen notification
       setOtp ('');
     }
   }
 
   // Function to handle back button
   const backHandle = () =>{
-    sendResponse('none');
+    //console.log('Role: ' + formData.role);
+    sendResponse(formData.role);
   }
 
   // Function to handle Resend Option
   const resendHandle = () =>{
     if (resendDissable){
-      alert('Wait till countdown ends!')
-    }
+      //handleShowNotification('Wait!', 'Wait untill countdown ends!', 'warning');
+      console.log('Wait untill countdown ends!')                                    // Screen notification
+    } 
     else{
       setTime(endTime);
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server
-      alert('Resend OTP');
+      //handleShowNotification('Resend OTP!', 'New OTP is sent to your mobile number.', 'info');
+      console.log('Resend OTP');                                                    // Screen notification
     }
   }
 
   return (
     <div className='OTP-Wrappper'>
+
+      {/* Notification */}
+
+      {(!showNotification) ? (<></>):(
+        <Notification
+          title={notificationData.title}
+          text={notificationData.text}
+          icon={notificationData.icon}
+          show={showNotification}
+          onClose={handleCloseNotification}
+        />
+      )}
+
       <h3>Enter Your OTP</h3>
-      <label>We sent an OTP to your mobile number and the email. It is valid for next {time} seconds.</label>
-      
+      <label>We sent an OTP to your mobile number. <br/> It is valid for next {time} seconds.</label>
       <div className="otp-area">
         <OTPInput
           value={otp}

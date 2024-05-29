@@ -1,0 +1,43 @@
+.customCard {
+    width: 300px;
+    height: fit-content;
+    border: 3px solid #666666;
+    border-radius: 10px;
+    background-color: rgb(71, 71, 71);
+    backdrop-filter: blur(30px);
+    padding: 0;
+    margin: 20px;
+    overflow: hidden;
+  }
+  
+  .cardImage {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cardbody {
+    color: white;
+    background-color: transparent;
+    padding: 10px;
+  }
+  
+  .cardbody button {
+    font-family: Roboto;
+    font-size: 18px;
+    width: 100%;
+    margin: 5px 0;
+  }
+  
+  .cardtopic {
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .description {
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  

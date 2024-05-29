@@ -139,7 +139,7 @@
 /* Customization for whole container */
 .react-tel-input {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   border: none;
   border-radius: none;
   background-color: transparent;
@@ -160,10 +160,6 @@
   margin: 0;
   border: none;
   border-radius: 0;
-}
-
-.react-tel-input .button {
-  background-color: turquoise;
 }
 
 /* Customization for flag */
