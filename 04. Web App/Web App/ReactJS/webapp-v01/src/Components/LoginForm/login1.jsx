@@ -6,6 +6,7 @@ import { GoPasskeyFill } from 'react-icons/go';
 import { FaApple, FaEnvelope } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import './login1.css';
+import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 
 function Login({ sendResponse }) {
   // variable for mobile number
@@ -18,11 +19,16 @@ function Login({ sendResponse }) {
   // Effect to handle user validation after userId state changes
   useEffect(() => {
     if (userId !== '') {
-      //alert('Hello ' + userId);
+      //console.log('Hello ' + userId);
       sendResponse(userId); // Send userId to the parent component
     }
     else if(userId === 'invalid') {
-      alert('Invalid mobile number!\nTry again!');
+      handleNotifications({
+        type:'error', 
+        title:'Invalid mobile number!', 
+        body:'Please try again!'
+      });
+      //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
     }
   }, [userId, sendResponse]);
@@ -32,7 +38,12 @@ function Login({ sendResponse }) {
   const submit = (e) => {
     e.preventDefault(); // Prevent form submission from reloading the page
     if (number.length < 11) {
-      alert("Invald mobile number!\nTry again!");
+      handleNotifications({
+        type:'error', 
+        title:'Invald mobile number!', 
+        body:'Please try again!'
+      });
+      //console.log("Invald mobile number!\nTry again!");
       setNumber('+94');
     } 
     else {
@@ -41,7 +52,7 @@ function Login({ sendResponse }) {
         Server input: 10 digit mobile number
         Server response: 'invalid' or 'userID'
        */
-      //alert('Mobile Number: ' + number);
+      //console.log('Mobile Number: ' + number);
       setUserId('p123'); // Set userId to the value of keyID
     }
   };

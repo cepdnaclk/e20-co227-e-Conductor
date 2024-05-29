@@ -3,8 +3,9 @@ import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 
-export default function OTP({Message, user, sendResponse}) {
+export default function OTP({userID, sendResponse}) {
   // Variable for initial count
   let endTime = 120;
 
@@ -50,19 +51,31 @@ export default function OTP({Message, user, sendResponse}) {
     else{
       setIsDissable(true);
       setresendDissable(false);
-      alert("Time is out! \nPlease click Resend OTP to get a new OTP.");      
+      handleNotifications({
+        type:'warning', 
+        title:'Time is out!', 
+        body:'Please click Resend OTP to get a new OTP.'
+      });
     }
   }, [time])
 
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      alert('Successful Login!');
-      // Add function to send user log
       navigate('/');
+      handleNotifications({
+        type:'success', 
+        title:'Successful Login!', 
+        body:'Welcome to e-Conductor!.'
+      });
+      // Add function to send user log
     }
     else{
-      alert('Invalid OTP! \nTry Again!');
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
       setOtp ('');
     }
   }
@@ -75,7 +88,11 @@ export default function OTP({Message, user, sendResponse}) {
   // Function to handle Resend Option
   const resendHandle = () =>{
     if (resendDissable){
-      alert('Wait till countdown ends!')
+      handleNotifications({
+        type:'warning', 
+        title:'Wait!', 
+        body:'Wait untill countdown ends!'
+      });
     }
     else{
       setTime(endTime);
@@ -83,7 +100,11 @@ export default function OTP({Message, user, sendResponse}) {
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server
-      alert('Resend OTP');
+      handleNotifications({
+        type:'info', 
+        title:'Resend OTP!', 
+        body:'New OTP is sent to your mobile number.'
+      });
     }
   }
 

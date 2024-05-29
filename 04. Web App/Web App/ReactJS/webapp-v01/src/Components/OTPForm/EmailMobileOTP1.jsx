@@ -3,9 +3,7 @@ import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { andleNotifications, handleNotifications } from '../MyNotifications/FloatingNotifications'
-import Swal from 'sweetalert2'
-
+import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 
 export default function OTP({formData, sendResponse}) {
   // Variable for initial count
@@ -53,8 +51,12 @@ export default function OTP({formData, sendResponse}) {
     else{
       setIsDissable(true);
       setresendDissable(false);
-      handleNotifications('timeOut');
-      console.log('Time is out');                  // Screen notification
+      handleNotifications({
+        type:'warning', 
+        title:'Time is out!', 
+        body:'Please click Resend OTP to get a new OTP.'
+      });
+      //console.log('Time is out');                  // Screen notification
     }
   }, [time])
 
@@ -62,14 +64,22 @@ export default function OTP({formData, sendResponse}) {
   const loginHandle = () =>{
     if(serverOTP === otp){
       navigate('/');
-      handleNotifications('success');
-      console.log('Successful Login!');            // Screen notification
+      handleNotifications({
+        type:'success', 
+        title:'Registration Successful!', 
+        body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
+      });
+      //console.log('Successful Login!');            // Screen notification
       // Add function to send user log
       
     }
     else{
-      handleNotifications('invalid');
-      console.log('Invalid OTP! \nTry Again!');    // Screen notification
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
+      //console.log('Invalid OTP! \nTry Again!');    // Screen notification
       setOtp ('');
     }
   }
@@ -83,9 +93,12 @@ export default function OTP({formData, sendResponse}) {
   // Function to handle Resend Option
   const resendHandle = () =>{
     if (resendDissable){
-      //handleShowNotification('Wait!', 'Wait untill countdown ends!', 'warning');
-      handleNotifications('wait');
-      console.log('Wait untill countdown ends!');   // Screen notification
+      handleNotifications({
+        type:'warning', 
+        title:'Wait!', 
+        body:'Wait untill countdown ends!'
+      });
+      //console.log('Wait untill countdown ends!');   // Screen notification
     } 
     else{
       setTime(endTime);
@@ -93,9 +106,12 @@ export default function OTP({formData, sendResponse}) {
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server
-      //handleShowNotification('Resend OTP!', 'New OTP is sent to your mobile number.', 'info');
-      handleNotifications('resend');
-      console.log('Resend OTP');                    // Screen notification
+      handleNotifications({
+        type:'info', 
+        title:'Resend OTP!', 
+        body:'New OTP is sent to your mobile number.'
+      });
+      //console.log('Resend OTP');                    // Screen notification
     }
   }
 

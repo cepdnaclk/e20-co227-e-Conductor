@@ -27,13 +27,6 @@ export default function Signup() {
     passbook  : null
   });
 
-  // Pre sending handler
-  useEffect(()=>{
-    //setData({...data, role: pageState});
-    console.log('updated pageState:');
-    console.log(data);
-  }, [pageState])
-
   // Handler for new data
   function handleData(newData) {
     setData(newData);

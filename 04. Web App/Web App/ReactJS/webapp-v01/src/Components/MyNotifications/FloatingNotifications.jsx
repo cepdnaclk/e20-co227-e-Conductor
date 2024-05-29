@@ -1,14 +1,14 @@
 import Swal from 'sweetalert2';
 import './FloatingNotifications.css'; // Import your custom CSS for styling
 
-const displayNotification = (type, title, text, confirmButtonColor) => {
+const displayNotification = (type, title, text, button, confirmButtonColor) => {
   const swalConfig = {
     title,
     text,
     icon: type,
-    confirmButtonText: 'OK',
+    confirmButtonText: !button ? 'OK' : button,
     customClass: {
-      confirmButton: 'swal-custom-button' // Apply custom button width
+      confirmButton: 'swal-custom-button' // Apply custom stylings 
     },
     confirmButtonColor
   };
@@ -16,22 +16,23 @@ const displayNotification = (type, title, text, confirmButtonColor) => {
   Swal.fire(swalConfig);
 };
 
-export const handleNotifications = (e) => {
-  switch (e) {
-    case 'timeOut':
-      displayNotification('warning', 'Time is out!', 'Please click Resend OTP to get a new OTP.', '#ff9800');
-      break;
-    case 'wait':
-      displayNotification('warning', 'Wait!', 'Wait until countdown ends.', '#ff9800');
-      break;
-    case 'invalid':
-      displayNotification('error', 'Invalid OTP!', 'OTP is invalid. Try Again!', '#f44336');
-      break;
-    case 'resend':
-      displayNotification('info', 'Resend OTP!', 'New OTP is sent to your mobile number.', '#2196F3');
-      break;
+export const handleNotifications = ({type, title, body, buttonName}) => {
+  //console.log("Notification data: type: %s \n titile: %s \n body: %s \n button: %s", type, title, body, buttonName);
+  switch (type) {
     case 'success':
-      displayNotification('success', 'Registration Successful!', "Welcome to e-Conductor Family.\n Use the sent link to your email for initial login.", '#4CAF50');
+      displayNotification(type, title, body, buttonName, '#4CAF50');
+      break;
+    case 'error':
+      displayNotification(type, title, body, buttonName, '#f44336');
+      break;
+    case 'warning':
+      displayNotification(type, title, body, buttonName, '#ff9800');
+      break;
+    case 'info':
+      displayNotification(type, title, body, buttonName, '#2196F3');
+      break;
+    case 'question':
+      displayNotification(type, title, body, buttonName, '#87adbd');
       break;
     default:
       break;
