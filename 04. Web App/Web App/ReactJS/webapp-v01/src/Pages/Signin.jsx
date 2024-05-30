@@ -5,13 +5,17 @@ import OTP from '../Components/OTPForm/OTP1'
 
 export default function Signin() {
   // Variable for storing current login state.
-  const [isLoging, setIsLogin] = useState(false);
-  const [user, setUser] = useState('');
+  const [isLoging, setIsLogin] = useState(false);   // boolean
+  const [user, setUser] = useState('');             // User ID or none
+  const [mobile, setMobile] = useState('');         // Mobile number 
 
   const handleResponse = (response) =>{
+    //console.log('New Login:');
+    //console.log(response);
     if(response === 'none'){
       setIsLogin(false);
       setUser('');
+      setMobile(''); 
     }
     else{
       setUser(response);
@@ -24,11 +28,11 @@ export default function Signin() {
       {
         !isLoging ? (
           <>
-            <Login sendResponse={handleResponse}/>
+            <Login user={handleResponse} mobile={e=>{setMobile(e)}}/>
           </>
         ):(
           <>
-            <OTP userID = {user} sendResponse = {handleResponse}/>
+            <OTP userID={user} mobile={mobile} sendResponse={handleResponse}/>
           </>
         )
       }

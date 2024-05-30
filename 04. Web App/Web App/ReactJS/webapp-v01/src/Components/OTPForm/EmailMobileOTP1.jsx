@@ -4,6 +4,7 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
+import { Request, Post } from '../../APIs/Connections';
 
 export default function OTP({formData, sendResponse}) {
   // Variable for initial count
@@ -27,19 +28,47 @@ export default function OTP({formData, sendResponse}) {
   // variable to store reamining time
   const [time, setTime] = useState(endTime);
 
+  // Trigering at the start
+  useEffect(()=>{
+    //console.log(`New user OTP SEND:: mobile: ${formData.mobile}`);
+    requestOTP(formData.mobile);
+  }, []);
+
   // Use effect for get the OTP from server
-  /*
-  
-    implement function here
+  const requestOTP = async (number) => {
+    // Creating data object
+    const data = {
+    type: 'Req1',  // OTP request
+    data: number
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
-  */
+    try {
+        const newOTP = await Request(data, 'OTP');
+        console.log(`New OTP:: ${newOTP.OTP}`);
+        setServerOTP(newOTP.OTP);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
 
-  // Send the user Log to the server
-  /*
-    user, finalOTP
-    implement function here
-  
-  */
+  // Function to send new user details to the database
+  const sendData = async (value) => {
+    // Creating data object
+    const data = {
+    type: 'Post2',  // Posting new user login details
+    data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data.licenceFile[0]}`);
+
+    try {
+        await Post(data, 'users');
+        console.log(`Registered Successfully`);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
 
   // Use effect for the countdown
   useEffect(()=>{
@@ -69,8 +98,8 @@ export default function OTP({formData, sendResponse}) {
         title:'Registration Successful!', 
         body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
       });
+      sendData(formData);
       //console.log('Successful Login!');            // Screen notification
-      // Add function to send user log
       
     }
     else{
@@ -103,6 +132,7 @@ export default function OTP({formData, sendResponse}) {
     else{
       setTime(endTime);
       setIsDissable(false);
+      requestOTP(formData.mobile);
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server

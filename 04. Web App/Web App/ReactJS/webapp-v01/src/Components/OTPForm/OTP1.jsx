@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { handleNotifications } from '../MyNotifications/FloatingNotifications'
+import { handleNotifications } from '../MyNotifications/FloatingNotifications';
+import { Request } from '../../APIs/Connections';
+import './OTP1.css'
 
-export default function OTP({userID, sendResponse}) {
+
+export default function OTP({userID, mobile, sendResponse}) {
   // Variable for initial count
   let endTime = 120;
 
   // Variable for server OTP
-  const [serverOTP, setServerOTP] = useState('abc123');
+  const [serverOTP, setServerOTP] = useState('');
 
   // Initialize useNavigate hook
   const navigate = useNavigate(); 
@@ -27,19 +29,48 @@ export default function OTP({userID, sendResponse}) {
   // variable to store reamining time
   const [time, setTime] = useState(endTime);
 
-  // Use effect for get the OTP from server
-  /*
-  
-    implement function here
 
-  */
+  // Confirm user and mobile comes correctly
+  useEffect(()=>{
+    //console.log(`OTP SEND:: userID: ${userID}    mobile: ${mobile}`);
+    requestOTP(mobile);
+  }, []);
 
-  // Send the user Log to the server
-  /*
-    user, finalOTP
-    implement function here
   
-  */
+  // Function to get the OTP from server
+  const requestOTP = async (number) => {
+    // Creating data object
+    const data = {
+      type: 'Req1',
+      data: number
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const newOTP = await Request(data, 'OTP');
+        //console.log(`New OTP:: ${newOTP.OTP}`);
+        setServerOTP(newOTP.OTP);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+  // Function to get the OTP from server
+  const sendLog = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Post1',    // Posting user login informations
+      data: value
+    }
+    console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        await Request(data, 'logs/users');
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
 
   // Use effect for the countdown
   useEffect(()=>{
@@ -68,6 +99,7 @@ export default function OTP({userID, sendResponse}) {
         title:'Successful Login!', 
         body:'Welcome to e-Conductor!.'
       });
+      sendLog(userID);
       // Add function to send user log
     }
     else{
@@ -99,7 +131,7 @@ export default function OTP({userID, sendResponse}) {
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
-      // function to get the new OTP from the server
+      requestOTP(mobile);   // function to get the new OTP from the server
       handleNotifications({
         type:'info', 
         title:'Resend OTP!', 

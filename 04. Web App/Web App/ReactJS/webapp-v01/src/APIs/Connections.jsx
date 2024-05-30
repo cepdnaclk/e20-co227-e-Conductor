@@ -1,0 +1,67 @@
+import Axios from 'axios';
+
+// Base API of the server
+const API_BASE_URL = 'http://localhost:8000/api';
+
+// Get data from backend
+export const Response = async (page) => {
+    try {
+        const destination = `${API_BASE_URL}/${page}`;
+        console.log(`Listening to: ${destination}`);
+        const response = await Axios.get(`${destination}`);
+        //console.log(`Response:: Type: ${response.data.type}   data: ${response.data.id}`);
+        return response.data; // Note::  format: {ResType, data}
+    } 
+    catch (error) {
+        console.error('There was an error fetching the users!', error);
+        throw error;
+    }
+};
+
+// Send data to the backend
+export const Post = async (data, page) => {
+    try {
+        const destination = `${API_BASE_URL}/${page}`;
+        console.log(`Post to: ${destination}`);
+        await Axios.post(`${destination}`, data);     // Note::  format: {PostType, data}
+    } catch (error) {
+        console.error('There was an error adding the user!', error);
+        throw error;
+    }
+};
+
+// Send data to the backend and get response from the backend
+export const Request = async (data, page) => {
+    try {
+        const destination = `${API_BASE_URL}/${page}`;
+        console.log(`Request from: ${destination}`);
+        await Axios.post(`${destination}`, data);   // Note::  format: {ReqType, data}
+        return await Response(page);                // Fetch response
+    } catch (error) {
+        console.error('There was an error adding the user!', error);
+        throw error;
+    }
+};
+
+
+/* 
+    How to use in a file - Example
+
+    // Use effect for get the OTP from server
+    const requestOTP = async (value) => {
+        // Creating data object
+        const data = {
+        type: 'Req1',
+        data: value
+        }
+        console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+        try {
+            const newOTP = await Request(data, 'OTP');
+            console.log(`New OTP:: ${newOTP.OTP}`);
+            setServerOTP(newOTP.OTP);
+        } catch (error) {
+            console.error('Error adding user:', error);
+        }
+    };
+*/

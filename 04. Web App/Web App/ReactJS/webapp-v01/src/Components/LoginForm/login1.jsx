@@ -5,10 +5,12 @@ import 'react-phone-input-2/lib/style.css';
 import { GoPasskeyFill } from 'react-icons/go';
 import { FaApple, FaEnvelope } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
+import { handleNotifications } from '../MyNotifications/FloatingNotifications';
+import { Request } from '../../APIs/Connections';
 import './login1.css';
-import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 
-function Login({ sendResponse }) {
+
+function Login({ user, mobile }) {  
   // variable for mobile number
   const [number, setNumber] = useState('');
 
@@ -19,8 +21,9 @@ function Login({ sendResponse }) {
   // Effect to handle user validation after userId state changes
   useEffect(() => {
     if (userId !== '') {
-      //console.log('Hello ' + userId);
-      sendResponse(userId); // Send userId to the parent component
+      //console.log(`UserID: ${userId}  mobile: ${number}`);
+      user(userId);   // Send userId to the parent component
+      mobile(number); // Send mobile number to the parent component
     }
     else if(userId === 'invalid') {
       handleNotifications({
@@ -31,7 +34,7 @@ function Login({ sendResponse }) {
       //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
     }
-  }, [userId, sendResponse]);
+  }, [userId]);
 
 
   // Handling submit 
@@ -47,13 +50,25 @@ function Login({ sendResponse }) {
       setNumber('+94');
     } 
     else {
-      /* 
-        In here this program contact with the server and do the user validation.
-        Server input: 10 digit mobile number
-        Server response: 'invalid' or 'userID'
-       */
-      //console.log('Mobile Number: ' + number);
-      setUserId('p123'); // Set userId to the value of keyID
+      requestUser(number);
+    }
+  };
+
+  // Use effect for get the OTP from server
+  const requestUser = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Req2', // Uservalidation message
+      data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const serverUserId = await Request(data, 'users');
+        //console.log(`ServerUserId:: ${serverUserId.id}`);
+        setUserId(serverUserId.id);  // Change here according to the database name
+    } catch (error) {
+        console.error('Error adding user:', error);
     }
   };
 
