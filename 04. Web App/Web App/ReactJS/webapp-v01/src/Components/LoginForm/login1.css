@@ -1,7 +1,9 @@
 /* login1.css */
 
 .wrapper {
-    width: 420px;
+    max-width: 420px;
+    width: 90%;
+    min-width: 350px;
     height: auto;
     border: 3px solid #666666;
     border-radius: 10px;    

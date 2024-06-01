@@ -7,9 +7,6 @@ export default function Home() {
   return (
     <div >
       <Navbar page = 'Home'/>
-      <h1>1. HOME</h1>
-      <h1>HOME</h1>
-      <h1>HOME</h1>
       <h1>HOME</h1>
       <Footer/>  
     </div>
