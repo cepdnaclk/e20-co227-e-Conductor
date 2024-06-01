@@ -8,15 +8,12 @@ import logo from '../../Images/logo - no bkgnd.png'
 function Footer() {
   return (
     <footer className="footer">
-      <Container>
-        <Row className="justify-content-center">
-          <Container className='custom'></Container>
+        <Row className="custom">
           
           <Col sm={6} md={3} className="footer-column-logo">
             <Image className='ourlogo' src={logo} rounded />
           </Col>
 
-          <Container className='custom1'></Container>
           
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
@@ -29,7 +26,6 @@ function Footer() {
             </ul>
           </Col>
 
-          <Container className='custom2'></Container>
 
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Contact Us</b></h5>
@@ -42,7 +38,6 @@ function Footer() {
             </ul>
           </Col>
 
-          <Container className='custom3'></Container>
 
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Follow Us</b></h5>
@@ -57,12 +52,12 @@ function Footer() {
           </Col>
 
         </Row>
+
         <Row>
           <Col className="text-center mt-3">
             <p>Copyright &copy; {new Date().getFullYear()} e-Conductor. All rights reserved.</p>
           </Col>
         </Row>
-      </Container>
     </footer>
   );
 }

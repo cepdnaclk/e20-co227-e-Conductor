@@ -48,7 +48,7 @@ export default function OTP({userID, mobile, sendResponse}) {
 
     try {
         const newOTP = await Request(data, 'OTP');
-        //console.log(`New OTP:: ${newOTP.OTP}`);
+        console.log(`New OTP:: ${newOTP.OTP}`);
         setServerOTP(newOTP.OTP);
     } catch (error) {
         console.error('Error adding user:', error);
@@ -62,7 +62,7 @@ export default function OTP({userID, mobile, sendResponse}) {
       type: 'Post1',    // Posting user login informations
       data: value
     }
-    console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
         await Request(data, 'logs/users');
