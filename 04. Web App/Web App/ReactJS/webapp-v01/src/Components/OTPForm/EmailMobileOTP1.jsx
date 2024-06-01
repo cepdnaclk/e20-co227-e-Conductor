@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 import { Request, Post } from '../../APIs/Connections';
 
