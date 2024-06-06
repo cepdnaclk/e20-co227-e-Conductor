@@ -62,7 +62,7 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
+  /*
     try {
         const serverUserId = await Request(data, 'users');
         //console.log(`ServerUserId:: ${serverUserId.id}`);
@@ -70,6 +70,8 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
     } catch (error) {
         console.error('Error adding user:', error);
     }
+        */
+       setUserId('p1234');
   };
 
   return (

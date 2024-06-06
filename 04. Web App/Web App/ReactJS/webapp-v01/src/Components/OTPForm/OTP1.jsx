@@ -46,13 +46,14 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
-    try {
+    /*try {
         const newOTP = await Request(data, 'OTP');
         console.log(`New OTP:: ${newOTP.OTP}`);
         setServerOTP(newOTP.OTP);
     } catch (error) {
         console.error('Error adding user:', error);
-    }
+    }*/
+   setServerOTP('abc123'); // Remove when connected to server
   };
 
   // Function to get the OTP from server

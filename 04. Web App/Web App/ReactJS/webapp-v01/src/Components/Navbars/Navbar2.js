@@ -89,7 +89,7 @@ function NavScrollExample({page, language, setLanguage}) {
                     </Dropdown.Toggle>
                     <Dropdown.Menu>                
                       <Dropdown.Item href='/dashboard'><AiFillDashboard /> {language==='sn' ? (<>අයිතම පුවරුව</>): (<>Dashboard</>)}</Dropdown.Item>
-                      <Dropdown.Item href='/settings'><RiSettings3Fill /> {language==='sn' ? (<>සැකසුම්</>): (<>Settings</>)}</Dropdown.Item>
+                      {/*<Dropdown.Item href='/settings'><RiSettings3Fill /> {language==='sn' ? (<>සැකසුම්</>): (<>Settings</>)}</Dropdown.Item>*/}
                       <Dropdown.Item onClick={handleUser}><TbLogout /> {language==='sn' ? (<>ඉවත්වන්න</>): (<>Logout</>)}</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>                   
