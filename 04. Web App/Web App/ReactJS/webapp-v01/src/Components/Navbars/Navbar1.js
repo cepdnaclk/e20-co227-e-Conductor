@@ -11,7 +11,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Image from 'react-bootstrap/Image';
 import logo from '../../Images/logo - no bkgnd.png';
 import './Navbar2.css';
-import Header from './Header'
 
 function NavScrollExample() {
   return (

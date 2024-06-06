@@ -7,7 +7,7 @@ import { Request } from '../../APIs/Connections';
 import './OTP1.css'
 
 
-export default function OTP({userID, mobile, sendResponse}) {
+export default function OTP({userID, mobile, sendResponse, language}) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
 
@@ -93,6 +93,8 @@ export default function OTP({userID, mobile, sendResponse}) {
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
+      //setVisitor(false);
+      localStorage.setItem('userId', JSON.stringify(userID));
       navigate('/');
       handleNotifications({
         type:'success', 
@@ -100,7 +102,6 @@ export default function OTP({userID, mobile, sendResponse}) {
         body:'Welcome to e-Conductor!.'
       });
       sendLog(userID);
-      // Add function to send user log
     }
     else{
       handleNotifications({

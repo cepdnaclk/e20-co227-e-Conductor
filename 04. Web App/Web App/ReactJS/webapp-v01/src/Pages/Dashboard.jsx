@@ -1,12 +1,13 @@
 import React from 'react'
 import Navbar from '../Components/Navbars/Navbar2'
 import Footer from '../Components/Footer/Footer2'
+import './Home.css'
 
-export default function About({ language, setLanguage }) {
+export default function Dashboard({ language, setLanguage }) {
   return (
-    <div className='body'>
-      <Navbar page = 'About' language={language} setLanguage={setLanguage}/>
-      <h1>ABOUT</h1>
+    <div >
+      <Navbar language={language} setLanguage={setLanguage}/>
+      <h1>DASHBOARD</h1>
       <h3>Language: {language} </h3>
       <Footer/>  
     </div>

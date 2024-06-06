@@ -3,7 +3,7 @@ import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
 
-export default function Signin() {
+export default function Signin( { language } ) {
   // Variable for storing current login state.
   const [isLoging, setIsLogin] = useState(false);   // boolean
   const [user, setUser] = useState('');             // User ID or none
@@ -28,11 +28,11 @@ export default function Signin() {
       {
         !isLoging ? (
           <>
-            <Login user={handleResponse} mobile={e=>{setMobile(e)}}/>
+            <Login user={handleResponse} mobile={e=>{setMobile(e)}} language={language}/>
           </>
         ):(
           <>
-            <OTP userID={user} mobile={mobile} sendResponse={handleResponse}/>
+            <OTP userID={user} mobile={mobile} sendResponse={handleResponse} language={language}/>
           </>
         )
       }

@@ -10,7 +10,7 @@ import { Request } from '../../APIs/Connections';
 import './login1.css';
 
 
-function Login({ user, mobile }) {  
+function Login({ user, mobile, language }) {  // language is not implemented yet
   // variable for mobile number
   const [number, setNumber] = useState('');
 
@@ -106,7 +106,7 @@ function Login({ user, mobile }) {
           <Button variant="light" className='custombutton2'><FaEnvelope className='icon' /><span className='Button-text'>Continue with Email</span></Button>
         </Container>
         <div className='register'>
-          <p>Don't have an account? <a href='/en-signup'>Register</a> </p>
+          <p>Don't have an account? <a href={`/signup`}>Register</a> </p>
         </div>
       </form>
     </div>

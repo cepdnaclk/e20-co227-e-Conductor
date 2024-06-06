@@ -17,7 +17,6 @@
     color: rgb(109, 108, 108);
     font-size: 17px;
     margin-left: 10px;
-    margin-left: 10px;
 }
 
 .tab:hover {
@@ -31,7 +30,7 @@
 
 .navbar-nav {
     margin-left: auto;
-}
+} 
 
 .button{
     margin-left: 10px;
@@ -50,11 +49,13 @@
     font-size: 17px;
     font-size: ROBOTO;
     color: black;
+    height: 40px;
 }
 
 .dropdown-item:focus, .dropdown-item:hover{
     background-color: #9b9b9b !important; /* Change this to your desired color */
     color: white !important;
+    font-family: ROBOTO;
 }
 
 .align-items-top{
@@ -65,4 +66,11 @@
 .justify-content-between{
     width: 80%;
     justify-content: space-between;   
+}
+
+.navbar .icon{
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
 }

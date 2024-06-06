@@ -18,11 +18,11 @@ function Footer() {
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
             <ul>
-              <li><a href="/about">About us</a></li>
-              <li><a href="/contact">Contact us</a></li>
-              <li><a href="/news">Newsroom</a></li>
-              <li><a href="/privacy">Privacy policy</a></li>
-              <li><a href="/terms">Terms & conditions</a></li>
+              <li><a href="/:language/about">About us</a></li>
+              <li><a href="/:language/contact">Contact us</a></li>
+              <li><a href="/:language/news">Newsroom</a></li>
+              <li><a href="/:language/privacy">Privacy policy</a></li>
+              <li><a href="/:language/terms">Terms & conditions</a></li>
             </ul>
           </Col>
 
