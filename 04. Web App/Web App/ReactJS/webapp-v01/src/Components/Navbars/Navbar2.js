@@ -17,7 +17,6 @@ import './Navbar2.css';
 import { FaUserCircle } from 'react-icons/fa';
 import { TbLogout } from 'react-icons/tb';
 import { AiFillDashboard } from 'react-icons/ai';
-import { RiSettings3Fill } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 
 function NavScrollExample({page, language, setLanguage}) {  
@@ -59,15 +58,15 @@ function NavScrollExample({page, language, setLanguage}) {
         <Navbar.Collapse id="navbarScroll">
           <Nav variant='underline' activeKey={page} className="navbar-nav" navbarScroll>
             
-            <Nav.Link className="tab" eventKey="Home"     href='/'      >{language==='sn' ? (<>මුල්පිටුව</>): (<>Home</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="About"    href='/about' >{language==='sn' ? (<>විස්තර</>): (<>About</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Booking"  href='/'      >{language==='sn' ? (<>වෙන්කිරීම්</>): (<>Booking</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Schedule" href='/'      >{language==='sn' ? (<>කාලසටහන්</>): (<>Schedule</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Page_5"   href='/'      >{language==='sn' ? (<>5_පිටුව</>): (<>Page_5</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Page_6"   href='/'      >{language==='sn' ? (<>6_පිටුව</>): (<>Page_6</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Page_7"   href='/'      >{language==='sn' ? (<>7_පිටුව</>): (<>Page_7</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Page_8"   href='/'      >{language==='sn' ? (<>8_පිටුව</>): (<>Page_8</>)}</Nav.Link>
-            <Nav.Link className="tab" eventKey="Page_9"   href='/'      >{language==='sn' ? (<>9_පිටුව</>): (<>Page_9</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Home"     href='/'        >{language==='sn' ? (<>මුල්පිටුව</>): (<>Home</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="About"    href='/about'   >{language==='sn' ? (<>විස්තර</>): (<>About</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Booking"  href='/booking'>{language==='sn' ? (<>වෙන්කිරීම්</>): (<>Booking</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Schedule" href='/'        >{language==='sn' ? (<>කාලසටහන්</>): (<>Schedule</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Page_5"   href='/'        >{language==='sn' ? (<>5_පිටුව</>): (<>Page_5</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Page_6"   href='/'        >{language==='sn' ? (<>6_පිටුව</>): (<>Page_6</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Page_7"   href='/'        >{language==='sn' ? (<>7_පිටුව</>): (<>Page_7</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Page_8"   href='/'        >{language==='sn' ? (<>8_පිටුව</>): (<>Page_8</>)}</Nav.Link>
+            <Nav.Link className="tab" eventKey="Page_9"   href='/'        >{language==='sn' ? (<>9_පිටුව</>): (<>Page_9</>)}</Nav.Link>
 
             <Container fluid className='d-flex justify-content-between align-items-top'>
               <Dropdown>

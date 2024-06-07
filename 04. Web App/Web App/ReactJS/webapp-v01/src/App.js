@@ -8,6 +8,8 @@ import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
 import { useEffect, useState } from "react";
 import Settings from "./Pages/Settings";
+import Bookings from "./Pages/bookings";
+import Topups from "./Pages/topups";
 
 function App() {
   /* Top level controlls for the web app */
@@ -41,6 +43,16 @@ function App() {
           <Route 
             path = "/about" 
             element={<About language={language} setLanguage={setLanguage}/>}
+          ></Route>
+
+          <Route 
+            path = "/booking" 
+            element={<Bookings language={language} setLanguage={setLanguage}/>}
+          ></Route>
+
+          <Route 
+            path = "/topup" 
+            element={<Topups language={language} setLanguage={setLanguage}/>}
           ></Route>
 
           <Route 

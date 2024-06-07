@@ -1,28 +1,32 @@
 .menuBar{
     /*background-color: rgb(64, 64, 104);*/
-    background-color: ghostwhite;
+    background-color:ghostwhite;
     width: 230px;
-    height: 100vh;
+    height: auto;
     margin: 0;
     padding: 10px 0px;
     color: rgb(61, 61, 61);
     transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .Collapsed-menuBar{
     background-color: ghostwhite;
     width: 100px;
-    height: 100vh;
+    height: auto;
     margin: 0;
     padding: 10px 0px;
     color: rgb(61, 61, 61);
     transition: width 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .menuBar .container, .Collapsed-menuBar .container{
     cursor: pointer;
     height: 50px;
-    width: auto;
+    width: 6px;
     margin: 20px 0px;
     margin-left: 20px;
     align-items: center;
@@ -56,17 +60,14 @@
 }
 
 .menuBar .container.active, .Collapsed-menuBar .container.active{
-    background-color: rgba(138, 137, 137, 0.19);
-    color: black;
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+    background-color: rgb(0, 0, 0);
+    color: rgb(0, 0, 0);
+    border-radius: 25px;
 }
 
 .menuBar .container:hover, .Collapsed-menuBar .container:hover{
-    background-color: rgb(36, 36, 36);
-    color: rgb(255, 255, 255);
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+    background-color: rgba(78, 78, 78, 0.589);
+    border-radius: 25px;
 }
 
 .menuBar .container .icon, .Collapsed-menuBar .container .icon{

@@ -65,12 +65,12 @@ export default function MenuBar({ state, setState, language }) {
             </Container>
             
             <Container 
-                data-id='bookings' 
+                data-id='tickets' 
                 onClick={handleState} 
-                className={`clickable-container ${state === 'bookings' ? 'active' : ''}`}
+                className={`clickable-container ${state === 'tickets' ? 'active' : ''}`}
             >
                 <BookOnlineTwoToneIcon className='icon'/> 
-                <span> Bookings</span>
+                <span> Tickets</span>
             </Container>
             
             <Container 

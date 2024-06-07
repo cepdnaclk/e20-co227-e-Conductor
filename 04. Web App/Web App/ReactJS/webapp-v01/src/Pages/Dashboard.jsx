@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react'
 import Navbar from '../Components/Navbars/Navbar2'
 import Footer from '../Components/Footer/Footer2'
 import { Col, Row } from 'react-bootstrap'
-import Content from '../Components/Dashboard/ContentContainer'
+import General from '../Components/Dashboard/General'
+import Payments from '../Components/Dashboard/Payments'
+import Bookings from '../Components/Dashboard/MyBookings'
+import Devices from '../Components/Dashboard/Devices'
 import Menu from '../Components/Dashboard/MenuBar'
+import Messages from '../Components/Dashboard/Messages'
+import Settings from '../Components/Dashboard/Settings'
 import './Dashboard.css'
+
 
 export default function Dashboard({ language, setLanguage }) {
 
@@ -28,7 +34,30 @@ export default function Dashboard({ language, setLanguage }) {
           <Menu state={state} setState={handleState} language={language}/>
         </Col>
         <Col className='content'>
-          <Content/>
+          {(()=>{
+            switch (state) {
+              case 'general':
+                return (<General language={language} setState={setState}/>);
+            
+              case 'payments':
+                return (<Payments language={language}/>);
+          
+              case 'tickets':
+                return (<Bookings language={language}/>);
+          
+              case 'devices':
+                return (<Devices language={language}/>);
+          
+              case 'messages':
+                return (<Messages language={language}/>);
+          
+              case 'settings':
+                return (<Settings language={language}/>);
+          
+              default:
+                break;
+            }
+          })()}
         </Col>
       </Row>
       

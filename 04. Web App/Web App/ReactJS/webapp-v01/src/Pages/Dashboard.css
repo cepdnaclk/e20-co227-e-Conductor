@@ -2,12 +2,13 @@
     background-color: ghostwhite;
     margin: 0;
     padding: 0;
+    height: fit-content;
 }
 
 .dashboardPage .dashboardArea{
-    height: 100vh;
     margin: 0;
     padding: 0;
+    height: max-content;
 }
 
 .dashboardArea .menu{
@@ -19,10 +20,15 @@
 }
 
 .dashboardArea .content{
-    background-color:rgba(138, 137, 137, 0.19);
-    width: auto;
-    margin: 10px 15px 20px 0;
-    padding: 15px;
+    background-image: url('../Images/waterfall.jpg');
+    width: calc(100% - 20px);
+    margin: 0;
+    padding: 10px;
     border-radius: 15px;
-    max-height: 100vh;
+    overflow: auto;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
