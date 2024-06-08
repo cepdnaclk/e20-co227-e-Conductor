@@ -56,12 +56,12 @@ export default function MenuBar({ state, setState, language }) {
             </Container>
             
             <Container 
-                data-id='payments' 
+                data-id='transactions' 
                 onClick={handleState}
-                className={`clickable-container ${state === 'payments' ? 'active' : ''}`}
+                className={`clickable-container ${state === 'transactions' ? 'active' : ''}`}
             >
                 <PaymentTwoToneIcon className='icon'/> 
-                <span> Payments</span>
+                <span> Transactions</span>
             </Container>
             
             <Container 
@@ -120,17 +120,17 @@ export default function MenuBar({ state, setState, language }) {
             </Container>
             
             <Container 
-                data-id='payments' 
+                data-id='transactions' 
                 onClick={handleState}
-                className={`clickable-container ${state === 'payments' ? 'active' : ''}`}
+                className={`clickable-container ${state === 'transactions' ? 'active' : ''}`}
             >
                 <PaymentTwoToneIcon className='icon'/> 
             </Container>
             
             <Container 
-                data-id='bookings' 
+                data-id='tickets' 
                 onClick={handleState} 
-                className={`clickable-container ${state === 'bookings' ? 'active' : ''}`}
+                className={`clickable-container ${state === 'tickets' ? 'active' : ''}`}
             >
                 <BookOnlineTwoToneIcon className='icon'/> 
             </Container>

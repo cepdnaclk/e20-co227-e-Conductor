@@ -3,7 +3,7 @@ import Navbar from '../Components/Navbars/Navbar2'
 import Footer from '../Components/Footer/Footer2'
 import { Col, Row } from 'react-bootstrap'
 import General from '../Components/Dashboard/General'
-import Payments from '../Components/Dashboard/Payments'
+import Transactions from '../Components/Dashboard/Transactions'
 import Bookings from '../Components/Dashboard/MyBookings'
 import Devices from '../Components/Dashboard/Devices'
 import Menu from '../Components/Dashboard/MenuBar'
@@ -39,8 +39,8 @@ export default function Dashboard({ language, setLanguage }) {
               case 'general':
                 return (<General language={language} setState={setState}/>);
             
-              case 'payments':
-                return (<Payments language={language}/>);
+              case 'transactions':
+                return (<Transactions language={language}/>);
           
               case 'tickets':
                 return (<Bookings language={language}/>);

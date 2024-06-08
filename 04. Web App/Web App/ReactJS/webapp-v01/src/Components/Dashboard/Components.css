@@ -8,8 +8,10 @@
     max-height: 76vh;
 }
 
-/* User info container */
 
+/*============ GENERAL TAB ===========*/
+
+/* ------ User info container ------- */
 
 .contentArea .user-info-container{
     height: auto;
@@ -141,7 +143,7 @@
     justify-content:space-evenly;
 }
 
-.contentArea .quick-Access-Container .row .col .card-icon{
+.contentArea .card-icon{
     font-size: 80px;
     margin: 0;
 }
@@ -179,4 +181,32 @@
         justify-content: center;
         align-items: center;
         display: flex;
+}
+
+/*=======================================================*/
+
+
+/*===================== PAYMENTS TAB ====================*/
+.contentArea .payments-Container{
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-radius: 15px;
+    margin: 0;
+    padding: 10px;
+    font-size: 50px;
+    font-family: ROBOTo;
+}
+
+.contentArea .payments-Container .container{
+    margin: 0;
+    width: auto;
+}
+
+.contentArea .payment-table{
+    background-color: chocolate;
+    height: 300px;
+    width: 100%;
+    margin-top: 30px;
 }
