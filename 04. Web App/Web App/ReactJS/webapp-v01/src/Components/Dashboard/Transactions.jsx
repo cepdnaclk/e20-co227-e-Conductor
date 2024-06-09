@@ -1,190 +1,250 @@
 import React from 'react'
 import CustomTable from '../Tables/Table';
 
-function Transactions() {
+function Transactions({ language }) {
   const credits = 500;
 
   // Dummy data for table body
   const rows = [{
-    "id": "54-394-1472",
-    "date": "2/23/2024",
-    "time": "22:40",
-    "description": 'Online\u00a0Top-Up',
-    "amount": 2232.43
+    "id": "3168411663",
+    "date": "2023-09-28",
+    "time": "18:05",
+    "description": "Top-up",
+    "amount": "2691.84"
   }, {
-    "id": "04-475-6065",
-    "date": "5/14/2024",
-    "time": "18:34",
-    "description": 'Online\u00a0Top-Up',
-    "amount": 3489.10
+    "id": "0493819959",
+    "date": "2023-11-21",
+    "time": "05:02",
+    "description": "Top-up",
+    "amount": "493.86"
   }, {
-    "id": "62-804-6502",
-    "date": "11/18/2023",
-    "time": "12:02",
-    "description": "nam congue risus semper",
-    "amount": 1018.09
+    "id": "5007381039",
+    "date": "2023-06-12",
+    "time": "13:09",
+    "description": "Payment",
+    "amount": "4342.70"
   }, {
-    "id": "20-112-5909",
-    "date": "1/23/2024",
-    "time": "23:22",
-    "description": "vestibulum sit amet cursus",
-    "amount": 4663.60
+    "id": "3088106392",
+    "date": "2024-02-13",
+    "time": "12:37",
+    "description": "Top-up",
+    "amount": "2813.59"
   }, {
-    "id": "59-303-2281",
-    "date": "11/30/2023",
-    "time": "12:40",
-    "description": "consequat",
-    "amount": 3208.98
+    "id": "1140751379",
+    "date": "2023-10-11",
+    "time": "18:01",
+    "description": "Top-up",
+    "amount": "444.29"
   }, {
-    "id": "51-456-5925",
-    "date": "1/20/2024",
-    "time": "13:51",
-    "description": "justo eu massa",
-    "amount": 616.82
+    "id": "2316623786",
+    "date": "2023-11-26",
+    "time": "22:53",
+    "description": "Payment",
+    "amount": "211.33"
   }, {
-    "id": "78-598-7884",
-    "date": "7/26/2023",
-    "time": "00:18",
-    "description": "proin interdum mauris",
-    "amount": 1446.19
+    "id": "7345134679",
+    "date": "2023-06-09",
+    "time": "10:30",
+    "description": "Top-up",
+    "amount": "3251.09"
   }, {
-    "id": "21-922-6002",
-    "date": "4/3/2024",
-    "time": "14:00",
-    "description": 'Online\u00a0Top-Up',
-    "amount": 1486.87
+    "id": "7924725849",
+    "date": "2023-08-25",
+    "time": "13:12",
+    "description": "Payment",
+    "amount": "2585.33"
   }, {
-    "id": "09-240-6417",
-    "date": "7/22/2023",
-    "time": "04:36",
-    "description": "turpis",
-    "amount": 3000.82
+    "id": "9628229036",
+    "date": "2024-01-11",
+    "time": "05:46",
+    "description": "Payment",
+    "amount": "1457.97"
   }, {
-    "id": "70-819-0800",
-    "date": "8/31/2023",
-    "time": "21:51",
-    "description": "eu mi nulla",
-    "amount": 412.99
+    "id": "8500069333",
+    "date": "2023-12-06",
+    "time": "20:12",
+    "description": "Refund",
+    "amount": "1199.81"
   }, {
-    "id": "90-188-8227",
-    "date": "11/16/2023",
-    "time": "21:40",
-    "description": "nunc donec quis",
-    "amount": 2402.76
+    "id": "4152116854",
+    "date": "2023-06-10",
+    "time": "04:55",
+    "description": "Refund",
+    "amount": "4808.60"
   }, {
-    "id": "68-310-0221",
-    "date": "2/12/2024",
-    "time": "04:30",
-    "description": "in magna bibendum imperdiet",
-    "amount": 1980.64
+    "id": "4081744084",
+    "date": "2024-01-23",
+    "time": "17:48",
+    "description": "Top-up",
+    "amount": "3539.11"
   }, {
-    "id": "45-238-0811",
-    "date": "10/18/2023",
-    "time": "18:53",
-    "description": "nulla",
-    "amount": 2245.53
+    "id": "3648482173",
+    "date": "2023-12-19",
+    "time": "10:33",
+    "description": "Refund",
+    "amount": "3195.80"
   }, {
-    "id": "35-185-4801",
-    "date": "11/15/2023",
-    "time": "11:22",
-    "description": "ut ultrices vel augue",
-    "amount": 3939.22
+    "id": "3529607835",
+    "date": "2023-08-24",
+    "time": "00:43",
+    "description": "Refund",
+    "amount": "358.49"
   }, {
-    "id": "88-313-1413",
-    "date": "11/21/2023",
-    "time": "23:03",
-    "description": "vel",
-    "amount": 1183.94
+    "id": "3597384706",
+    "date": "2024-02-17",
+    "time": "22:49",
+    "description": "Refund",
+    "amount": "3384.72"
   }, {
-    "id": "09-911-3125",
-    "date": "11/7/2023",
+    "id": "3837687465",
+    "date": "2023-12-11",
+    "time": "20:46",
+    "description": "Refund",
+    "amount": "4006.26"
+  }, {
+    "id": "8316824159",
+    "date": "2023-08-24",
+    "time": "15:31",
+    "description": "Top-up",
+    "amount": "983.75"
+  }, {
+    "id": "9997797213",
+    "date": "2024-01-14",
+    "time": "18:42",
+    "description": "Payment",
+    "amount": "994.03"
+  }, {
+    "id": "9384848891",
+    "date": "2024-03-03",
+    "time": "20:37",
+    "description": "Top-up",
+    "amount": "4463.27"
+  }, {
+    "id": "4554452417",
+    "date": "2023-12-04",
+    "time": "00:01",
+    "description": "Payment",
+    "amount": "959.38"
+  }, {
+    "id": "9504591574",
+    "date": "2023-08-20",
+    "time": "22:33",
+    "description": "Top-up",
+    "amount": "4344.46"
+  }, {
+    "id": "7472405558",
+    "date": "2024-02-25",
+    "time": "90:30",
+    "description": "Payment",
+    "amount": "78.19"
+  }, {
+    "id": "6243681548",
+    "date": "2023-09-04",
+    "time": "23:34",
+    "description": "Refund",
+    "amount": "2073.00"
+  }, {
+    "id": "5101638455",
+    "date": "2023-09-15",
+    "time": "12:29",
+    "description": "Refund",
+    "amount": "1367.98"
+  }, {
+    "id": "3184324451",
+    "date": "2024-03-07",
+    "time": "12:35",
+    "description": "Top-up",
+    "amount": "3122.44"
+  }, {
+    "id": "8911395633",
+    "date": "2024-05-18",
+    "time": "05:02",
+    "description": "Payment",
+    "amount": "4697.27"
+  }, {
+    "id": "1998055647",
+    "date": "2024-04-12",
+    "time": "08:54",
+    "description": "Payment",
+    "amount": "266.99"
+  }, {
+    "id": "6058516161",
+    "date": "2023-12-15",
+    "time": "04:27",
+    "description": "Top-up",
+    "amount": "1352.19"
+  }, {
+    "id": "9901765420",
+    "date": "2024-04-19",
+    "time": "12:19",
+    "description": "Top-up",
+    "amount": "4429.20"
+  }, {
+    "id": "6953478373",
+    "date": "2024-03-04",
+    "time": "15:21",
+    "description": "Refund",
+    "amount": "4472.13"
+  }, {
+    "id": "5093741078",
+    "date": "2023-07-28",
+    "time": "00:13",
+    "description": "Refund",
+    "amount": "1456.69"
+  }, {
+    "id": "9112703303",
+    "date": "2023-07-23",
+    "time": "04:35",
+    "description": "Top-up",
+    "amount": "379.39"
+  }, {
+    "id": "5792120099",
+    "date": "2024-02-05",
+    "time": "12:35",
+    "description": "Top-up",
+    "amount": "4270.02"
+  }, {
+    "id": "2250082936",
+    "date": "2024-02-24",
     "time": "04:17",
-    "description": "varius",
-    "amount": 123.27
+    "description": "Refund",
+    "amount": "320.33"
   }, {
-    "id": "37-071-7661",
-    "date": "11/26/2023",
-    "time": "10:07",
-    "description": "vel lectus",
-    "amount": 2596.87
+    "id": "3320001655",
+    "date": "2023-09-27",
+    "time": "17:17",
+    "description": "Payment",
+    "amount": "4207.88"
   }, {
-    "id": "50-582-5020",
-    "date": "6/10/2023",
-    "time": "02:10",
-    "description": "tristique",
-    "amount": 2668.97
+    "id": "3926541709",
+    "date": "2023-08-29",
+    "time": "12:42",
+    "description": "Refund",
+    "amount": "3650.72"
   }, {
-    "id": "93-557-9009",
-    "date": "7/20/2023",
-    "time": "07:15",
-    "description": "platea dictumst",
-    "amount": 2386.79
+    "id": "4076335333",
+    "date": "2024-03-05",
+    "time": "04:58",
+    "description": "Top-up",
+    "amount": "4946.73"
   }, {
-    "id": "85-342-2198",
-    "date": "3/20/2024",
-    "time": "21:42",
-    "description": "ipsum",
-    "amount": 2454.39
+    "id": "9611627718",
+    "date": "2023-09-27",
+    "time": "15:02",
+    "description": "Top-up",
+    "amount": "3635.01"
   }, {
-    "id": "55-015-0578",
-    "date": "4/12/2024",
-    "time": "01:29",
-    "description": "nullam orci pede venenatis",
-    "amount": 3882.50
+    "id": "4052461207",
+    "date": "2023-10-02",
+    "time": "06:56",
+    "description": "Top-up",
+    "amount": "2729.84"
   }, {
-    "id": "41-631-9931",
-    "date": "7/24/2023",
-    "time": "03:48",
-    "description": "diam neque",
-    "amount": 2621.44
-  }, {
-    "id": "81-070-8487",
-    "date": "7/5/2023",
-    "time": "21:19",
-    "description": "in",
-    "amount": 4811.27
-  }, {
-    "id": "87-306-7246",
-    "date": "8/5/2023",
-    "time": "23:28",
-    "description": "et commodo",
-    "amount": 1205.39
-  }, {
-    "id": "99-709-1629",
-    "date": "1/23/2024",
-    "time": "06:28",
-    "description": "non",
-    "amount": 393.8
-  }, {
-    "id": "16-313-5603",
-    "date": "3/23/2024",
-    "time": "11:26",
-    "description": "metus aenean fermentum donec",
-    "amount": 4064.0
-  }, {
-    "id": "87-075-9655",
-    "date": "4/8/2024",
-    "time": "23:57",
-    "description": "cubilia curae mauris",
-    "amount": 1052.79
-  }, {
-    "id": "44-188-6409",
-    "date": "11/4/2023",
-    "time": "12:11",
-    "description": "integer ac",
-    "amount": 4635.92
-  }, {
-    "id": "20-966-5916",
-    "date": "6/6/2024",
-    "time": "16:47",
-    "description": "nec molestie",
-    "amount": 2108.79
-  }, {
-    "id": "39-715-8385",
-    "date": "11/4/2023",
-    "time": "00:06",
-    "description": "tempus vivamus",
-    "amount": 3374.34
+    "id": "6961288448",
+    "date": "2024-03-17",
+    "time": "07:02",
+    "description": "Payment",
+    "amount": "4322.93"
   }];
   
   // Dummy data for table header
@@ -195,15 +255,15 @@ function Transactions() {
       label:'Transaction\u00a0ID' 
     },{
       id: 'date',
-      align: 'right',
+      align: 'left',
       label:'Date' 
     },{
       id: 'time',
-      align: 'right',
+      align: 'left',
       label:'Time\u00a0(Hrs)' 
     },{
       id: 'description',
-      align: 'center',
+      align: 'left',
       label:'Description' 
     },{
       id: 'amount',
@@ -222,6 +282,8 @@ function Transactions() {
       bodyData={rows}
       filterData={filterList}
       title={`Available\u00a0Credits: LKR\u00a0${credits}`}
+      filterColumn={'description'}
+      buttonDisable={true}
     />
   )
 }

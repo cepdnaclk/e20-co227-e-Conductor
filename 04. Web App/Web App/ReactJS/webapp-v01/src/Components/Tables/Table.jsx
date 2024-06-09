@@ -1,11 +1,31 @@
 import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Box, Grid, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Tooltip, Typography } from '@mui/material';
+import { Box, Button, Grid, IconButton, Menu, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel, Toolbar, Tooltip, Typography } from '@mui/material';
 import SearchBox from '../SearchBox/SearchBox';
 
+
+/* 
+  ------------------------------------------------------- API For Table ---------------------------------------------------------------------------------
+
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+  |   bodyData   | date, time, amount, other |   string object  | Data for the table body. JSON type object. All data types must be in string format.   | 
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+  |  headerData  |     id, align, label      |   string object  | Data for the table header. JSON type object. All data types must be in string format. |
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+  |    title     |  ( Topic of the Table )   |      string      | Topic for the table header.                                                           |
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+  |  filterData  |(Options for the filtering)|    string list   | Options for the table filter. JSON type list. All data types must be in string format.|
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+  | filterColumn |(An excisting column name) |      string      | Column name for filtering the table.                                                  |
+  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
+
+  NOTE: Always headerData cells and the keyValues of the bodyData must be the same.
+*/
+
+
 // Function to generate table header
-function TableHeadGenerator({ order, orderBy, onRequestSort, headerData }){
+function TableHeadGenerator({ order, orderBy, onRequestSort, headerData, buttonDisable }){
 
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -28,10 +48,16 @@ function TableHeadGenerator({ order, orderBy, onRequestSort, headerData }){
                 sx={{fontSize:'18px', fontFamily:'system-UI', fontWeight:'bold', }}
               >
                 {cell.label}
-                
               </TableSortLabel>              	
             </TableCell>
           ))}
+          <TableCell 
+            align='center'
+            sx={{fontSize:'18px', fontFamily:'system-UI', fontWeight:'bold', }}
+            hidden={buttonDisable}
+          >
+            Options
+          </TableCell>
       </TableRow>
     </TableHead>
   );
@@ -119,7 +145,7 @@ function TableToolbar({title, setSearching, filterList, filter}) {
 }
 
 // Main Function
-export default function CustomTable({ headerData, bodyData, title, filterData }) {
+export default function CustomTable({ headerData, bodyData, title, filterData, filterColumn, buttonDisable, buttonLabel, handleButton }) {
   // Initial States
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
@@ -138,11 +164,13 @@ export default function CustomTable({ headerData, bodyData, title, filterData })
     console.log(`Filtered: ${filter}     Searched: ${searching}`);
   }, [filter, searching]);
 */
+
   // Filtering and Sorting data
   const filteredRows = bodyData.filter(row => {
-    const matchesSearchTerm = row.id.toLowerCase().includes(searching.toLowerCase()) ||
-                              row.description.toLowerCase().includes(searching.toLowerCase());
-    const matchesFilter = filter ? row.description.toLowerCase().includes(filter.toLowerCase()) : true;
+    const matchesSearchTerm = headerData.some(cell => 
+      String(row[cell.id]).toLowerCase().includes(searching.toLowerCase())
+    );
+    const matchesFilter = filter ? row[filterColumn].toLowerCase().includes(filter.toLowerCase()) : true;
     return matchesSearchTerm && matchesFilter;
   });
 
@@ -196,6 +224,7 @@ export default function CustomTable({ headerData, bodyData, title, filterData })
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               headerData={headerData}
+              buttonDisable={buttonDisable}
             />
 
             <TableBody>{ 
@@ -215,7 +244,23 @@ export default function CustomTable({ headerData, bodyData, title, filterData })
                     >
                       {row[cell.id]}
                     </TableCell>
-                  ))}                  
+                  ))}       
+                  <TableCell hidden={buttonDisable} align='center'>
+                    <Button 
+                      variant="outlined" 
+                      size="small"
+                      onClick={handleButton} 
+                      sx={{ color: 'black', 
+                            borderColor: 'black', 
+                            '&:hover': { 
+                              backgroundColor: 'black', 
+                              color: 'white', 
+                              border: 'none'
+                          }}}
+                    >
+                      {buttonLabel}
+                    </Button>
+                  </TableCell>           
                 </TableRow>
               )):(
                 <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 }}} >
