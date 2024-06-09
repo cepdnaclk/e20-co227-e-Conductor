@@ -1,15 +1,16 @@
 // This is the main code for the web app
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Home from "./Pages/Home";
 import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
-import { useEffect, useState } from "react";
-import Settings from "./Pages/Settings";
+import Settings from "./Components/Invoice/Invioce";
 import Bookings from "./Pages/bookings";
 import Topups from "./Pages/topups";
+import Invoice from "./Pages/Invoice";
 
 function App() {
   /* Top level controlls for the web app */
@@ -73,6 +74,11 @@ function App() {
           <Route 
             path = "/settings" 
             element={<Settings language={language} setLanguage={setLanguage}/>}
+          ></Route>
+
+          <Route 
+            path = "/invoice" 
+            element={<Invoice language={language}/>}
           ></Route>
 
         </Routes>

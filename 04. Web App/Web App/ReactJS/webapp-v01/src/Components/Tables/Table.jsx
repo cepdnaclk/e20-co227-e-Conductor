@@ -256,17 +256,20 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
                       {row[cell.id]}
                     </TableCell>
                   ))}       
-                  <TableCell hidden={isHidden} align='center' sx={{gap: '5px', display: 'flex', justifyContent:'center'}}>
+                  <TableCell hidden={isHidden} align='center' sx={{gap: '5px', display: 'flex', justifyContent:'center', alignItems:'center'}}>
                     <Button 
                       id='button1'
                       variant="contained" 
                       size="small"
+                      value = {row.id}
                       onClick={handleButton} 
                       hidden={button1Label === undefined}
                       sx={{ 
                             color: 'white', 
                             backgroundColor: 'black', 
                             border: 'none', 
+                            fontFamily: 'System-UI', 
+                            fontWeight: 'bold',
                             '&:hover': { 
                               color: 'white', 
                               backgroundColor: 'rgb(109, 108, 108)', 
@@ -280,10 +283,13 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
                       id='button2'
                       variant="outlined" 
                       size="small"
+                      value = {row.id}
                       onClick={handleButton} 
                       hidden={button2Label === undefined}
                       sx={{ color: 'black', 
                             borderColor: 'black', 
+                            fontFamily: 'System-UI', 
+                            fontWeight: 'bold',
                             '&:hover': { 
                               backgroundColor: 'rgb(109, 108, 108)',
                               color: 'white', 

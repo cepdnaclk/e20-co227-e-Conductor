@@ -325,8 +325,9 @@ export default function Tickets({ language }) {
 
   // Handle Button Click
   const handleButton = (e) =>{
-    console.log(`${e.target.id} Clicked`);
-    navigate('/');
+    //console.log(`${e.target.id} Clicked.   RefNo: ${e.target.value}`);
+    localStorage.setItem('TicketNo', e.target.value);
+    navigate('/invoice');
   }
 
   return (
