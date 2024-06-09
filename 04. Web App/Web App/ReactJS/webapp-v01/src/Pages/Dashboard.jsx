@@ -4,10 +4,10 @@ import Footer from '../Components/Footer/Footer2'
 import { Col, Row } from 'react-bootstrap'
 import General from '../Components/Dashboard/General'
 import Transactions from '../Components/Dashboard/Transactions'
-import Bookings from '../Components/Dashboard/MyBookings'
+import Tickets from '../Components/Dashboard/Tickets'
 import Devices from '../Components/Dashboard/Devices'
 import Menu from '../Components/Dashboard/MenuBar'
-import Messages from '../Components/Dashboard/Messages'
+import Messages from '../Components/Dashboard/trans2'
 import Settings from '../Components/Dashboard/Settings'
 import './Dashboard.css'
 
@@ -43,7 +43,7 @@ export default function Dashboard({ language, setLanguage }) {
                 return (<Transactions language={language}/>);
           
               case 'tickets':
-                return (<Bookings language={language}/>);
+                return (<Tickets language={language}/>);
           
               case 'devices':
                 return (<Devices language={language}/>);
