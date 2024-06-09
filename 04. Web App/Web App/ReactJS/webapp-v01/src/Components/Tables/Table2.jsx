@@ -6,7 +6,7 @@ import SearchBox from '../SearchBox/SearchBox';
 
 
 /* 
-  ------------------------------------------------- API For Filtering Searching Sorting Table -----------------------------------------------------------
+  ------------------------------------------------------- API For Table ---------------------------------------------------------------------------------
 
   +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
   |   bodyData   | date, time, amount, other |   string object  | Data for the table body. JSON type object. All data types must be in string format.   | 
@@ -19,19 +19,13 @@ import SearchBox from '../SearchBox/SearchBox';
   +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
   | filterColumn |(An excisting column name) |      string      | Column name for filtering the table.                                                  |
   +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
-  | button1Label |      Primary Button       |      string      | Name of the primary button (contained).                                               |
-  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
-  | button2Label |     Secondary Button      |      string      | Name of the secondary button (outlined).                                              |
-  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
-  | handleButton |             e             |       event      | Event handling function. ( Use e.target.id)                                           |
-  +--------------+---------------------------+------------------+---------------------------------------------------------------------------------------+
 
   NOTE: Always headerData cells and the keyValues of the bodyData must be the same.
 */
 
 
 // Function to generate table header
-function TableHeadGenerator({ order, orderBy, onRequestSort, headerData, isHidden }){
+function TableHeadGenerator({ order, orderBy, onRequestSort, headerData, buttonDisable }){
 
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -60,7 +54,7 @@ function TableHeadGenerator({ order, orderBy, onRequestSort, headerData, isHidde
           <TableCell 
             align='center'
             sx={{fontSize:'18px', fontFamily:'system-UI', fontWeight:'bold', }}
-            hidden={isHidden}
+            hidden={buttonDisable}
           >
             Options
           </TableCell>
@@ -151,18 +145,13 @@ function TableToolbar({title, setSearching, filterList, filter}) {
 }
 
 // Main Function
-export default function CustomTable({ headerData, bodyData, title, filterData, filterColumn, button1Label, button2Label, handleButton }) {
+export default function CustomTable({ headerData, bodyData, title, filterData, filterColumn, buttonDisable, buttonLabel, handleButton }) {
   // Initial States
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('id');
   const [filter, setFilter] = React.useState('');
   const [searching, setSearching] = React.useState('');
-  const [isHidden, setIsHidden] = React.useState(true);
 
-  React.useEffect(()=>{
-    setIsHidden(button1Label !== undefined || button2Label !== undefined ? false : true);
-    //console.log(`Button1: ${button1Label}   Button2: ${button2Label}     Number of Buttons: ${length}   hidden:${buttonFieldLength === 0}`);
-  },[button1Label, button2Label])
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -235,7 +224,7 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
               headerData={headerData}
-              isHidden={isHidden}
+              buttonDisable={buttonDisable}
             />
 
             <TableBody>{ 
@@ -256,41 +245,20 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
                       {row[cell.id]}
                     </TableCell>
                   ))}       
-                  <TableCell hidden={isHidden} align='center' sx={{gap: '5px', display: 'flex', justifyContent:'center'}}>
+                  <TableCell hidden={buttonDisable} align='center'>
                     <Button 
-                      id='button1'
-                      variant="contained" 
-                      size="small"
-                      onClick={handleButton} 
-                      hidden={button1Label === undefined}
-                      sx={{ 
-                            color: 'white', 
-                            backgroundColor: 'black', 
-                            border: 'none', 
-                            '&:hover': { 
-                              color: 'white', 
-                              backgroundColor: 'rgb(109, 108, 108)', 
-                              border: 'none'
-                          }}}
-                    >
-                      {button1Label}
-                    </Button>
-
-                    <Button 
-                      id='button2'
                       variant="outlined" 
                       size="small"
                       onClick={handleButton} 
-                      hidden={button2Label === undefined}
                       sx={{ color: 'black', 
                             borderColor: 'black', 
                             '&:hover': { 
-                              backgroundColor: 'rgb(109, 108, 108)',
+                              backgroundColor: 'black', 
                               color: 'white', 
                               border: 'none'
                           }}}
                     >
-                      {button2Label}
+                      {buttonLabel}
                     </Button>
                   </TableCell>           
                 </TableRow>
