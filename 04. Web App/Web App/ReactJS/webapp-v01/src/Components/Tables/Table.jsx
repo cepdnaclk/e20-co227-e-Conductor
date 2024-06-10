@@ -251,7 +251,7 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
                     <TableCell 
                       key={cell.id}
                       align={cell.align}
-                      sx={{fontFamily:'system-UI', fontSize:'16px', fontWeight:'bold'}}
+                      sx={{fontFamily:'system-UI', fontSize:'16px', fontWeight:'bold', whiteSpace:'nowrap'}}
                     >
                       {row[cell.id]}
                     </TableCell>
