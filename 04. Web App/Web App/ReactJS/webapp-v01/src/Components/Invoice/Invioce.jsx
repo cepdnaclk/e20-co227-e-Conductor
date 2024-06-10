@@ -42,7 +42,7 @@ export default function Invoice({data, language}) {
           flexDirection: 'column',
           width: `${A4_WIDTH}px`,
           height: `${A4_HEIGHT}px`,
-          padding: `${MARGINE_V}px ${MARGINE_H}px`
+          padding: `${MARGINE_V}px ${MARGINE_H}px`,
         }}
       >
         {/* Header */}
