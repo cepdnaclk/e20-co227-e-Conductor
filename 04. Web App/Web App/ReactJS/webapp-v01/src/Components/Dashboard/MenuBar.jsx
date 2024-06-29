@@ -9,16 +9,19 @@ import ExitToAppTwoToneIcon from '@mui/icons-material/ExitToAppTwoTone';
 import BookOnlineTwoToneIcon from '@mui/icons-material/BookOnlineTwoTone';
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
 import NavigateNextTwoToneIcon from '@mui/icons-material/NavigateNextTwoTone';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './Menu.css';
 
 
-export default function MenuBar({ state, setState, language }) {
+export default function MenuBar({ language }) {
   // variable for navigations  
   const navigate = useNavigate();
 
   // variable to store the menu mode (collapsed or not)
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // variable to store current nested page
+  const state = useLocation().pathname.split("/")[2];
 
   // handle collapsed
   const handleCollapsed = () => {
@@ -29,7 +32,7 @@ export default function MenuBar({ state, setState, language }) {
   const handleState = (e) =>{
     const newState = e.currentTarget.getAttribute('data-id');
     //console.log(`1. Dashboard State: ${newState}`);  
-    setState(newState); 
+    navigate(`/dashboard/${newState}`);
   }
 
   // handle logout button
