@@ -204,7 +204,7 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
   }, [filteredRows, order, orderBy]);
 
   return (
-    <Box sx={{ width: '100%', margin: '20px' }}>
+    <Box sx={{ width: 'calc(100% - 50px)', margin: '20px' }}>
       <Paper 
         sx={{ 
           width: '100%', 

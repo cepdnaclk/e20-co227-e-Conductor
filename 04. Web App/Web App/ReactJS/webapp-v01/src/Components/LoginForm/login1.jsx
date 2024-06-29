@@ -20,12 +20,7 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
 
   // Effect to handle user validation after userId state changes
   useEffect(() => {
-    if (userId !== '') {
-      //console.log(`UserID: ${userId}  mobile: ${number}`);
-      user(userId);   // Send userId to the parent component
-      mobile(number); // Send mobile number to the parent component
-    }
-    else if(userId === 'invalid') {
+    if(userId === 'invalid') {
       handleNotifications({
         type:'error', 
         title:'Invalid mobile number!', 
@@ -34,6 +29,12 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
     }
+    else if (userId !== '') {
+      console.log(`UserID: ${userId}  mobile: ${number}`);
+      user(userId);   // Send userId to the parent component
+      mobile(number); // Send mobile number to the parent component
+    }
+    
   }, [userId]);
 
 
@@ -62,16 +63,16 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-  /*
+  
     try {
         const serverUserId = await Request(data, 'users');
-        //console.log(`ServerUserId:: ${serverUserId.id}`);
-        setUserId(serverUserId.id);  // Change here according to the database name
+        //console.log(`ServerUserId:: ${serverUserId}`);
+        setUserId(serverUserId);  // Change here according to the database name
     } catch (error) {
         console.error('Error adding user:', error);
     }
-        */
-       setUserId('p1234');
+      
+      // setUserId('p1234');
   };
 
   return (

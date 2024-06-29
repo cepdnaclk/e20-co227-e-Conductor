@@ -7,10 +7,11 @@ import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
-import Settings from "./Components/Invoice/Invioce";
+import Settings from "./Components/Dashboard/Settings";
 import Bookings from "./Pages/bookings";
 import Topups from "./Pages/topups";
 import Invoice from "./Pages/Invoice";
+import Forbidden from "./Pages/Forbidden";
 
 function App() {
   /* Top level controlls for the web app */
@@ -71,14 +72,16 @@ function App() {
             element={<Dashboard language={language} setLanguage={setLanguage}/>}
           ></Route>
 
-          <Route 
-            path = "/settings" 
-            element={<Settings language={language} setLanguage={setLanguage}/>}
-          ></Route>
+
 
           <Route 
             path = "/invoice" 
             element={<Invoice language={language}/>}
+          ></Route>
+
+          <Route 
+            path = "*" 
+            element={<Forbidden/>}
           ></Route>
 
         </Routes>

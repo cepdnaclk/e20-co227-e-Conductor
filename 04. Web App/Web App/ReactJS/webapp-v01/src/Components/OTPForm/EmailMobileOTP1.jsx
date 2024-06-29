@@ -11,7 +11,7 @@ export default function OTP({formData, sendResponse}) {
   let endTime = 120;
 
   // Variable for server OTP
-  const [serverOTP, setServerOTP] = useState('abc123');
+  const [serverOTP, setServerOTP] = useState('');
 
   // Initialize useNavigate hook
   const navigate = useNavigate(); 
@@ -45,8 +45,8 @@ export default function OTP({formData, sendResponse}) {
 
     try {
         const newOTP = await Request(data, 'OTP');
-        console.log(`New OTP:: ${newOTP.OTP}`);
-        setServerOTP(newOTP.OTP);
+        console.log(`New OTP:: ${newOTP}`);
+        setServerOTP(newOTP);
     } catch (error) {
         console.error('Error adding user:', error);
     }

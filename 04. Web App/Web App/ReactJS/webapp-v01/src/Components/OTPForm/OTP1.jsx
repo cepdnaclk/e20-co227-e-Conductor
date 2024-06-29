@@ -3,7 +3,7 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Request } from '../../APIs/Connections';
+import { Post, Request } from '../../APIs/Connections';
 import './OTP1.css'
 
 
@@ -46,14 +46,14 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
-    /*try {
+    try {
         const newOTP = await Request(data, 'OTP');
-        console.log(`New OTP:: ${newOTP.OTP}`);
-        setServerOTP(newOTP.OTP);
+        console.log(`New OTP:: ${newOTP}`);
+        setServerOTP(newOTP);
     } catch (error) {
         console.error('Error adding user:', error);
-    }*/
-   setServerOTP('abc123'); // Remove when connected to server
+    }
+   //setServerOTP('abc123'); // Remove when connected to server
   };
 
   // Function to get the OTP from server
@@ -66,7 +66,7 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
-        await Request(data, 'logs/users');
+        await Post(data, 'logs/users');
     } catch (error) {
         console.error('Error adding user:', error);
     }

@@ -31,12 +31,13 @@ export const Post = async (data, page) => {
 };
 
 // Send data to the backend and get response from the backend
-export const Request = async (data, page) => {
+export const Request = async (sendData, page) => {
     try {
         const destination = `${API_BASE_URL}/${page}`;
         console.log(`Request from: ${destination}`);
-        await Axios.post(`${destination}`, data);   // Note::  format: {ReqType, data}
-        return await Response(page);                // Fetch response
+        const ServerResponse = await Axios.post(`${destination}`, sendData);   // Note::  format: {ReqType, data}
+        //console.log(`Server Response: ${ServerResponse.data}`);
+        return ServerResponse.data; 
     } catch (error) {
         console.error('There was an error adding the user!', error);
         throw error;

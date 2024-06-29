@@ -4,7 +4,7 @@ import ComputerIcon from '@mui/icons-material/Computer';
 import TabletIcon from '@mui/icons-material/Tablet';
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-
+import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 
 export default function Devices() {
   // Dummy data for devices
@@ -157,6 +157,11 @@ export default function Devices() {
   // Handle Button Click
   const handleButton = (e) =>{
     console.log(`Button is Clicked. Terminate the session with MAC: ${e.target.value}.`);
+    handleNotifications({
+      type:'success', 
+      title:'Successfull Termination', 
+      body:`Successfully terminate the session with<br/>MAC: ${e.target.value}.`
+    });
     // Function to API call with backend
   }
 
@@ -207,7 +212,7 @@ export default function Devices() {
                   
                 </TableCell>
 
-                <TableCell>
+                <TableCell sx={{width:'200px'}}>
                   <Button 
                     variant="outlined" 
                     size="normal"
@@ -217,6 +222,7 @@ export default function Devices() {
                           borderColor: 'black', 
                           fontFamily: 'System-UI', 
                           fontWeight: 'bold',
+                          whiteSpace:'nowrap',
                           '&:hover': { 
                             backgroundColor: 'rgb(0,0,0)',
                             color: 'white', 
@@ -224,7 +230,7 @@ export default function Devices() {
                           }
                         }}
                   >
-                    Logout
+                    Terminate
                   </Button>
                 </TableCell>
               </TableRow>

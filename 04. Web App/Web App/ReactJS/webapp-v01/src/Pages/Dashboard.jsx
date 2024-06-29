@@ -7,7 +7,7 @@ import Transactions from '../Components/Dashboard/Transactions'
 import Tickets from '../Components/Dashboard/Tickets'
 import Devices from '../Components/Dashboard/Devices'
 import Menu from '../Components/Dashboard/MenuBar'
-import Messages from '../Components/Dashboard/trans2'
+import Messages from '../Components/Dashboard/Messages'
 import Settings from '../Components/Dashboard/Settings'
 import './Dashboard.css'
 
