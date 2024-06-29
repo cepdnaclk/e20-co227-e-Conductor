@@ -1,17 +1,21 @@
 // This is the main code for the web app
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Home from "./Pages/Home";
 import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
-import Settings from "./Components/Dashboard/Settings";
 import Bookings from "./Pages/bookings";
 import Topups from "./Pages/topups";
 import Invoice from "./Pages/Invoice";
 import Forbidden from "./Pages/Forbidden";
+import General from './Components/Dashboard/General'
+import Transactions from './Components/Dashboard/Transactions'
+import Tickets from './Components/Dashboard/Tickets'
+import Devices from './Components/Dashboard/Devices'
+import Settings from './Components/Dashboard/Settings'
 
 function App() {
   /* Top level controlls for the web app */
@@ -43,39 +47,44 @@ function App() {
           ></Route>
 
           <Route 
-            path = "/about" 
+            path = "about" 
             element={<About language={language} setLanguage={setLanguage}/>}
           ></Route>
 
           <Route 
-            path = "/booking" 
+            path = "booking" 
             element={<Bookings language={language} setLanguage={setLanguage}/>}
           ></Route>
 
           <Route 
-            path = "/topup" 
+            path = "topup" 
             element={<Topups language={language} setLanguage={setLanguage}/>}
           ></Route>
 
           <Route 
-            path = "/signin" 
+            path = "signin" 
             element={<Signin language={language}/>}
           ></Route>
 
           <Route 
-            path = "/signup" 
+            path = "signup" 
             element={<Signup language={language}/>}
           ></Route>
 
           <Route 
-            path = "/dashboard" 
+            path = "dashboard" 
             element={<Dashboard language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-
+          >
+            <Route path = "" element={<Navigate to="general" replace/>} />
+            <Route path = "general" element={<General language={language} />} />
+            <Route path = "transactions" element={<Transactions language={language} />} />
+            <Route path = "tickets" element={<Tickets language={language} />} />
+            <Route path = "devices" element={<Devices language={language} />} />
+            <Route path = "settings" element={<Settings language={language} />} />
+          </Route>
 
           <Route 
-            path = "/invoice" 
+            path = "invoice" 
             element={<Invoice language={language}/>}
           ></Route>
 

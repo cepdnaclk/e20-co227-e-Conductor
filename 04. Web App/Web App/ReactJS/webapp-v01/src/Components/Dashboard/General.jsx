@@ -9,7 +9,7 @@ import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
 import { useNavigate } from 'react-router-dom';
 
-function General({ language, setState }) {
+function General({ language }) {
 
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ function General({ language, setState }) {
 
   // Handle Click Events
   const handleClick = (e) => {
-    setState(e.target.id);
+    navigate(`/dashboard/${e.target.id}`);
   }
 
   return (
