@@ -1,0 +1,34 @@
+.dashboardPage{
+    background-color: ghostwhite;
+    margin: 0;
+    padding: 0;
+    height: auto;
+}
+
+.dashboardPage .dashboardArea{
+    margin: 0;
+    padding: 0;
+    height: fit-content;
+}
+
+.dashboardArea .menu{
+    max-width: fit-content;
+    min-width:min-content;
+    width: 40lh;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboardArea .content{
+    background-image: url('../Images/waterfall.jpg');
+    width: calc(100% - 20px);
+    margin: 0;
+    padding: 10px;
+    border-radius: 15px;
+    overflow: auto;
+    background-size: cover;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

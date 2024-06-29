@@ -2,6 +2,11 @@
     background-color:ghostwhite;
     padding: 20px 0;
   }
+
+.footer .justify-content-center{
+  background-color: aquamarine;
+  font-size: 150px;
+}
   
   .footer-column {
     margin-bottom: 20px;
@@ -43,7 +48,7 @@
   
   .custom {
     width: 70px;
-    /*background-color: aqua;*/
+    background-color: aqua;
   }
 
   .custom2 {

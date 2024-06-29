@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Image } from 'react-bootstrap';
+import { Row, Col, Image } from 'react-bootstrap';
 import { FaEnvelope, FaFacebook, FaFacebookMessenger, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhoneAlt, FaWhatsappSquare, FaYoutube } from "react-icons/fa";
 import './Footer2.css';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -8,28 +8,24 @@ import logo from '../../Images/logo - no bkgnd.png'
 function Footer() {
   return (
     <footer className="footer">
-      <Container>
-        <Row className="justify-content-center">
-          <Container className='custom'></Container>
+        <Row className="custom">
           
           <Col sm={6} md={3} className="footer-column-logo">
             <Image className='ourlogo' src={logo} rounded />
           </Col>
 
-          <Container className='custom1'></Container>
           
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
             <ul>
-              <li><a href="/about">About us</a></li>
-              <li><a href="/contact">Contact us</a></li>
-              <li><a href="/news">Newsroom</a></li>
-              <li><a href="/privacy">Privacy policy</a></li>
-              <li><a href="/terms">Terms & conditions</a></li>
+              <li><a href="/:language/about">About us</a></li>
+              <li><a href="/:language/contact">Contact us</a></li>
+              <li><a href="/:language/news">Newsroom</a></li>
+              <li><a href="/:language/privacy">Privacy policy</a></li>
+              <li><a href="/:language/terms">Terms & conditions</a></li>
             </ul>
           </Col>
 
-          <Container className='custom2'></Container>
 
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Contact Us</b></h5>
@@ -42,7 +38,6 @@ function Footer() {
             </ul>
           </Col>
 
-          <Container className='custom3'></Container>
 
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Follow Us</b></h5>
@@ -57,12 +52,12 @@ function Footer() {
           </Col>
 
         </Row>
+
         <Row>
           <Col className="text-center mt-3">
             <p>Copyright &copy; {new Date().getFullYear()} e-Conductor. All rights reserved.</p>
           </Col>
         </Row>
-      </Container>
     </footer>
   );
 }

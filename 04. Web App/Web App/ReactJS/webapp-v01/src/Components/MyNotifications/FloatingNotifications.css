@@ -1,0 +1,14 @@
+.swal-custom-button {
+  width: 120px !important; 
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.swal-custom-button:hover,
+.swal-custom-button:focus,
+.swal-custom-button:active {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}

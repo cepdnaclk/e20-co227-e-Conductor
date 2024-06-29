@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { handleNotifications } from '../MyNotifications/FloatingNotifications';
+import { Post, Request } from '../../APIs/Connections';
+import './OTP1.css'
 
-export default function OTP({user, sendResponse}) {
+
+export default function OTP({userID, mobile, sendResponse, language}) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
 
   // Variable for server OTP
-  const [serverOTP, setServerOTP] = useState('abc123');
+  const [serverOTP, setServerOTP] = useState('');
 
   // Initialize useNavigate hook
   const navigate = useNavigate(); 
@@ -26,19 +29,49 @@ export default function OTP({user, sendResponse}) {
   // variable to store reamining time
   const [time, setTime] = useState(endTime);
 
-  // Use effect for get the OTP from server
-  /*
-  
-    implement function here
 
-  */
+  // Confirm user and mobile comes correctly
+  useEffect(()=>{
+    //console.log(`OTP SEND:: userID: ${userID}    mobile: ${mobile}`);
+    requestOTP(mobile);
+  }, []);
 
-  // Send the user Log to the server
-  /*
-    user, finalOTP
-    implement function here
   
-  */
+  // Function to get the OTP from server
+  const requestOTP = async (number) => {
+    // Creating data object
+    const data = {
+      type: 'Req1',
+      data: number
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const newOTP = await Request(data, 'OTP');
+        console.log(`New OTP:: ${newOTP}`);
+        setServerOTP(newOTP);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+   //setServerOTP('abc123'); // Remove when connected to server
+  };
+
+  // Function to get the OTP from server
+  const sendLog = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Post1',    // Posting user login informations
+      data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        await Post(data, 'logs/users');
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
 
   // Use effect for the countdown
   useEffect(()=>{
@@ -50,19 +83,33 @@ export default function OTP({user, sendResponse}) {
     else{
       setIsDissable(true);
       setresendDissable(false);
-      alert("Time is out! \nPlease click Resend OTP to get a new OTP.");      
+      handleNotifications({
+        type:'warning', 
+        title:'Time is out!', 
+        body:'Please click Resend OTP to get a new OTP.'
+      });
     }
   }, [time])
 
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      alert('Successful Login!');
-      // Add function to send user log
+      //setVisitor(false);
+      localStorage.setItem('userId', JSON.stringify(userID));
       navigate('/');
+      handleNotifications({
+        type:'success', 
+        title:'Successful Login!', 
+        body:'Welcome to e-Conductor!.'
+      });
+      sendLog(userID);
     }
     else{
-      alert('Invalid OTP! \nTry Again!');
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
       setOtp ('');
     }
   }
@@ -75,15 +122,23 @@ export default function OTP({user, sendResponse}) {
   // Function to handle Resend Option
   const resendHandle = () =>{
     if (resendDissable){
-      alert('Wait till countdown ends!')
+      handleNotifications({
+        type:'warning', 
+        title:'Wait!', 
+        body:'Wait untill countdown ends!'
+      });
     }
     else{
       setTime(endTime);
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
-      // function to get the new OTP from the server
-      alert('Resend OTP');
+      requestOTP(mobile);   // function to get the new OTP from the server
+      handleNotifications({
+        type:'info', 
+        title:'Resend OTP!', 
+        body:'New OTP is sent to your mobile number.'
+      });
     }
   }
 

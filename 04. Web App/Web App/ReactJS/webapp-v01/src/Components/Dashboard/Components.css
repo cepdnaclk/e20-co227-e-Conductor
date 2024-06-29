@@ -1,0 +1,212 @@
+.contentArea{
+    padding: 10px;
+    margin: 0;
+    background-color:transparent;
+    height: auto;
+    width: calc(100% - 20px);
+    min-width: 318px;
+    max-height: 76vh;
+}
+
+
+/*============ GENERAL TAB ===========*/
+
+/* ------ User info container ------- */
+
+.contentArea .user-info-container{
+    height: auto;
+    width: 100%;
+    min-height: 130px;
+    min-width: 270px;
+    backdrop-filter: blur 30px;
+    background-color: rgba(248, 248, 255, 0.8);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 0 0 30px 0;
+}
+
+.contentArea .user-info-container .row{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    justify-content: center;
+    @media (min-width: 768px) {
+        justify-content: start;
+    }
+}
+
+.contentArea .user-info-container .profile-pic{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px;
+    min-width: 150px;
+    max-width: 500px;
+}
+
+.contentArea .user-info-container .profile-pic .container{
+    width: 130px;
+    height: 130px;
+    margin: 0;
+    padding: 0;
+    border-radius: 70px;
+    background-color: #666666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contentArea .user-info-container .user-info{
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    margin: 0;
+    padding: 20px 0;
+}
+
+.contentArea .user-info-container .user-info .name-box{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    margin: 5px 0px;
+    padding: 5px;
+    min-width: 298px;
+    @media (max-width: 768px) {
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+}
+
+.contentArea .user-info-container .user-info .name-box h1{
+    font-size: 30px;
+    color: black;
+    font-family: ROBOTO;
+    text-align: start;
+    margin: 0;
+    padding: 0;
+}
+
+.contentArea .user-info-container .user-info .name-box h4{
+    font-size: 22px;
+    color: #4d4c4c;
+    font-weight: bold;
+    margin: 0;
+    text-align: start;
+}
+
+.contentArea .user-info-container .user-info .name-box h6{
+    font-size: 18px;
+}
+
+
+.contentArea .user-info-container .user-info .contact--row{
+    pad: 20px;
+    padding: 0;
+}
+
+
+
+/* Quick Access Area */
+.contentArea .quick-Access-Container{
+    height: auto;
+    width: 100%;
+    min-height: 130px;
+    min-width: 250px;
+}
+
+.contentArea .quick-Access-Container .row{
+    width: 100%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    padding: 0;
+    margin: 0;
+    gap: 15px;
+}
+
+.contentArea .quick-Access-Container .row .col{
+    background-color: rgba(248, 248, 255, 0.8);
+    min-width: 270px;
+    max-width: 370px;
+    margin: 0 0 15px 0; 
+    height: 160px;
+    border-radius: 10px;
+    padding: 15px;
+    align-items: center;
+    display: flex;
+    justify-content:space-evenly;
+}
+
+.contentArea .card-icon{
+    font-size: 80px;
+    margin: 0;
+}
+
+.contentArea .quick-Access-Container .row .col .container{
+    margin: 0;
+    padding: 0;
+    gap: 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    font-family: ROBOTO;
+    font-size: 30px;
+    width: 160px;
+}
+
+.contentArea .quick-Access-Container .row .col .container span{
+    font-size: 20px;
+    color: #4d4c4c;
+    text-align: center;
+}
+
+.contentArea .dash-button{
+        gap: 5px; 
+        border-radius: 23px;
+        height: 40px;
+        font-size: 17px;
+        font-family: system-ui;
+        margin: 0;
+        padding: 0px;
+        gap: 5px;
+        width: 125px;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+}
+
+/*=======================================================*/
+
+
+/*===================== PAYMENTS TAB ====================*/
+.contentArea .payments-Container{
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-radius: 15px;
+    margin: 0;
+    padding: 10px;
+    font-size: 50px;
+    font-family: ROBOTo;
+}
+
+.contentArea .payments-Container .container{
+    margin: 0;
+    width: auto;
+}
+
+.contentArea .payment-table{
+    background-color: chocolate;
+    height: 300px;
+    width: 100%;
+    margin-top: 30px;
+}
