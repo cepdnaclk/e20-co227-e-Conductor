@@ -85,14 +85,14 @@ export default function MenuBar({ language }) {
                 <span> Devices</span>
             </Container>
         
-            <Container 
+            {/*<Container 
                 data-id='messages' 
                 onClick={handleState}
                 className={`clickable-container ${state === 'messages' ? 'active' : ''}`}
             >
                 <MarkEmailUnreadTwoToneIcon className='icon'/> 
                 <span> Messages</span>
-            </Container>
+            </Container>*/}
             
             <Container 
                 data-id='settings' 
@@ -146,13 +146,13 @@ export default function MenuBar({ language }) {
                 <DevicesTwoToneIcon className='icon'/> 
             </Container>
         
-            <Container 
+            {/*<Container 
                 data-id='messages' 
                 onClick={handleState}
                 className={`clickable-container ${state === 'messages' ? 'active' : ''}`}
             >
                 <MarkEmailUnreadTwoToneIcon className='icon'/> 
-            </Container>
+            </Container>*/}
             
             <Container 
                 data-id='settings' 

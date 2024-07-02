@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
-import { Grid, Container, TextField, Button, Box, Typography, Paper, FormControl, InputLabel, Select, FormHelperText } from '@mui/material';
+import { TextField, Button, Box, Typography, Paper, FormControl, InputLabel, Select } from '@mui/material';
 import MenuItem from '@mui/material/MenuItem';
 import { MuiTelInput } from 'mui-tel-input';
+import { Col, Container, Row } from 'react-bootstrap';
+import avatar from '../../Images/logo - Bkgrnd.jpg'
+import bgImage from '../../Images/waterfall.jpg'
+import './Components.css'
+import AvatarButton from '../InputItems/AvatarButton';
+import ImageButton from '../InputItems/ImageButton';
 
 const userData = {
   userId    : 'userID',
-  role      : 'passenger',
+  userType  : 'passenger',
+  empType   : 'driver',
   fName     : 'John',
   lName     : 'Doe',
   email     : 'johndoe@gmail.com',
-  mobile    : '+94 70-1345678',
+  mobile    : '+94 70134567',
   nic       : '200456789105',
   birthDay  : '2004-05-24',
   ntc       : '',
@@ -22,9 +29,35 @@ const userData = {
   passbook: null
 };
 
-function UserForm() {
+function Settings() {
+  // Variable to store updated data
   const [formData, setFormData] = useState(userData);
 
+  // Variable to check the validity of given data
+  const [isValid, setIsValid] = useState(false);
+
+  // Object to store errors
+  const [formErrors, setFormErrors] = useState({}); 
+
+  // Variable to store user type
+  const [role, setRole] = useState(userData.userType);
+
+  // Variable to store employee type
+  const [empType, setEmpType] = useState(userData.empType);
+
+  // Variable to store mobile number
+  const [mobile, setMobile] = useState(userData.mobile);
+
+  // Handle reset button
+  const hanbleReset = () =>{
+    setFormData(userData);
+    setMobile(userData.mobile);
+    setRole(userData.userType);
+    setEmpType(userData.empType);
+    setFormErrors({});
+  }
+
+  // Handling form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -38,165 +71,373 @@ function UserForm() {
 
   return (
     <Paper sx={{
-      bgcolor:'rgba(248, 248, 255, 0.8)',
-      maxHeight:'76vh',
+      bgcolor:'rgb(248, 248, 255, 0.7)',
+      height: 'calc(100% - 50px)',
+      width: 'calc(100% - 50px)',
+      minHeight: '400px',
+      maxHeight: '76vh',
       overflow: 'hidden',
-      padding: '20px 30px 30px 30px',
+      padding: '20px',
+      paddingBottom: '0',
       borderRadius: '15px'
     }}>
-      <Container style={{margin:0, padding:0, maxWidth:"sm"}}>
-        <Box sx={{padding:'0', margin:0, maxHeight:'60vh', overflow: 'auto',}} >
-          <Typography variant="h4" gutterBottom sx={{fontFamily:'Open Sans', textAlign:'center', textJustify:'center', bgc:'red', fontWeight:'bold', mb:'20px'}}>
-            Update Information
+      <Row className='settingsPage'>
+        <Col xs={12} md={5} lg={4} xl={3} xxl={2} className='appearance'>
+          <Typography variant='h5' fontFamily='Open Sans' fontWeight='bold' fontSize='28px'>
+            Appearance
           </Typography>
-        </Box>
-        <Box sx={{padding:'10px 0', margin:0, maxHeight:'60vh', overflow: 'auto',}} >
-          <form onSubmit={handleSubmit}>
-            <Box display="flex" flexDirection="column" gap={2}>
-              <TextField
-                required
-                label="First Name"
-                name="fName"
-                value={formData.fName}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                required
-                label="Last Name"
-                name="lName"
-                value={formData.lName}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                required
-                label="Email"
-                name="email"
-                //error={handleEror} // Error Handling Here
-                value={formData.email}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                type="email"
-              />
 
-              <MuiTelInput
-                required
-                name='mobile'
-                onlyCountries={['LK']}
-                //error={errror}
-                label='Mobile Number'
-                fullWidth
-                value={formData.mobile}
-                //onChange={handleNumber}
-                inputProps={{
-                  maxLength: 15          
-                }}
-              />
-              <TextField
-                label="NIC"
-                name="nic"
-                //required={}
-                //error={handleEror} // Error Handling Here
-                value={formData.nic}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                label="Birthday"
-                name="birthDay"
-                //required={}
-                //error={}
-                value={formData.birthDay}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                type="date"
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField
-                label="NTC"
-                name="ntc"
-                //required={}
-                value={formData.ntc}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                label="Licence"
-                name="licence"
-                //required={}
-                value={formData.licence}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                label="Account Name"
-                name="accName"
-                //required={}
-                value={formData.accName}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-              <TextField
-                label="Account Number"
-                name="accNo"
-                //required={}
-                value={formData.accNo}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-              />
-
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Bank</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  //value={formData.bank}
-                  label="Age"
-                  onChange={handleChange}
-                >
-                  <MenuItem value="People's Bank">People's Bank</MenuItem>
-                  <MenuItem value="BOC">BOC</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
-              </FormControl>
-
-              <TextField
-                label="Branch"
-                name="branch"
-                //required={}
-                value={formData.branch}
-                onChange={handleChange}
-                variant="outlined"
-                fullWidth
-                type='select'
-              />
-              
-              {/* For file inputs, you might want to use different handling */}
-
-              <Grid sx={{display:'flex', justifyContent:'space-around'}}>
-                <Button variant="outlined" color="primary" type="submit">
-                  Cancel
-                </Button>
-                <Button variant="contained" color="primary" type="submit">
-                  Submit
-                </Button>
-              </Grid>
+          <Container>
+            <Box>
+              <AvatarButton image={avatar}/>
             </Box>
+            <Typography fontFamily='Open Sans' fontWeight='bold' fontSize='16px'>
+              Profile Picture
+            </Typography>
+          </Container>
+
+          <Container>           
+            <ImageButton image={bgImage} width='180px' height='100px'/>
+            
+            <Typography fontFamily='Open Sans' fontWeight='bold' fontSize='16px'>
+              Background Image
+            </Typography>
+          </Container>         
+        </Col>
+
+        <Col xs={12} md={7} lg={4} xl={6} xxl={8} className='information'>
+          <Typography variant='h5' fontFamily='Open Sans' fontWeight='bold' fontSize='28px'>
+            General
+          </Typography>
+
+          <form onSubmit={handleSubmit}>
+            <Typography fontFamily='Open Sans' fontWeight='bold' fontSize='20px'>Personal Infomation</Typography>
+            <Container>
+              <Row >
+                <Col xs={12} xl={6} xxl={6} className='textField'>
+                  <TextField
+                    required
+                    label="First Name"
+                    name="fName"
+                    error={formErrors.fName}
+                    value={formData.fName}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    type='text'
+                    inputProps={{
+                      maxLength:20
+                    }}
+                  />
+                </Col>
+
+                <Col xs={12} xl={6} xxl={6} className='textField'>
+                  <TextField
+                    required
+                    label="Last Name"
+                    name="lName"
+                    error={formErrors.lName}
+                    value={formData.lName}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    inputProps={{
+                      maxLength:20
+                    }}
+                  />
+                </Col>
+              </Row>
+
+              <Row >
+                <Col xs={12} xl={6} xxl={6} className='textField'>
+                  <TextField
+                    required
+                    label="Email"
+                    name="email"
+                    error={formErrors.email}
+                    value={formData.email}
+                    onChange={handleChange}
+                    variant="outlined"
+                    fullWidth
+                    type="email"
+                  />
+                </Col>
+
+                <Col xs={12} xl={6} xxl={6} className='textField'>
+                  <MuiTelInput
+                    required
+                    name='mobile'
+                    onlyCountries={['LK']}
+                    error={formErrors.mobile}
+                    label='Mobile Number'
+                    fullWidth
+                    value={mobile}
+                    onChange={setMobile}
+                    inputProps={{
+                      maxLength: 15     
+                    }}
+                  />
+                </Col>
+              </Row>
+            </Container>
+
+            {role === 'passenger' ? (<></>) : (
+              <>
+                <Container>
+                  <Row >
+                    <Col xs={12} xl={6} xxl={6} className='textField'>                     
+                      <TextField
+                        label="NIC Number"
+                        name="nic"
+                        required={(role !== 'Passenger')}
+                        error={formErrors.nic}
+                        value={formData.nic}
+                        onChange={handleChange}
+                        variant="outlined"
+                        fullWidth
+                        inputProps={{
+                          maxLength:12                          
+                        }}
+                      />
+                    </Col>
+
+                    <Col xs={12} xl={6} xxl={6} className='textField'>
+                      <TextField
+                        label="Birthday"
+                        name="birthDay"
+                        required={(role !== 'Passenger')}
+                        error={formErrors.birthDay}
+                        value={formData.birthDay}
+                        onChange={handleChange}
+                        variant="outlined"
+                        fullWidth
+                        type="date"
+                        InputLabelProps={{ shrink: true }}
+                      />
+                    </Col>
+                  </Row>
+                </Container>
+                <hr/>
+
+              {// Is User not an employee ?
+                empType === 'none' ? (<></>) : (
+                  <>
+                    <Typography mt='20px' fontFamily='Open Sans' fontWeight='bold' fontSize='20px'>Work Infomation</Typography>
+                    <Container>
+                      <Row >
+                        <Col xs={12} xl={6} xxl={6} className='textField'>
+                          <TextField
+                            label="NTC Registration No."
+                            name="ntc"
+                            required={(empType !== 'none')}
+                            error={formErrors.ntc}
+                            value={formData.ntc}
+                            onChange={handleChange}
+                            variant="outlined"
+                            fullWidth
+                            inputProps={{
+                              maxLength:10                          
+                            }}
+                          />
+                        </Col>
+
+                        <Col xs={12} xl={6} xxl={6} className='textField'>
+                          <FormControl fullWidth required={(empType !== 'none')}>
+                            <InputLabel >Work As</InputLabel>
+                            <Select
+                              name='empType'
+                              label='Work As'
+                              value={empType}
+                              onChange={(e)=>{setEmpType(e.target.value)}}
+                            >
+                              <MenuItem value="conductor">Conductor</MenuItem>
+                              <MenuItem value="driver">Driver</MenuItem>
+                              <MenuItem value="both">Both</MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Col>
+                      </Row>
+
+                      <Row >
+                        <Col xs={12} xl={6} xxl={6} className='textField'>
+                          <TextField
+                            label="Driving Licence Number"
+                            name="licence"
+                            required={(empType === 'driver' || empType === 'both')}
+                            error={formErrors.licence}
+                            value={formData.licence}
+                            onChange={handleChange}
+                            variant="outlined"
+                            fullWidth
+                            inputProps={{
+                              maxLength:8
+                            }}
+                          />
+                        </Col>
+
+                        {/*Need to update*/}
+                        <Col xs={12} xl={6} xxl={6} className='textField'>
+                          <TextField
+                            label="Upload images of both sides of your driving license card"
+                            name="licenceFile"
+                            required={(empType === 'driver' || empType === 'both')}
+                            error={formErrors.licence}
+                            value={formData.licence}
+                            onChange={handleChange}
+                            variant="outlined"
+                            fullWidth
+                            type="file"
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{
+                              accept:".png, .jpg, .jpeg",
+                              multiple:true,
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </Container>
+                    <hr/>
+                  </>
+                )
+              }
+
+              { role === 'owner' ? (
+                <>
+                  <Typography mt='20px' fontFamily='Open Sans' fontWeight='bold' fontSize='20px'>Bank Infomation</Typography>
+                  <Container>
+                    <Row >
+                      <Col xs={12} xl={6} xxl={6} className='textField'>
+                        <TextField
+                          label="Beneficiary's Name"
+                          name="accName"
+                          required={(role === 'owner')}
+                          value={formData.accName}
+                          error={formErrors.accName}
+                          onChange={handleChange}
+                          variant="outlined"
+                          fullWidth
+                          inputProps={{
+                            maxLength:30
+                          }}
+                        />
+                      </Col>
+
+                      <Col xs={12} xl={6} xxl={6} className='textField'>
+                        <TextField
+                          label="Account Number"
+                          name="accNo"
+                          required={(role === 'owner')}
+                          value={formData.accNo}
+                          error={formErrors.accNo}
+                          onChange={handleChange}
+                          variant="outlined"
+                          fullWidth
+                          inputProps={{
+                            maxLength:25
+                          }}
+                        />
+                      </Col>                        
+                    </Row>
+
+                    <Row >
+                      <Col xs={12} xl={6} xxl={4} className='textField'>
+                        <FormControl fullWidth required={(role === 'owner')}>
+                          <InputLabel >Bank</InputLabel>
+                          <Select
+                            name='bank'
+                            label="Bank"
+                            value={formData.bank}
+                            onChange={handleChange}
+                          >
+                            <MenuItem value="Peoples' Bank">Peoples' Bank</MenuItem>
+                            <MenuItem value="Bank of Ceylon">Bank of Ceylon</MenuItem>
+                            <MenuItem value="Sampath Bank">Sampath Bank</MenuItem>
+                            <MenuItem value="Commercial Bank PLC">Commercial Bank PLC</MenuItem>
+                            <MenuItem value="Seylan Bank PLC">Seylan Bank PLC</MenuItem>
+                            <MenuItem value="HNB - Hatton National Bank">HNB - Hatton National Bank</MenuItem>
+                            <MenuItem value="NTB - Nations Trust Bank">NTB - Nations Trust Bank</MenuItem>
+                            <MenuItem value="NDB - National Development Bank">NDB - National Development Bank</MenuItem>
+                            <MenuItem value="NSB - National Saving Bank">NSB - National Saving Bank</MenuItem>
+                          </Select>
+                        </FormControl>
+                      </Col>
+
+                      <Col xs={12} xl={6} xxl={4} className='textField'>
+                        <TextField
+                          label="Branch"
+                          name="branch"
+                          required={(role === 'owner')}
+                          value={formData.branch}
+                          error={formErrors.branch}
+                          onChange={handleChange}
+                          variant="outlined"
+                          fullWidth
+                          inputProps={{
+                          maxLength:25
+                          }}
+                        />
+                      </Col>
+
+                      {/*Need to update*/}
+                      <Col xs={12} xxl={4} className='textField'>
+                        <TextField
+                          label="Upload an image of your bank passbook"
+                          name="passbook"
+                          required={(role === 'owner')}
+                          error={formErrors.passbook}
+                          value={formData.passbook}
+                          onChange={handleChange}
+                          variant="outlined"
+                          fullWidth
+                          type="file"
+                          InputLabelProps={{ shrink: true }}
+                          inputProps={{
+                            accept:".png, .jpg, .jpeg",
+                            multiple:false,
+                          }}
+                      />
+                      </Col>
+                    </Row>                      
+                  </Container>
+                  <hr/>
+                </>
+              ) : (<></>)}
+              </>
+              )}
           </form>
-        </Box>
-      </Container>
+        </Col>   
+
+        <Col xs={12} lg={4} xl={3} xxl={2} className='userType'>
+          <Box sx={{display:'flex', flexDirection:'column', gap:'20px'}}>
+            <Typography variant='h5' fontFamily='Open Sans' fontWeight='bold' fontSize='28px'>
+              Account
+            </Typography>
+
+            <Box sx={{display:'flex', flexDirection:'column', alignItems:'center', border:'solid 3px black', borderRadius:'10px', padding:'5px'}}>
+              <Typography fontFamily='Open Sans' fontWeight='bold' fontSize='16px'> You loged as a </Typography>
+              <Typography variant='h6' fontFamily='Open Sans' fontWeight='bold' fontSize='28px'> {formData.userType.toUpperCase()} </Typography>
+            </Box>
+
+            <Button sx={{marginBottom: '20px'}} variant="outlined">Change Account Type</Button>
+          </Box>         
+
+          <Box sx={{
+            display:'flex', 
+            justifyContent:'space-between',
+            margin: '20px 0'
+          }}>            
+            <Button variant="outlined" sx={{width:'85px'}} onClick={hanbleReset}>Reset</Button>
+            <Button variant="contained" sx={{width:'85px'}} type='submit'>Save</Button>
+          </Box>
+
+        </Col>
+      </Row>
     </Paper>
   );
 }
 
-export default UserForm;
+export default Settings;
+
+/*
+
+*/

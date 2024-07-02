@@ -12,6 +12,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
   // Object to store form data
   const [formData, setFormData] = useState( (userType === Data.role) ? (Data) : {
     role      : userType,
+    empType   : '',
     fName     : '',
     lName     : '',
     email     : '',
@@ -473,3 +474,4 @@ export default function SignUp1({Data, userType, Response, userData}) {
     </div>
   )
 }
+

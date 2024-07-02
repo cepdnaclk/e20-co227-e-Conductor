@@ -30,7 +30,7 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       setNumber('+94');
     }
     else if (userId !== '') {
-      console.log(`UserID: ${userId}  mobile: ${number}`);
+      //console.log(`UserID: ${userId}  mobile: ${number}`);
       user(userId);   // Send userId to the parent component
       mobile(number); // Send mobile number to the parent component
     }

@@ -45,7 +45,7 @@ export default function OTP({formData, sendResponse}) {
 
     try {
         const newOTP = await Request(data, 'OTP');
-        console.log(`New OTP:: ${newOTP}`);
+        //console.log(`New OTP:: ${newOTP}`);
         setServerOTP(newOTP);
     } catch (error) {
         console.error('Error adding user:', error);

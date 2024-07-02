@@ -24,15 +24,8 @@ function App() {
   const localLanguage = localStorage.getItem('language');
   const [language, setLanguage] = useState((localLanguage === 'en' || localLanguage === 'sn') ? localLanguage : 'en');
 
-  /*
-  // To identify the user mode (a visitor or a registerd user)
-  const localId = localStorage.getItem('userId');
-  const [id, setId] = useState((localId !== '') ? localId : '');
-  */
   useEffect(()=>{
     console.log(`localLanguage: ${localLanguage}     language: ${language}`);
-    //localStorage.setItem('language', language);
-    //console.log(`2. localLanguage: ${localLanguage}     language: ${language}`);
   },[language, localLanguage])
   
 

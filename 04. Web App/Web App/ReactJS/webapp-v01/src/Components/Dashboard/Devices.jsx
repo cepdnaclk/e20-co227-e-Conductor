@@ -172,9 +172,9 @@ export default function Devices() {
         width: 'calc(100% - 50px)',
         height: 'auto',
         opacity: '80%',
-        maxHeight: '76vh',
-        minWidth: '290px',
-        overflow: 'auto'
+        maxHeight: 'calc(76vh - 50px)',
+        overflow: 'auto',
+        margin: '20px'
       }}
     >
       <TableContainer>
