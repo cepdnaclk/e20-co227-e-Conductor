@@ -4,7 +4,7 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
-import { Request, Post } from '../../APIs/Connections';
+import { Request, Post } from '../../APIs/NodeBackend';
 
 export default function OTP({formData, sendResponse}) {
   // Variable for initial count
@@ -31,22 +31,23 @@ export default function OTP({formData, sendResponse}) {
   // Trigering at the start
   useEffect(()=>{
     //console.log(`New user OTP SEND:: mobile: ${formData.mobile}`);
-    requestOTP(formData.mobile);
+    //requestOTP(formData.mobile);
+    requestOTP({mobile:formData.mobile, email:formData.email});
   }, []);
 
   // Use effect for get the OTP from server
-  const requestOTP = async (number) => {
+  const requestOTP = async (value) => {
     // Creating data object
     const data = {
-    type: 'Req1',  // OTP request
-    data: number
+    type: 'signupOTP',  // OTP request
+    data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
-        const newOTP = await Request(data, 'OTP');
-        //console.log(`New OTP:: ${newOTP}`);
-        setServerOTP(newOTP);
+        const serverResponse = await Request(data, 'OTP');
+        console.log(`New OTP:: ${serverResponse.data}`);
+        setServerOTP(serverResponse.data);
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -92,14 +93,14 @@ export default function OTP({formData, sendResponse}) {
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      navigate('/');
+      navigate('/verify');
       handleNotifications({
         type:'success', 
         title:'Registration Successful!', 
         body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
       });
       sendData(formData);
-      //console.log('Successful Login!');            // Screen notification
+      //console.log('Successful Signup!');            // Screen notification
       
     }
     else{
@@ -116,7 +117,7 @@ export default function OTP({formData, sendResponse}) {
   // Function to handle back button
   const backHandle = () =>{
     //console.log('Role: ' + formData.role);
-    sendResponse(formData.role);
+    sendResponse(formData.userType);
   }
 
   // Function to handle Resend Option
@@ -132,7 +133,8 @@ export default function OTP({formData, sendResponse}) {
     else{
       setTime(endTime);
       setIsDissable(false);
-      requestOTP(formData.mobile);
+      //requestOTP(formData.mobile);
+      requestOTP({mobile:formData.mobile, email:formData.email});
       setOtp('');
       setresendDissable(true);
       // function to get the new OTP from the server

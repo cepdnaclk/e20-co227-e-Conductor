@@ -19,28 +19,20 @@ import { TbLogout } from 'react-icons/tb';
 import { AiFillDashboard } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 
-function NavScrollExample({page, language, setLanguage}) {  
+function NavScrollExample({isLogged, setIsLogged, page, language, setLanguage}) {  
   const navigate = useNavigate();
-
-  const localUser = JSON.parse(localStorage.getItem('userId'));
-  const isUser = (localUser === null || localUser.length !== 5) ? false : true;
 
   // Set prefer language in the local memory
   const handleLanguage = (e) => {
     const newLanguage = e.target.id;
-    localStorage.setItem('language', newLanguage);
     setLanguage(newLanguage);
-    console.log(`UserID: ${localUser}       isUser: ${isUser}`);
   };
-
   
   // Update the user ID in the local memory
   const handleUser = () => {
-    localStorage.removeItem('userId');
+    setIsLogged(false);
     navigate('/');
-    console.log(`UserID: ${localUser}       isUser: ${isUser}`);
   };
-  
 
   return (
     <Navbar expand="lg" sticky="top" className="navbar">
@@ -79,7 +71,7 @@ function NavScrollExample({page, language, setLanguage}) {
                   {/*<Dropdown.Item id='தமிழ்' onClick={handleLanguage}>தமிழ்</Dropdown.Item>*/}
                 </Dropdown.Menu>
               </Dropdown>
-              { !isUser ? (
+              { !isLogged ? (
                 <Button className='button' variant="dark" href='/signin'>{language==='sn' ? (<>පුරන්න</>): (<>Login</>)}</Button>
                 ):(
                   <Dropdown align='end'>

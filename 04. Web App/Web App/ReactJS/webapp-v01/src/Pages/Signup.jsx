@@ -1,20 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RegistrationForm from '../Components/SignupForm/SignUpForm1';
 import CardHolder from '../Components/Card/CardHolder';
 import OTP from '../Components/OTPForm/EmailMobileOTP1';
 import './Signin.css';
 
-export default function Signup({ language }) {
+export default function Signup({ isLogged, language }) {
   // Variable for current status of the page
   const [pageState, setPageState] = useState('0');
 
   // Variable to store user data
   const [data, setData] = useState({
-    role      : '',
+    userType  : '',
+    empType   : 'None',
     fName     : '',
     lName     : '',
     email     : '',
-    mobile    : '',
+    mobile    : '94',
     nic       : '',
     birthDay  : '',
     ntc       : '',
@@ -30,17 +31,17 @@ export default function Signup({ language }) {
   // Handler for new data
   function handleData(newData) {
     setData(newData);
-    /*
-    console.log("Parent Page: ");
-    console.log(newData);
-    console.log('Page: ' + pageState);
-    */
+    //console.log(`Parent Page: ${JSON.stringify(newData)} \n page: ${pageState}`);
   }
-
+/*
+  useEffect(()=>{
+    console.log(`page: ${pageState}`);
+  },[pageState])
+*/
   return (
     <div className='Login-body'>
       { pageState==='0' ? (
-        <CardHolder Response={setPageState}/>
+        <CardHolder Response={setPageState} language={language}/>
       ):(
         <>
           { pageState === '4' ? 
@@ -49,9 +50,7 @@ export default function Signup({ language }) {
           }
         </>               
       )
-      }
-
-      
+      }      
     </div>
   )
 }

@@ -6,21 +6,38 @@ import { GoPasskeyFill } from 'react-icons/go';
 import { FaApple, FaEnvelope } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Request } from '../../APIs/Connections';
+import { Request } from '../../APIs/NodeBackend';
+import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
 
+function Login({ data, sendResponse, language }) {  // language is not implemented yet
+  // userId patterns
+  const psngPattern = /^p\d{4}$/;
+  const epmPattern  = /^e\d{4}$/;
+  const ownrPattren = /^o\d{4}$/;
+  const emailPattren= /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
-function Login({ user, mobile, language }) {  // language is not implemented yet
   // variable for mobile number
   const [number, setNumber] = useState('');
 
-  // variable for user id
-  const [userId, setUserId] = useState('');
+  // variable for userData
+  const [userData, setUserData] = useState(data);
 
+  // Effect to handle session data
+  useEffect(() => {
+    const fetchData = async () => {
+      const sessionData = await getSessionData();
+      setUserData({ ...userData, sessionData: sessionData });
+    };
+  
+    fetchData();
+  }, []);
+   
 
   // Effect to handle user validation after userId state changes
   useEffect(() => {
-    if(userId === 'invalid') {
+    //console.log(`ServerUserId useEffect:: ${userData.userID}    ServerUserEmail:: ${userData.email}`);
+    if(userData.userID === 'invalid' && userData.email === 'none') {
       handleNotifications({
         type:'error', 
         title:'Invalid mobile number!', 
@@ -28,15 +45,22 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       });
       //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
+      setUserData({...userData, userID: '', email: ''});
     }
-    else if (userId !== '') {
-      //console.log(`UserID: ${userId}  mobile: ${number}`);
-      user(userId);   // Send userId to the parent component
-      mobile(number); // Send mobile number to the parent component
+    else if (((psngPattern.test(userData.userID)) || (epmPattern.test(userData.userID)) || (ownrPattren.test(userData.userID))) && (emailPattren.test(userData.email))) {
+      //console.log(`user data:: ${JSON.stringify(userData)}`);
+      sendResponse(userData); // Send data to parent component
     }
-    
-  }, [userId]);
-
+    else if (userData.email !== '' || userData.userID !== ''){
+      handleNotifications({
+        type: 'warning',
+        title: 'Network Error!',
+        body: 'Network connection is unstable. Please reload page again.'
+      })
+      setNumber('+94');
+      setUserData({...userData, userID: '', email: ''});
+    }   
+  }, [userData.userID, userData.email]);
 
   // Handling submit 
   const submit = (e) => {
@@ -51,27 +75,28 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       setNumber('+94');
     } 
     else {
-      requestUser(number);
+      requestUserDetails(number);
     }
   };
 
-  // Use effect for get the OTP from server
-  const requestUser = async (value) => {
+  // Use effect for get the user id and email from our server
+  const requestUserDetails = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req2', // Uservalidation message
-      data: value
+      type: 'Req2', // User validation message
+      data: value   // Mobile number of the user
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
     try {
-        const serverUserId = await Request(data, 'users');
-        //console.log(`ServerUserId:: ${serverUserId}`);
-        setUserId(serverUserId);  // Change here according to the database name
+        const serverResponse = await Request(data, 'users');
+        const {userID, email} = serverResponse.data;
+        //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}`);
+        setUserData({...userData, userID:userID, mobile:number, email:email});
+        
     } catch (error) {
         console.error('Error adding user:', error);
-    }
-      
+    }      
       // setUserId('p1234');
   };
 

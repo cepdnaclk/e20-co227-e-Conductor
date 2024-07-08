@@ -8,14 +8,15 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom';
 
-export default function InvoicePage({ language }) {
+export default function InvoicePage({ isLogged, language }) {
   // Sheet sizes
   const A4_WIDTH = 210 * 3.7795275591; // in cm -> px
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px
 
   // Getting Ticket Id
-  const ticketNo = localStorage.getItem('TicketNo') || null;
+  const ticketNo = localStorage.getItem('TicketNo');
 
   // Dummy data
   const data = {
@@ -42,6 +43,9 @@ export default function InvoicePage({ language }) {
 
   // Resizing
   const [scale, setScale] = useState(1);
+
+  // Navigating
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -81,7 +85,7 @@ export default function InvoicePage({ language }) {
   };
 
   return ticketNo === null ? (
-    <div>404 Page Not Found</div>
+    navigate('/forbidden')
   ) : (
     <Box sx={{ flexGrow: 1, width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <AppBar position="sticky" sx={{ bgcolor: 'rgb(0,0,0,0.8)', width: '100vw', border:'none' }}>
@@ -111,7 +115,7 @@ export default function InvoicePage({ language }) {
             </IconButton>
 
             <Typography
-              onInput={false}
+              //onInput={false}
               sx={{
                 width:'60px', 
                 height: '22px',

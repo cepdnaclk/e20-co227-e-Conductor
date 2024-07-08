@@ -13,7 +13,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './Menu.css';
 
 
-export default function MenuBar({ language }) {
+export default function MenuBar({ setIsLogged, language }) {
   // variable for navigations  
   const navigate = useNavigate();
 
@@ -37,7 +37,7 @@ export default function MenuBar({ language }) {
 
   // handle logout button
   const logout = () =>{
-    localStorage.removeItem('userId');
+    setIsLogged(false);
     navigate('/');
   }
 

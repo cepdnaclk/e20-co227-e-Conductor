@@ -5,18 +5,20 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { Container} from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
+import { Request } from '../../APIs/NodeBackend';
 import './SignUpForm1.css'
+import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 
 
-export default function SignUp1({Data, userType, Response, userData}) {
-  // Object to store form data
-  const [formData, setFormData] = useState( (userType === Data.role) ? (Data) : {
-    role      : userType,
-    empType   : '',
+export default function SignUp1({Data, userType, Response, userData, language}) {
+  // Empty Data set
+  const emptyData = {
+    userType  : userType,
+    empType   : 'None',
     fName     : '',
     lName     : '',
     email     : '',
-    mobile    : '',
+    mobile    : '94',
     nic       : '',
     birthDay  : '',
     ntc       : '',
@@ -27,7 +29,10 @@ export default function SignUp1({Data, userType, Response, userData}) {
     branch    : '',
     licenceFile: [], 
     passbook: null
-  });
+  }
+
+  // Object to store form data
+  const [formData, setFormData] = useState( (userType === Data.userType) ? Data : emptyData);
 
   // Variable to check the availability of the continue button
   const [isDisable, setIsDisable] = useState(true);
@@ -38,8 +43,11 @@ export default function SignUp1({Data, userType, Response, userData}) {
   // Object to store errors
   const [formErrors, setFormErrors] = useState({});
 
+  // Variable for user availability
+  const [isAvailable, setIsAvailable] = useState('none');
+
   // Variable for hold the employee type
-  const [isEmployee, setIsEmployee] = useState((userType==='2')||(userType==='3' && formData.ntc) ? true : false);
+  const [isEmployee, setIsEmployee] = useState((userType==='employee')||(userType==='owner' && formData.empType !== 'None') ? true : false);
   const [EmpType, setEmpType] = useState((isEmployee) ? 'Conductor' : 'None') 
   /* Note:: EmpTypes None, Conductor, Driver, Both */
 
@@ -52,6 +60,23 @@ export default function SignUp1({Data, userType, Response, userData}) {
   // Handle EmpType
   const handleEmpType = (e) => {
     setEmpType(e.target.value);
+  }
+
+  // Check user availability
+  const userAvailability = async(value) =>{
+    // Creating data object
+    const data = {
+      type: 'Req3', // user availability
+      data: value
+    }
+    //console.log(`New rquest:: type: ${data.type}   mobile: ${data.data.mobile}   email: ${data.data.email}`);
+    try {
+      const serverResponse = await Request(data, 'users');
+      //console.log(`User availability:: ${serverResponse.data}`);
+      setIsAvailable(serverResponse.data);
+    } catch (error) {
+      console.error('Error checking availability:', error);
+    }
   }
 
   // Handling form data
@@ -67,15 +92,51 @@ export default function SignUp1({Data, userType, Response, userData}) {
 
   // Handling bank passbook file change
   const handleBankPassbookFileChange = (e) => {
+    //console.log(`passbook: ${JSON.stringify(e.target.files)}`);
     setFormData({ ...formData, passbook: e.target.files[0] });
   };
 
   // Handling submit button  
   const handleSubmit = (e) =>{
-    e.preventDefault();                            // Disable default behavior of a form 
-    setFormData({...formData, role:userType});     // Update role of the user
-    setFormErrors(validate(formData));             // Checking validity of the form
+    e.preventDefault();                                              // Disable default behavior of a form 
+    setFormData({...formData, userType:userType, empType:EmpType});  // Update role of the user
+    setFormErrors(validate(formData));                               // Checking validity of the form
   }
+
+  // Handling availability of user
+  useEffect(()=>{
+    //console.log(`useEffect: ${isAvailable}\nData: ${JSON.stringify(formData)}`);
+    // User email and phone number is available to use
+    if(isAvailable==='true'){
+      //console.log(`Ready to submit form: \n${JSON.stringify(formData)}`);
+      userData(formData); // Send form data to the parent
+      Response('4');      // Send next page state to the parent
+    }
+    // User email or phone number is not available to use
+    else if(isAvailable==='false'){
+      handleNotifications({
+        type: 'error',
+        title: 'Email/Mobile Number Already Exists!',
+        body: 'Email or mobile number already exists. Please change email/mobile number.'
+      })
+      setIsAvailable('none'); // Default case
+      setIsValid(false);      // New data need to be validated
+      setFormData(emptyData); // Reset form
+      setIsDisable(true);     // Reset accepting terms and conditions
+    }
+    // Bad response may be a connection issue
+    else if(isAvailable !== 'none'){
+      handleNotifications({
+        type: 'warning',
+        title: 'Network Error!',
+        body: 'Your connection is unstable. Please reload page again.'
+      })
+      setIsAvailable('none'); // Default case
+      setIsValid(false);      // New data need to be validated
+      setFormData(emptyData); // Reset form
+      setIsDisable(true);     // Reset accepting terms and conditions
+    }
+  },[isAvailable])
 
   // Handling the is employee checkbox
   useEffect(()=>{
@@ -86,11 +147,9 @@ export default function SignUp1({Data, userType, Response, userData}) {
 
   
   useEffect(()=>{
-    if(isValid){     
-      //console.log("Ready to sumit form: ");
-      //console.log(formData) ;
-      userData(formData); // Send form data to the parent
-      Response('4');      // Send next page state to the parent
+    if(isValid === true){     
+      // Check user availability
+      userAvailability({mobile: formData.mobile, email: formData.email})  
     }
   }, [isValid])
 
@@ -99,10 +158,10 @@ export default function SignUp1({Data, userType, Response, userData}) {
     Response('0');
   }
 
-  // Handing accept rules
+  /*// Handing accept rules
   const handleAcceptRules = () =>{
     setIsDisable(!isDisable);
-  } 
+  } */
 
   // Function to extract birthday from NIC
   function getBirthDateFromNIC(nic) {
@@ -149,8 +208,9 @@ export default function SignUp1({Data, userType, Response, userData}) {
   const validate = (values) => {
     const errors = {};
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-
+    //console.log(`validating...\n${JSON.stringify(formData)}`);
     
+
     /* Common requirements */
 
     // First name validation
@@ -161,16 +221,16 @@ export default function SignUp1({Data, userType, Response, userData}) {
 
     // Email validation
     if (!values.email) { errors.email = "* This field is required!"; } 
-    else if (!regex.test(values.email)) { errors.email = "* This is a invalid email format!"; }
+    else if (!regex.test(values.email)) { errors.email = "* This is an invalid email format!"; }
 
     // Mobile number validation
     if (!values.mobile) { errors.mobile = "* This field is required!"; } 
-    else if (values.mobile.length < 11) { errors.mobile = "* This is a invalid mobile number!"; }
+    else if (values.mobile.length < 11) { errors.mobile = "* This is an invalid mobile number!"; }
 
 
 
     /* Requirements for Employees and Bus Owners */
-    if(userType !== '1'){
+    if(userType !== 'passenger'){
 
       // NIC & Birthday validation
       if (!values.nic || !values.birthDay) { errors.nic = "* Both fields are required!"; } 
@@ -192,7 +252,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
       
 
       /* Requirements for bus owners */
-      if(userType === '3'){
+      if(userType === 'owner'){
         // Beneficiary's name validation
         if (!values.accName) { errors.accName = "* This field is required!"; }
 
@@ -206,7 +266,6 @@ export default function SignUp1({Data, userType, Response, userData}) {
         if (!values.passbook) { errors.passbook = "* This field is required!"; }
       }
     }
-
     
 
     (Object.keys(errors).length === 0) ? setIsValid(true) : setIsValid(false); // Data validation is updated
@@ -214,7 +273,6 @@ export default function SignUp1({Data, userType, Response, userData}) {
   };
 
   return (
-
     <div className='signup-wrapper'>
       <h1>Sign Up</h1>
       <Container className='signupForm'>
@@ -277,7 +335,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
           </Form.Group>
 
           {/* Requirements for employees and bus owners. */
-            (userType === '1') ? (<></>) : (
+            (userType === 'passenger') ? (<></>) : (
             <>
               <Row className="mb-3">
                 <Form.Group as={Col} controlId="formGridNIC">
@@ -304,8 +362,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
                 <p className='signUpErrorMsg'>{formErrors.nic}</p> 
               </Row>
               
-              
-              {(userType !== '3') ? (<></>):(
+              {(userType !== 'owner') ? (<></>):(
                 // Bus Owner
                 <>
                   <Form.Group className="mb-3" id="formGridCheckbox">
@@ -376,7 +433,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
                 </>
               )}
 
-              {(userType !== '3') ? (<></>) : (
+              {(userType !== 'owner') ? (<></>) : (
                 <>
                   {/* Requirements for bus owners. */}
                   <Form.Label className='details'>Bank Account Details</Form.Label>
@@ -410,37 +467,37 @@ export default function SignUp1({Data, userType, Response, userData}) {
                     
                   <Row className="mb-3">
                     <Form.Group as={Col} controlId="formGridBank">
-                        <Form.Label>Bank</Form.Label>
-                        <Form.Select 
-                          defaultValue="Peoples' Bank"
-                          name='bank'
-                          value={formData.bank}
-                          onChange={handleFormData}
-                        >
-                            <option>Peoples' Bank</option>
-                            <option>Bank of Ceylon</option>
-                            <option>Sampath Bank</option>
-                            <option>Commercial Bank PLC</option>
-                            <option>Seylan Bank PLC</option>
-                            <option>HNB - Hatton National Bank</option>
-                            <option>NTB - Nations Trust Bank</option>
-                            <option>NDB - National Development Bank</option>
-                            <option>NSB - National Saving Bank</option>
-                        </Form.Select>
-                      </Form.Group>
+                      <Form.Label>Bank</Form.Label>
+                      <Form.Select 
+                        //defaultValue="Peoples' Bank"
+                        name='bank'
+                        value={formData.bank}
+                        onChange={handleFormData}
+                      >
+                        <option>Peoples' Bank</option>
+                        <option>Bank of Ceylon</option>
+                        <option>Sampath Bank</option>
+                        <option>Commercial Bank PLC</option>
+                        <option>Seylan Bank PLC</option>
+                        <option>HNB - Hatton National Bank</option>
+                        <option>NTB - Nations Trust Bank</option>
+                        <option>NDB - National Development Bank</option>
+                        <option>NSB - National Saving Bank</option>
+                      </Form.Select>
+                    </Form.Group>
 
-                      <Form.Group as={Col} controlId="formGridBranch">
-                        <Form.Label>Branch</Form.Label>
-                        <Form.Control 
-                          type="text" 
-                          placeholder="Your Brach" 
-                          name='branch'
-                          value={formData.branch}
-                          onChange={handleFormData}
-                          maxLength={20}
-                        />
-                        <p>{formErrors.branch}</p> 
-                      </Form.Group>
+                    <Form.Group as={Col} controlId="formGridBranch">
+                      <Form.Label>Branch</Form.Label>
+                      <Form.Control 
+                        type="text" 
+                        placeholder="Your Brach" 
+                        name='branch'
+                        value={formData.branch}
+                        onChange={handleFormData}
+                        maxLength={20}
+                      />
+                      <p>{formErrors.branch}</p> 
+                    </Form.Group>
 
                   </Row>
 
@@ -461,7 +518,7 @@ export default function SignUp1({Data, userType, Response, userData}) {
           
           <Form.Group className="mb-3" id="formGridCheckbox">
             <Container className='termsContainer'>
-              <Form.Check type="checkbox" checked={!isDisable} onChange={handleAcceptRules} label="I accept all " /><a href='/'> terms and conditions.</a>
+              <Form.Check type="checkbox" checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><a href='/terms'> terms and conditions.</a>
             </Container>
           </Form.Group>
         </Form>

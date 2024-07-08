@@ -3,11 +3,11 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Post, Request } from '../../APIs/Connections';
+import { Post, Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({userID, mobile, sendResponse, language}) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language}) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
 
@@ -32,23 +32,24 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
 
   // Confirm user and mobile comes correctly
   useEffect(()=>{
-    //console.log(`OTP SEND:: userID: ${userID}    mobile: ${mobile}`);
-    requestOTP(mobile);
+    //console.log(`OTP SEND:: userID: ${userData.userID}    mobile: ${userData.mobile}   email: ${userData.email}`);
+    requestOTP({mobile: userData.mobile, email: userData.email});
   }, []);
 
   
   // Function to get the OTP from server
-  const requestOTP = async (number) => {
+  const requestOTP = async (values) => {
     // Creating data object
     const data = {
-      type: 'Req1',
-      data: number
+      type: 'loginOTP',
+      data: values
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
-        const newOTP = await Request(data, 'OTP');
-        //console.log(`New OTP:: ${newOTP}`);
+        const serverResponse = await Request(data, 'OTP');
+        const newOTP = serverResponse.data;
+        console.log(`New OTP:: ${newOTP}`);
         setServerOTP(newOTP);
     } catch (error) {
         console.error('Error adding user:', error);
@@ -95,14 +96,16 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
   const loginHandle = () =>{
     if(serverOTP === otp){
       //setVisitor(false);
-      localStorage.setItem('userId', JSON.stringify(userID));
+      localStorage.setItem('userId', JSON.stringify(userData.userID));
+      localStorage.setItem('language', language);
+      setIsLogged(true);
       navigate('/');
       handleNotifications({
         type:'success', 
         title:'Successful Login!', 
         body:'Welcome to e-Conductor!.'
       });
-      sendLog(userID);
+      sendLog(userData);
     }
     else{
       handleNotifications({
@@ -133,7 +136,7 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
-      requestOTP(mobile);   // function to get the new OTP from the server
+      requestOTP({mobile: userData.mobile, email: userData.email});   // function to get the new OTP from the server
       handleNotifications({
         type:'info', 
         title:'Resend OTP!', 

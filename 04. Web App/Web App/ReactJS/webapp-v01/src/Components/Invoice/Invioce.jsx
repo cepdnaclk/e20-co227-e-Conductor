@@ -47,7 +47,7 @@ export default function Invoice({data, language}) {
       >
         {/* Header */}
         <Grid 
-          component='container'
+          container
           sx={{
             width: '100%',
             height: 'auto',
@@ -194,13 +194,13 @@ export default function Invoice({data, language}) {
                   <TableCell align='right'  sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>{(parseFloat(data.price) * parseInt(data.full)).toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell align='leftt'  sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>Childern</TableCell>
+                  <TableCell align='left'  sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>Childern</TableCell>
                   <TableCell align='center' sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>{data.half}</TableCell>
                   <TableCell align='right'  sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>{data.price}</TableCell>
                   <TableCell align='right'  sx={{fontFamily: 'Open Sans', fontSize:'14px'}}>{(0.5 * parseFloat(data.price) * parseInt(data.half)).toFixed(2)}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell align='leftt' colSpan={3}  sx={{fontFamily: 'Open Sans', fontWeight:'bold', fontSize:'14px'}}>SUBTOTAL</TableCell>
+                  <TableCell align='left' colSpan={3}  sx={{fontFamily: 'Open Sans', fontWeight:'bold', fontSize:'14px'}}>SUBTOTAL</TableCell>
                   <TableCell align='right'  sx={{fontFamily: 'Open Sans',fontWeight:'bold', fontSize:'14px'}}>{((parseFloat(data.price) * parseInt(data.full))+(0.5 * parseFloat(data.price) * parseInt(data.half))).toFixed(2)}</TableCell>
                 </TableRow>
               </TableBody>
@@ -219,13 +219,13 @@ export default function Invoice({data, language}) {
           }}
         >
           <Typography sx={{mt:'5px', fontFamily:'Open Sans', fontWeight:'bold', fontSize:'14px', color:'#666666'}}>Terms&nbsp;and&nbsp;conditions</Typography>
-          <Typography textAlign='justify' sx={{mt:'5px', fontFamily:'Open Sans', fontSize:'12px', color:'#4d4d4d'}}><p>
+          <Typography textAlign='justify' sx={{mt:'5px', fontFamily:'Open Sans', fontSize:'12px', color:'#4d4d4d'}}>
             {`Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, 
             making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more 
             obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered 
             the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) 
             by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 
-            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.`}</p>
+            "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.`}
           </Typography>
         </Grid>
       </Grid>
