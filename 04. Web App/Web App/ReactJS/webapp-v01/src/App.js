@@ -7,8 +7,8 @@ import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
-import Bookings from "./Pages/bookings";
-import Topups from "./Pages/topups";
+import Bookings from "./Pages/Bookings";
+import Topups from "./Pages/Topups";
 import Invoice from "./Pages/Invoice";
 import Forbidden from "./Pages/Forbidden";
 import General from './Components/Dashboard/General'
