@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Components.css'
 import { Button, Col, Container, Image, Row } from 'react-bootstrap';
 import image from '../../Images/logo - Bkgrnd.jpg'
@@ -8,20 +8,38 @@ import CommuteTwoToneIcon from '@mui/icons-material/CommuteTwoTone';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
 import { useNavigate } from 'react-router-dom';
+import { Request } from '../../APIs/NodeBackend';
 
 function General({ language }) {
-
   const navigate = useNavigate();
 
-  const data = {
-    name: 'John Doe', 
-    role: 'Passenger',
-    mobile: '+94 701 234 567',
-    email: 'johndoe@gmail.com',
-    rides: '250',
-    tickets: '5',
-    credits: 'LKR 500'
-  }
+  // Getting userID from local storage
+  const userID = JSON.parse(localStorage.getItem('userId'));
+
+  // Getting userData from node backend
+  const [data, setData] = useState({});
+
+  // Requesting device data from node backend
+  const getData = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Req5', // Get user infomation from backend
+      data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const serverResponse = await Request(data, 'users');
+        //console.log(`General infomation:: ${JSON.stringify(serverResponse.data)}`);
+        setData(serverResponse.data);
+    } catch (error) {
+        console.error('Error fetching devices:', error);
+    }
+  };
+
+  useEffect(()=>{
+    getData(userID);
+  }, [])
 
   // Handle Click Events
   const handleClick = (e) => {

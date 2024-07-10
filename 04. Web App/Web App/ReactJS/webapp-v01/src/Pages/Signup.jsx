@@ -4,7 +4,7 @@ import CardHolder from '../Components/Card/CardHolder';
 import OTP from '../Components/OTPForm/EmailMobileOTP1';
 import './Signin.css';
 
-export default function Signup({ isLogged, language }) {
+export default function Signup({ isLogged, language, setAllowNavigate }) {
   // Variable for current status of the page
   const [pageState, setPageState] = useState('0');
 
@@ -45,8 +45,8 @@ export default function Signup({ isLogged, language }) {
       ):(
         <>
           { pageState === '4' ? 
-            ( <OTP formData={data} language={language} sendResponse={setPageState} /> ) : 
-            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language}/> )
+            ( <OTP formData={data} language={language} sendResponse={setPageState} setAllowNavigate={setAllowNavigate} /> ) : 
+            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language} setAllowNavigate={setAllowNavigate}/> )
           }
         </>               
       )

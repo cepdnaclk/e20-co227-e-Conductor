@@ -3,7 +3,7 @@ import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
 
-export default function Signin( { setIsLogged, language } ) {
+export default function Signin( { setIsLogged, language, setAllowNavigate } ) {
   // Empty data set
   const emptyData = {
     userID: '',
@@ -36,11 +36,11 @@ export default function Signin( { setIsLogged, language } ) {
       {
         !isLoging ? (
           <>
-            <Login data={userData} sendResponse={handleResponse} language={language}/>
+            <Login data={userData} sendResponse={handleResponse} language={language} setAllowNavigate={setAllowNavigate}/>
           </>
         ):(
           <>
-            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language}/>
+            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} setAllowNavigate={setAllowNavigate}/>
           </>
         )
       }

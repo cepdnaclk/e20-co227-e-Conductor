@@ -4,6 +4,7 @@ import { FaEnvelope, FaFacebook, FaFacebookMessenger, FaInstagram, FaLinkedin, F
 import './Footer2.css';
 import { FaXTwitter } from 'react-icons/fa6';
 import logo from '../../Images/logo - no bkgnd.png'
+import { Link } from 'react-router-dom';
 
 function Footer() {
   return (
@@ -18,11 +19,11 @@ function Footer() {
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
             <ul>
-              <li><a href="/:language/about">About us</a></li>
-              <li><a href="/:language/contact">Contact us</a></li>
-              <li><a href="/:language/news">Newsroom</a></li>
-              <li><a href="/:language/privacy">Privacy policy</a></li>
-              <li><a href="/:language/terms">Terms & conditions</a></li>
+              <li><Link to="/about">About us</Link></li>
+              <li><Link to="/contact">Contact us</Link></li>
+              <li><Link to="/news">Newsroom</Link></li>
+              <li><Link to="/privacy">Privacy policy</Link></li>
+              <li><Link to="/terms">Terms & conditions</Link></li>
             </ul>
           </Col>
 

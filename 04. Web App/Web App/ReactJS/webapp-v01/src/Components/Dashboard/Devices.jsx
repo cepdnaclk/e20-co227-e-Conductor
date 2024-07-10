@@ -21,25 +21,25 @@ export default function Devices({setIsLogged, language}) {
   const [isTerminated, setIsTerminated] = useState('none');
 
   useEffect(()=>{
-    console.log('Getting devices');
+    //console.log('Getting devices');
     if(isTerminated === true || isTerminated==='none'){
       getDevices(userID);
       setIsTerminated(false);
     }
-  }, [isTerminated, userID])
+  }, [isTerminated])
 
   // Requesting device data from node backend
   const getDevices = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req4',
+      type: 'Req4',     // Get device data from backend
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
         const serverResponse = await Request(data, 'logs/users');
-        console.log(`Devices:: ${JSON.stringify(serverResponse.data)}`);
+        //console.log(`Devices:: ${JSON.stringify(serverResponse.data)}`);
         setDevices(serverResponse.data);
     } catch (error) {
         console.error('Error fetching devices:', error);
@@ -57,7 +57,7 @@ export default function Devices({setIsLogged, language}) {
         browser: values.browser,
       }
     }
-    console.log(`post message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    //console.log(`post message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
         await Post(data, 'logs/users');
@@ -79,7 +79,7 @@ export default function Devices({setIsLogged, language}) {
     handleNotifications({
       type:'success', 
       title:'Successfull Termination', 
-      body:`Successfully terminate the session with<br/>MAC: .`
+      body:`Successfully terminate the session with \n MAC: ${e.target.value}.`
     });
 
     // Function to API call with backend

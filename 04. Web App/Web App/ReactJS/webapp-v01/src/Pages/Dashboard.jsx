@@ -7,15 +7,15 @@ import './Dashboard.css'
 import { Outlet } from 'react-router-dom'
 
 
-export default function Dashboard({ isLogged, setIsLogged, language, setLanguage }) {
+export default function Dashboard({ isLogged, setIsLogged, language, setLanguage, setAllowNavigate }) {
 
   return (
     <div className='dashboardPage'>
-      <Navbar isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>
+      <Navbar isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>
 
       <Row className='dashboardArea'>
         <Col className='menu'>
-          <Menu setIsLogged={setIsLogged} language={language}/>
+          <Menu setIsLogged={setIsLogged} language={language} setAllowNavigate={setAllowNavigate}/>
         </Col>
 
         <Col className='content'>

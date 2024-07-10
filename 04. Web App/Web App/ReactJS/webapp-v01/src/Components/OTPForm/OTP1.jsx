@@ -7,7 +7,7 @@ import { Post, Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({setIsLogged, userData, sendResponse, language}) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language, setAllowNavigate}) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
 
@@ -15,7 +15,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language}) { /
   const [serverOTP, setServerOTP] = useState('');
 
   // Initialize useNavigate hook
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // variable where user entered otp is stored
   const [otp, setOtp] = useState('');
@@ -95,10 +95,10 @@ export default function OTP({setIsLogged, userData, sendResponse, language}) { /
   // Function to handle login button
   const loginHandle = () =>{
     if(serverOTP === otp){
-      //setVisitor(false);
       localStorage.setItem('userId', JSON.stringify(userData.userID));
       localStorage.setItem('language', language);
       setIsLogged(true);
+      setAllowNavigate(true);
       navigate('/');
       handleNotifications({
         type:'success', 

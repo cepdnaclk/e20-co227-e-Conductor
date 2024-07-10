@@ -10,7 +10,7 @@ import { Request } from '../../APIs/NodeBackend';
 import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
 
-function Login({ data, sendResponse, language }) {  // language is not implemented yet
+function Login({ data, sendResponse, language, setAllowNavigate }) {  // language is not implemented yet
   // userId patterns
   const psngPattern = /^p\d{4}$/;
   const epmPattern  = /^e\d{4}$/;
@@ -134,7 +134,7 @@ function Login({ data, sendResponse, language }) {  // language is not implement
           <Button variant="light" className='custombutton2'><FaEnvelope className='icon' /><span className='Button-text'>Continue with Email</span></Button>
         </Container>
         <div className='register'>
-          <p>Don't have an account? <a href={`/signup`}>Register</a> </p>
+          <p>Don't have an account? <a href={`/signup`} onClick={()=>{setAllowNavigate(true)}}>Register</a> </p>
         </div>
       </form>
     </div>

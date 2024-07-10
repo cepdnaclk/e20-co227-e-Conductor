@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 import { Request, Post } from '../../APIs/NodeBackend';
 
-export default function OTP({formData, sendResponse}) {
+export default function OTP({formData, sendResponse, setAllowNavigate}) {
   // Variable for initial count
   let endTime = 120;
 
@@ -94,6 +94,7 @@ export default function OTP({formData, sendResponse}) {
   const loginHandle = () =>{
     if(serverOTP === otp){
       navigate('/verify');
+      setAllowNavigate(true);
       handleNotifications({
         type:'success', 
         title:'Registration Successful!', 

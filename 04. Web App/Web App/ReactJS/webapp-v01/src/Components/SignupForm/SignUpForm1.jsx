@@ -8,6 +8,7 @@ import PhoneInput from 'react-phone-input-2';
 import { Request } from '../../APIs/NodeBackend';
 import './SignUpForm1.css'
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
+import { Link } from 'react-router-dom';
 
 
 export default function SignUp1({Data, userType, Response, userData, language}) {
@@ -518,7 +519,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
           
           <Form.Group className="mb-3" id="formGridCheckbox">
             <Container className='termsContainer'>
-              <Form.Check type="checkbox" checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><a href='/terms'> terms and conditions.</a>
+              <Form.Check type="checkbox" checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><Link to='/terms'> terms and conditions.</Link>
             </Container>
           </Form.Group>
         </Form>
