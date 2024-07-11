@@ -87,7 +87,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
     try {
-        const serverResponse = await Request(data, 'users');
+        const serverResponse = await Request(data, 'hello');
         const {userID, email, userType, empType} = serverResponse.data;
         //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
         setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});
