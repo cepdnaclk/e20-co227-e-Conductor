@@ -8,7 +8,7 @@ import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
 import Bookings from "./Pages/bookings";
-import Topups from "./Pages/topups";
+import Topups from "./Pages/Topups";
 import Invoice from "./Pages/Invoice";
 import Forbidden from "./Pages/Forbidden";
 import General from './Components/Dashboard/General'
@@ -32,7 +32,7 @@ function App() {
   const deviceData = getDeviceData();
   const [isLogged, setIsLogged] = useState('none');
 
-  // T0 identify the navigation status
+  // To identify the navigation status
   const [allowNavigate, setAllowNavigate] = useState(false);
 
   // Finding session status

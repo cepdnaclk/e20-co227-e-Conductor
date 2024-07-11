@@ -85,7 +85,7 @@ function NavScrollExample({isLogged, setIsLogged, page, language, setLanguage, s
                     <FaUserCircle className='icon'/>
                     </Dropdown.Toggle>
                     <Dropdown.Menu>                
-                      <Dropdown.Item onClick={() => handleNavigate('/dashboard')}s><AiFillDashboard /> {language==='sn' ? (<>අයිතම පුවරුව</>): (<>Dashboard</>)}</Dropdown.Item>
+                      <Dropdown.Item onClick={() => handleNavigate('/dashboard')}><AiFillDashboard /> {language==='sn' ? (<>අයිතම පුවරුව</>): (<>Dashboard</>)}</Dropdown.Item>
                       <Dropdown.Item onClick={logout}><TbLogout /> {language==='sn' ? (<>ඉවත්වන්න</>): (<>Logout</>)}</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>                   

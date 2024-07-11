@@ -11,11 +11,10 @@ import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
 
 function Login({ data, sendResponse, language, setAllowNavigate }) {  // language is not implemented yet
-  // userId patterns
-  const psngPattern = /^p\d{4}$/;
-  const epmPattern  = /^e\d{4}$/;
-  const ownrPattren = /^o\d{4}$/;
-  const emailPattren= /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+  // possible responses
+  const userTypes = ['passenger', 'employee', 'owner'];
+  const empTypes  = ['None', 'Driver', 'Conductor', 'Both'];
+  const emailPattren = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
   // variable for mobile number
   const [number, setNumber] = useState('');
@@ -33,11 +32,10 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
     fetchData();
   }, []);
    
-
   // Effect to handle user validation after userId state changes
   useEffect(() => {
     //console.log(`ServerUserId useEffect:: ${userData.userID}    ServerUserEmail:: ${userData.email}`);
-    if(userData.userID === 'invalid' && userData.email === 'none') {
+    if(userData.userID === 'invalid' && userData.email === 'invalid' && userData.userType === 'invalid' && userData.empType === 'invalid') {
       handleNotifications({
         type:'error', 
         title:'Invalid mobile number!', 
@@ -45,22 +43,22 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
       });
       //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
-      setUserData({...userData, userID: '', email: ''});
+      setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
     }
-    else if (((psngPattern.test(userData.userID)) || (epmPattern.test(userData.userID)) || (ownrPattren.test(userData.userID))) && (emailPattren.test(userData.email))) {
-      //console.log(`user data:: ${JSON.stringify(userData)}`);
+    else if ((Number.isInteger(userData.userID)) && (emailPattren.test(userData.email)) && (userTypes.includes(userData.userType)) && (empTypes.includes(userData.empType))) {
+      console.log(`user data:: ${JSON.stringify(userData)}`);
       sendResponse(userData); // Send data to parent component
     }
-    else if (userData.email !== '' || userData.userID !== ''){
+    else if (userData.email !== '' || userData.userID !== '' || userData.userType !== '' || userData.empType !== ''){
       handleNotifications({
         type: 'warning',
         title: 'Network Error!',
         body: 'Network connection is unstable. Please reload page again.'
       })
       setNumber('+94');
-      setUserData({...userData, userID: '', email: ''});
+      setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
     }   
-  }, [userData.userID, userData.email]);
+  }, [userData.userID, userData.email, userData.empType, userData.userType]);
 
   // Handling submit 
   const submit = (e) => {
@@ -90,9 +88,9 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
   
     try {
         const serverResponse = await Request(data, 'users');
-        const {userID, email} = serverResponse.data;
-        //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}`);
-        setUserData({...userData, userID:userID, mobile:number, email:email});
+        const {userID, email, userType, empType} = serverResponse.data;
+        //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
+        setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});
         
     } catch (error) {
         console.error('Error adding user:', error);

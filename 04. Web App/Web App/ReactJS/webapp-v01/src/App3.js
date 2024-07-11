@@ -7,7 +7,7 @@ import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
-import Bookings from "./Pages/Bookings";
+import Bookings from "./Pages/bookings";
 import Topups from "./Pages/Topups";
 import Invoice from "./Pages/Invoice";
 import Forbidden from "./Pages/Forbidden";
@@ -108,6 +108,8 @@ function App() {
     //console.log(`localLanguage: ${localLanguage}     language: ${language}`);
   },[language])
   
+  // To identify the navigation status
+  const [allowNavigate, setAllowNavigate] = useState(false);
 
   return (
     <div>
@@ -116,37 +118,37 @@ function App() {
 
           <Route 
             path = "/"
-            element={<Home isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Home isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "about" 
-            element={<About isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<About isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "booking" 
-            element={<Bookings isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Bookings isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "topup" 
-            element={<Topups isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Topups isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "signin" 
-            element={<Signin setIsLogged={setIsLogged} language={language}/>}
+            element={<Signin setIsLogged={setIsLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "signup" 
-            element={<Signup isLogged={isLogged} language={language}/>}
+            element={<Signup isLogged={isLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "dashboard" 
-            element={<Dashboard isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Dashboard isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           >
             <Route path = "" element={<Navigate to="general" replace/>} />
             <Route path = "general" element={<General language={language} />} />
@@ -158,22 +160,22 @@ function App() {
 
           <Route 
             path = "invoice" 
-            element={<Invoice isLogged={isLogged} language={language}/>}
+            element={<Invoice isLogged={isLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "verify" 
-            element={<VerifyEmail isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<VerifyEmail isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "terms" 
-            element={<Terms isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Terms isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
           <Route 
             path = "*" 
-            element={<Forbidden isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
+            element={<Forbidden isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
           ></Route>
 
         </Routes>

@@ -97,6 +97,8 @@ export default function OTP({setIsLogged, userData, sendResponse, language, setA
     if(serverOTP === otp){
       localStorage.setItem('userId', JSON.stringify(userData.userID));
       localStorage.setItem('language', language);
+      localStorage.setItem('userType', JSON.stringify(userData.userType));
+      localStorage.setItem('empType', JSON.stringify(userData.empType));
       setIsLogged(true);
       setAllowNavigate(true);
       navigate('/');

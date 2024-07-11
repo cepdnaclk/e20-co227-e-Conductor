@@ -7,6 +7,8 @@ export default function Signin( { setIsLogged, language, setAllowNavigate } ) {
   // Empty data set
   const emptyData = {
     userID: '',
+    userType: '',
+    empType: '',
     mobile: '',
     email: '',
     sessionData: { }
