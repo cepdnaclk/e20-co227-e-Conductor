@@ -16,7 +16,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
   const emptyData = {
     userType  : userType,
     empType   : 'None',
-    fName     : '',
+    fName     : '', 
     lName     : '',
     email     : '',
     mobile    : '94',
