@@ -20,81 +20,21 @@ import VerifyEmail from "./Pages/VerifyEmail";
 import Terms from "./Pages/TermsConditions";
 import { Post, Request } from "./APIs/NodeBackend";
 import { getDeviceData } from "./Components/SessionData/Sessions";
+import MyCustomPage from "./Components/Context/MyCustomPage"
 
 function Appp(isLogged, setIsLogged, language, setLanguage) {
+
+  const [allowedNavigation, setAllowedNavigation] = useState(false);
 
 
   return (
     <div>
-      
+      <BrowserRouter>
         <Routes>
 
-          {/*<Route path="/my-custom-page/*" element={<MyCustomPage allowedNavigation={allowedNavigation} setAllowedNavigation={setAllowedNavigation} />} />*/}
-          
-          <Route 
-            path = "/"
-            element={<Home isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "/about" 
-            element={<Home isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "/booking" 
-            element={<Bookings isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "topup" 
-            element={<Topups isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "signin" 
-            element={<Signin setIsLogged={setIsLogged} language={language}/>}
-          ></Route>
-
-          <Route 
-            path = "signup" 
-            element={<Signup isLogged={isLogged} language={language}/>}
-          ></Route>
-
-          <Route 
-            path = "dashboard" 
-            element={<Dashboard isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          >
-            <Route path = "" element={<Navigate to="general" replace/>} />
-            <Route path = "general" element={<General language={language} />} />
-            <Route path = "transactions" element={<Transactions language={language} />} />
-            <Route path = "tickets" element={<Tickets language={language} />} />
-            <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged}/>} />
-            <Route path = "settings" element={<Settings language={language} />} />
-          </Route>
-
-          <Route 
-            path = "invoice" 
-            element={<Invoice isLogged={isLogged} language={language}/>}
-          ></Route>
-
-          <Route 
-            path = "verify" 
-            element={<VerifyEmail isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "terms" 
-            element={<Terms isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-          <Route 
-            path = "*" 
-            element={<Forbidden isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-          ></Route>
-
-        </Routes>
-      
+          <Route path="/my/*" element={<MyCustomPage allowedNavigation={allowedNavigation} setAllowedNavigation={setAllowedNavigation} />} />
+                 </Routes>
+        </BrowserRouter>
     </div>
   );
 }

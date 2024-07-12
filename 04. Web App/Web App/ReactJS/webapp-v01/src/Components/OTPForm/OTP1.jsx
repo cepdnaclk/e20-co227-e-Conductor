@@ -7,7 +7,7 @@ import { Post, Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({setIsLogged, userData, sendResponse, language, setAllowNavigate}) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language }) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
   
@@ -86,11 +86,11 @@ export default function OTP({setIsLogged, userData, sendResponse, language, setA
       type: 'access',
       data: values
     }
-    console.log(`request message::   type: ${data.type}      userOTP: ${data.data}`);
+    //console.log(`request message::   type: ${data.type}      userOTP: ${data.data}`);
 
     try {
         const serverRespose = await Request(data, 'OTP');
-        console.log(`Authentication: ${serverRespose.data}`);
+        //console.log(`Authentication: ${serverRespose.data}`);
         setAuth(serverRespose.data);
     } catch (error) {
         console.error('Error adding user:', error);
@@ -101,7 +101,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, setA
   const sendLog = async (value) => {
     // Creating data object
     const data = {
-      type: 'Post1',    // Posting user login informations
+      type: 'Log3',    // Posting user login informations
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
@@ -127,8 +127,10 @@ export default function OTP({setIsLogged, userData, sendResponse, language, setA
       localStorage.setItem('language', language);
       localStorage.setItem('userType', JSON.stringify(userData.userType));
       localStorage.setItem('empType', JSON.stringify(userData.empType));
-      setIsLogged(true);
-      setAllowNavigate(true);
+      sessionStorage.setItem('isLogged', 'true');
+      sessionStorage.setItem('sessionData', JSON.stringify(userData.sessionData));
+      setIsLogged('true');
+      //setAllowNavigate(true);
       navigate('/');
       handleNotifications({
         type:'success', 

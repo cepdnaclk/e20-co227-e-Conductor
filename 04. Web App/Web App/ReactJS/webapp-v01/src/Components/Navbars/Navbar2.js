@@ -20,18 +20,18 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import './Navbar2.css';
 
-function NavScrollExample({isLogged, setIsLogged, language, setLanguage, setAllowNavigate}) {  
+function NavScrollExample({isLogged, setIsLogged, language, setLanguage }) {  
   const navigate = useNavigate();
   const location = useLocation();
   const specialPages = ["signin", "signup", "invoice"];  // Hide Nav bar for this pages
 
-  // Identify current page
+  // Identify current page 
   const [page, setPage] = useState('home');
 
   useEffect(() => {
     const path = location.pathname.split('/')[1];
     //console.log(`page: ${path}`);
-    setPage(path);
+    setPage(path.toLowerCase());
   }, [location.pathname]);
 
 
@@ -42,14 +42,14 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage, setAllo
   
   // Handle logout
   const logout = () => {
-    setIsLogged(false);
+    setIsLogged('false');
     navigate('/');
   };
 
   // Handle navigate
   const handleNavigate = (path) => {
     //console.log(path);
-    setAllowNavigate(true);
+    //setAllowNavigate(true);
     navigate(path);
   }
 
@@ -71,11 +71,11 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage, setAllo
             <Nav variant='underline' activeKey={page} className="navbar-nav" navbarScroll>              
               <Nav.Link className="tab" eventKey="home"  onClick={() => handleNavigate('/')}      >{language==='sn' ? (<>මුල්පිටුව</>): (<>Home</>)}</Nav.Link>
               <Nav.Link className="tab" eventKey="about" onClick={() => handleNavigate('/about')} >{language==='sn' ? (<>විස්තර</>): (<>About</>)}</Nav.Link>
-              {isLogged === true ? 
+              {isLogged === 'true' ? 
                 <>
                   <Nav.Link className="tab" eventKey="booking"  onClick={() => handleNavigate('/booking')} >{language==='sn' ? (<>වෙන්කිරීම්</>): (<>Booking</>)}</Nav.Link>
                   <Nav.Link className="tab" eventKey="schedule" onClick={() => handleNavigate('/schedule')}>{language==='sn' ? (<>කාලසටහන්</>): (<>Schedule</>)}</Nav.Link>
-                  <Nav.Link className="tab" eventKey="page_5"   onClick={() => handleNavigate('/topup')}  >{language==='sn' ? (<>ටොප්-අප්</>): (<>Topups</>)}</Nav.Link>
+                  <Nav.Link className="tab" eventKey="topup"   onClick={() => handleNavigate('/topup')}  >{language==='sn' ? (<>ටොප්-අප්</>): (<>Topups</>)}</Nav.Link>
                   {/* Clasification accroding to userType and empType */}
                 </> : <></>
               }
@@ -91,7 +91,7 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage, setAllo
                     {/*<Dropdown.Item id='தமிழ்' onClick={handleLanguage}>தமிழ்</Dropdown.Item>*/}
                   </Dropdown.Menu>
                 </Dropdown>
-                { !isLogged ? (
+                { isLogged !== 'true' ? (
                   <Button className='button' variant="dark" onClick={() => handleNavigate('/signin')}>{language==='sn' ? (<>පුරන්න</>): (<>Login</>)}</Button>
                   ):(
                     <Dropdown align='end'>

@@ -37,7 +37,7 @@ export default function MenuBar({ setIsLogged, language }) {
 
   // handle logout button
   const logout = () =>{
-    setIsLogged(false);
+    setIsLogged('false');
     navigate('/');
   }
 

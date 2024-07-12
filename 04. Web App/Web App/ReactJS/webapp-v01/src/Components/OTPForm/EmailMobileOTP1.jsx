@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
 import { Request, Post } from '../../APIs/NodeBackend';
 
-export default function OTP({formData, sendResponse, setAllowNavigate}) {
+export default function OTP({formData, sendResponse}) {
   // Variable for initial count
   let endTime = 120;
 
@@ -104,7 +104,7 @@ export default function OTP({formData, sendResponse, setAllowNavigate}) {
   const sendData = async (value) => {
     // Creating data object
     const data = {
-    type: 'Post2',  // Posting new user login details
+    type: 'Req3',  // Posting new user login details
     data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data.licenceFile[0]}`);
@@ -128,7 +128,7 @@ export default function OTP({formData, sendResponse, setAllowNavigate}) {
   useEffect(()=>{
     if(auth === true){
       navigate('/verify');
-      setAllowNavigate(true);
+      //setAllowNavigate(true);
       handleNotifications({
         type:'success', 
         title:'Registration Successful!', 

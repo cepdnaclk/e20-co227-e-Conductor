@@ -9,8 +9,9 @@ import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 import { Request } from '../../APIs/NodeBackend';
 import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
+import { Link } from 'react-router-dom';
 
-function Login({ data, sendResponse, language, setAllowNavigate }) {  // language is not implemented yet
+function Login({ data, sendResponse, language }) {  // language is not implemented yet
   // possible responses
   const userTypes = ['passenger', 'employee', 'owner'];
   const empTypes  = ['None', 'Driver', 'Conductor', 'Both'];
@@ -26,6 +27,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
   useEffect(() => {
     const fetchData = async () => {
       const sessionData = await getSessionData();
+      //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
       setUserData({ ...userData, sessionData: sessionData });
     };
   
@@ -81,7 +83,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
   const requestUserDetails = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req2', // User validation message
+      type: 'Req1', // User validation message
       data: value   // Mobile number of the user
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
@@ -132,7 +134,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
           <Button variant="light" className='custombutton2'><FaEnvelope className='icon' /><span className='Button-text'>Continue with Email</span></Button>
         </Container>
         <div className='register'>
-          <p>Don't have an account? <a href={`/signup`} onClick={()=>{setAllowNavigate(true)}}>Register</a> </p>
+          <p>Don't have an account? <Link to={`/signup`} /*onClick={()=>{setAllowNavigate(true)}}*/>Register</Link> </p>
         </div>
       </form>
     </div>

@@ -1,13 +1,14 @@
-import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import React from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
 
-const PrivateRoute = ({ element: Component, isLogged, ...rest }) => {
+export function PrivertRouteToSignin({isLogged}) {
   return (
-    <Route
-      {...rest}
-      element={isLogged ? <Component /> : <Navigate to="/signin" />}
-    />
-  );
-};
+    isLogged === 'true' ? <Outlet/> : <Navigate to="/signin" />
+  )
+}
 
-export default PrivateRoute;
+export function PrivertRouteToHome({isLogged}) {
+  return (
+    isLogged !== 'true' ? <Outlet/> : <Navigate to="/home" />
+  )
+}

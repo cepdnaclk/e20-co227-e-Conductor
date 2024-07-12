@@ -32,7 +32,7 @@ export default function Devices({setIsLogged, language}) {
   const getDevices = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req4',     // Get device data from backend
+      type: 'Log4',     // Get device data from backend
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
@@ -69,7 +69,7 @@ export default function Devices({setIsLogged, language}) {
   
   // handle logout button
   const logout = () =>{
-    setIsLogged(false);
+    setIsLogged('false');
     navigate('/');
   }
 

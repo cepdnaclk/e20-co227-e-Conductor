@@ -67,7 +67,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
   const userAvailability = async(value) =>{
     // Creating data object
     const data = {
-      type: 'Req3', // user availability
+      type: 'Req2', // user availability
       data: value
     }
     //console.log(`New rquest:: type: ${data.type}   mobile: ${data.data.mobile}   email: ${data.data.email}`);

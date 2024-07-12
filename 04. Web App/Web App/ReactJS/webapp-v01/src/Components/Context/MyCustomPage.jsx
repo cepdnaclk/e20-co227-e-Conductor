@@ -1,18 +1,37 @@
 // src/MyCustomPage.js
-import React, { useEffect } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Home from './Home';
-import Page1 from '../../Pages/About';
-import Page2 from '../../Pages/Signin';
+import Page1 from './Page1';
+import Page2 from './Page2';
 
-const ProtectedRoute = ({ allowedNavigation, element }) => {
+const NavigationContext = createContext();
+
+const useNavigation = () => useContext(NavigationContext);
+
+const NavigationProvider = ({ children }) => {
+  const [allowedNavigation, setAllowedNavigation] = useState(false);
+
+  const value = {
+    allowedNavigation,
+    setAllowedNavigation,
+  };
+
+  return (
+    <NavigationContext.Provider value={value}>
+      {children}
+    </NavigationContext.Provider>
+  );
+};
+
+const ProtectedRoute = ({ element, ...rest }) => {
+  const { allowedNavigation } = useNavigation();
+
   return allowedNavigation ? element : <Navigate to="/my" />;
 };
 
-const MyCustomPage = ({ allowedNavigation, setAllowedNavigation }) => {
-  useEffect(()=>{
-    console.log(`allow Nav:: ${allowedNavigation}`);
-  }, [allowedNavigation])
+const MyCustomPage = () => {
+  const { setAllowedNavigation } = useNavigation();
   const navigate = useNavigate();
 
   const handleButtonClick = (path) => {
@@ -25,15 +44,21 @@ const MyCustomPage = ({ allowedNavigation, setAllowedNavigation }) => {
       <h1>My Custom Page</h1>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/page1" element={<Page1 />} />
-        <Route path="/page2" element={<Page2 />} />
+        <Route path="/page1" element={<ProtectedRoute element={<Page1 />} />} />
+        <Route path="/page2" element={<ProtectedRoute element={<Page2 />} />} />
       </Routes>
-
-      <div><Navigate to={'/my/page1'}><h1>Page1</h1></Navigate></div>
       <button onClick={() => handleButtonClick('/my/page1')}>Navigate to Page 1</button>
       <button onClick={() => handleButtonClick('/my/page2')}>Navigate to Page 2</button>
     </div>
   );
 };
 
-export default MyCustomPage;
+const MyCustomPageWrapper = () => {
+  return (
+    <NavigationProvider>
+      <MyCustomPage />
+    </NavigationProvider>
+  );
+};
+
+export default MyCustomPageWrapper;

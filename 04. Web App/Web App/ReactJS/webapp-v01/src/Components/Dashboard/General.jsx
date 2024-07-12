@@ -23,7 +23,7 @@ function General({ language }) {
   const getData = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req5', // Get user infomation from backend
+      type: 'Req4', // Get user infomation from backend
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
