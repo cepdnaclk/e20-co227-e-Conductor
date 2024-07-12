@@ -11,7 +11,7 @@ import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { Request } from '../APIs/NodeBackend';
 
-export default function InvoicePage({ isLogged, language }) {
+export default function InvoicePage({ language }) {
   // Sheet sizes
   const A4_WIDTH = 210 * 3.7795275591; // in cm -> px
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px

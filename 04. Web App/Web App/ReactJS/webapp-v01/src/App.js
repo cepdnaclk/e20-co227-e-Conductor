@@ -2,6 +2,8 @@
 
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Navbar from './Components/Navbars/Navbar2';
+import Footer from "./Components/Footer/Footer2";
 import Home from "./Pages/Home";
 import Signin from "./Pages/Signin";
 import Signup from "./Pages/Signup";
@@ -33,7 +35,7 @@ function App() {
   const [isLogged, setIsLogged] = useState('none');
 
   // To identify the navigation status
-  const [allowNavigate, setAllowNavigate] = useState(false);
+  const [allowNavigate, setAllowNavigate] = useState( sessionStorage.getItem('allowNavigate') !== null ? sessionStorage.getItem('allowNavigate') : false );
 
   // Finding session status
   useEffect(()=>{
@@ -58,6 +60,7 @@ function App() {
       }
 
       localStorage.clear();
+      sessionStorage.clear();
       //console.log(`removed user : ${userID}`);
     }
   }, [isLogged])
@@ -66,7 +69,7 @@ function App() {
   const sessionStatus = async (value) =>{
     // Creating data object
     const data = {
-      type: 'Req1',  // Requesting session status from our backend
+      type: 'Log1',  // Requesting session status from our backend
       data: {
         userID: value,
         MAC: deviceData.mac,
@@ -88,7 +91,7 @@ function App() {
   const sessionTerminate = async (value) =>{
     // Creating data object
     const data = {
-      type: 'Post3',  // Terminate session from our backend
+      type: 'Log2',  // Terminate session from our backend
       data: {
         userID: value,
         MAC: deviceData.mac,
@@ -111,6 +114,7 @@ function App() {
     //console.log(`localLanguage: ${localLanguage}     language: ${language}`);
   },[language])
 
+  // Check Naigation status
   useEffect(()=>{
     console.log(`NavAllow: ${allowNavigate}`);
   },[allowNavigate])
@@ -119,79 +123,34 @@ function App() {
   return (
     <div>
       <BrowserRouter>
+        <Navbar isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>
+        
         <Routes>
-          <Route 
-            path = "/"
-            element={<Home isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-          ></Route>
-
-          {allowNavigate === true ? // Dissable browser address bar
-            <>       
-              <Route 
-                path = "about" 
-                element={<About isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-              ></Route>
-
-              {isLogged === true ? 
-                <>
-                  <Route 
-                    path = "booking" 
-                    element={<Bookings isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-                  ></Route>
-
-                  <Route 
-                    path = "topup" 
-                    element={<Topups isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-                  ></Route>
-
-                  <Route 
-                    path = "dashboard" 
-                    element={<Dashboard isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-                  >
-                    <Route path = "" element={<Navigate to="general" replace/>} />
-                    <Route path = "general" element={<General language={language} />} setAllowNavigate={setAllowNavigate}/>
-                    <Route path = "transactions" element={<Transactions language={language} />} />
-                    <Route path = "tickets" element={<Tickets language={language} />} setAllowNavigate={setAllowNavigate}/>
-                    <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged}/>} />
-                    <Route path = "settings" element={<Settings language={language} />} />
-                  </Route>
-
-                  <Route 
-                    path = "invoice" 
-                    element={<Invoice isLogged={isLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
-                  ></Route>
-                </> : <>
-                  <Route 
-                    path = "signin" 
-                    element={<Signin setIsLogged={setIsLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
-                  ></Route>
-
-                  <Route 
-                    path = "signup" 
-                    element={<Signup isLogged={isLogged} language={language} setAllowNavigate={setAllowNavigate}/>}
-                  ></Route>
-                </> 
-              }
-              <Route 
-                path = "verify" 
-                element={<VerifyEmail isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-              ></Route>
-
-              <Route 
-                path = "terms" 
-                element={<Terms isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage}/>}
-              ></Route>
-
-            </> : <></>
-          }
-
-          <Route 
-            path = "*" 
-            element={<Forbidden isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>}
-          ></Route>
-
+          <Route path = "/" element={<Navigate to="home"/>} />
+          <Route path = "home" element={<Home language={language}/>} />
+          
+          <Route path = "about" element={<About language={language} />}></Route>
+          <Route path = "booking" element={<Bookings language={language}/>}></Route>
+          <Route path = "topup" element={<Topups language={language}/>}></Route>
+          <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setAllowNavigate={setAllowNavigate}/>} >
+            <Route path = "" element={<Navigate to="general" replace/>} />
+            <Route path = "general" element={<General language={language} />}/>
+            <Route path = "transactions" element={<Transactions language={language} />} />
+            <Route path = "tickets" element={<Tickets language={language} setAllowNavigate={setAllowNavigate}/>} />
+            <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged} setAllowNavigate={setAllowNavigate}/>} />
+            <Route path = "settings" element={<Settings language={language} />} />
+          </Route>
+          <Route path = "invoice" element={<Invoice language={language} />}></Route>
+          <Route path = "signin" element={<Signin setIsLogged={setIsLogged} language={language} setAllowNavigate={setAllowNavigate}/>} ></Route>
+          <Route path = "signup" element={<Signup language={language} setAllowNavigate={setAllowNavigate}/>} ></Route>
+          <Route path = "verify" element={<VerifyEmail language={language} />}></Route>
+          <Route path = "terms" element={<Terms language={language}/>}></Route>
+          
+          <Route path = "*" element={<Forbidden language={language} />}/>
         </Routes>
-      </BrowserRouter>
+        
+        <Footer/>
+      </BrowserRouter>      
     </div>
   );
 }

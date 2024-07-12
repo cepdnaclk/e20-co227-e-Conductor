@@ -46,7 +46,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
       setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
     }
     else if ((Number.isInteger(userData.userID)) && (emailPattren.test(userData.email)) && (userTypes.includes(userData.userType)) && (empTypes.includes(userData.empType))) {
-      console.log(`user data:: ${JSON.stringify(userData)}`);
+      //console.log(`user data:: ${JSON.stringify(userData)}`);
       sendResponse(userData); // Send data to parent component
     }
     else if (userData.email !== '' || userData.userID !== '' || userData.userType !== '' || userData.empType !== ''){
@@ -87,7 +87,7 @@ function Login({ data, sendResponse, language, setAllowNavigate }) {  // languag
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
     try {
-        const serverResponse = await Request(data, 'hello');
+        const serverResponse = await Request(data, 'users');
         const {userID, email, userType, empType} = serverResponse.data;
         //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
         setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});

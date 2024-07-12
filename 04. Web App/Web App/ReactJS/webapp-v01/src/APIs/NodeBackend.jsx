@@ -5,8 +5,8 @@ This API is used to connect frontend with the own nodeJS backend server
 import Axios from 'axios';
 
 // Base API of the server
-//const API_BASE_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
-const API_BASE_URL = process.env.REACT_APP_RAILWAY_BACKEND_URL;
+const API_BASE_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
+//const API_BASE_URL = process.env.REACT_APP_RAILWAY_BACKEND_URL;
 
 // Get data from backend
 export const Response = async (page) => {
@@ -30,7 +30,7 @@ export const Post = async (data, page) => {
         console.log(`Post to: ${destination}`);
         await Axios.post(`${destination}`, data);     // Note::  format: {PostType, data}
     } catch (error) {
-        console.error('There was an error adding the user!', error);
+        console.error('There was an error in the request message!', error);
         throw error;
     }
 };
@@ -41,8 +41,8 @@ export const Request = async (sendData, page) => {
     try {
         const destination = `${API_BASE_URL}/${page}`;
         console.log(`Request from: ${destination}`);
-        const ServerResponse = await Axios.get(`${destination}`, sendData);   // Note::  format: {ReqType, data}
-        console.log(`Server Response: ${JSON.stringify(ServerResponse.data)}`);
+        const ServerResponse = await Axios.post(`${destination}`, sendData);   // Note::  format: {ReqType, data}
+        //console.log(`Server Response: ${JSON.stringify(ServerResponse.data)}`);
         return ServerResponse; 
     } catch (error) {
         console.error('There was an error adding the user!', error);

@@ -10,11 +10,11 @@ export default function OTP({formData, sendResponse, setAllowNavigate}) {
   // Variable for initial count
   let endTime = 120;
 
+  // Variable for server OTP
+  const [serverOTP, setServerOTP] = useState('');
+
   // Initialize useNavigate hook
   const navigate = useNavigate(); 
-  
-  // Variable for server OTP
-  const [auth, setAuth] = useState(null);
 
   // variable where user entered otp is stored
   const [otp, setOtp] = useState('');
@@ -28,9 +28,91 @@ export default function OTP({formData, sendResponse, setAllowNavigate}) {
   // variable to store reamining time
   const [time, setTime] = useState(endTime);
 
+  // Trigering at the start
+  useEffect(()=>{
+    //console.log(`New user OTP SEND:: mobile: ${formData.mobile}`);
+    //requestOTP(formData.mobile);
+    requestOTP({mobile:formData.mobile, email:formData.email});
+  }, []);
+
+  // Use effect for get the OTP from server
+  const requestOTP = async (value) => {
+    // Creating data object
+    const data = {
+    type: 'signupOTP',  // OTP request
+    data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const serverResponse = await Request(data, 'OTP');
+        console.log(`New OTP:: ${serverResponse.data}`);
+        setServerOTP(serverResponse.data);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+  // Function to send new user details to the database
+  const sendData = async (value) => {
+    // Creating data object
+    const data = {
+    type: 'Post2',  // Posting new user login details
+    data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data.licenceFile[0]}`);
+
+    try {
+        await Post(data, 'users');
+        console.log(`Registered Successfully`);
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+
+  // Use effect for the countdown
+  useEffect(()=>{
+    if(time>0){
+      setTimeout(() => {
+        setTime(time-1);
+      }, 1000);
+    }
+    else{
+      setIsDissable(true);
+      setresendDissable(false);
+      handleNotifications({
+        type:'warning', 
+        title:'Time is out!', 
+        body:'Please click Resend OTP to get a new OTP.'
+      });
+      //console.log('Time is out');                  // Screen notification
+    }
+  }, [time])
+
   // Function to handle login button
   const loginHandle = () =>{
-    requestLoginAccess(otp);
+    if(serverOTP === otp){
+      navigate('/verify');
+      setAllowNavigate(true);
+      handleNotifications({
+        type:'success', 
+        title:'Registration Successful!', 
+        body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
+      });
+      sendData(formData);
+      //console.log('Successful Signup!');            // Screen notification
+      
+    }
+    else{
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
+      //console.log('Invalid OTP! \nTry Again!');    // Screen notification
+      setOtp ('');
+    }
   }
 
   // Function to handle back button
@@ -65,113 +147,6 @@ export default function OTP({formData, sendResponse, setAllowNavigate}) {
       //console.log('Resend OTP');                    // Screen notification
     }
   }
-
-  // Function to get the OTP from server
-  const requestOTP = async (value) => {
-    // Creating data object
-    const data = {
-    type: 'signupOTP',  // OTP request
-    data: value
-    }
-    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
-    try {
-        await Post(data, 'OTP');
-    } catch (error) {
-        console.error('Error adding user:', error);
-    }
-  };
-
-  // Function to get logging access
-  const requestLoginAccess = async (values) => {
-    // Creating data object
-    const data = {
-      type: 'access',
-      data: values
-    }
-    console.log(`request message::   type: ${data.type}      userOTP: ${data.data}`);
-
-    try {
-        const serverRespose = await Request(data, 'OTP');
-        console.log(`Authentication: ${serverRespose.data}`);
-        setAuth(serverRespose.data);
-    } catch (error) {
-        console.error('Error adding user:', error);
-    }
-  };
-
-  // Function to send new user details to the database
-  const sendData = async (value) => {
-    // Creating data object
-    const data = {
-    type: 'Post2',  // Posting new user login details
-    data: value
-    }
-    //console.log(`request message::   type: ${data.type}      data: ${data.data.licenceFile[0]}`);
-
-    try {
-        await Post(data, 'users');
-        console.log(`Registered Successfully`);
-    } catch (error) {
-        console.error('Error adding user:', error);
-    }
-  };
-
-  // Trigering at the start
-  useEffect(()=>{
-    //console.log(`New user OTP SEND:: mobile: ${formData.mobile}`);
-    //requestOTP(formData.mobile);
-    requestOTP({mobile:formData.mobile, email:formData.email});
-  }, []);  
-
-  // Use effect for the authentication
-  useEffect(()=>{
-    if(auth === true){
-      navigate('/verify');
-      setAllowNavigate(true);
-      handleNotifications({
-        type:'success', 
-        title:'Registration Successful!', 
-        body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
-      });
-      sendData(formData);      
-    }
-    else if(auth === false){
-      handleNotifications({
-        type:'error', 
-        title:'Invalid OTP!', 
-        body:'OTP is invalid. Try Again!'
-      });
-      setOtp ('');
-    }
-    else if (auth !== null) {
-      handleNotifications({
-        type:'warning', 
-        title:'Network Issue!', 
-        body:'Try Again!'
-      });
-      setOtp ('');
-    }
-  }, [auth]);
-
-  // Use effect for the countdown
-  useEffect(()=>{
-    if(time>0){
-      setTimeout(() => {
-        setTime(time-1);
-      }, 1000);
-    }
-    else{
-      setIsDissable(true);
-      setresendDissable(false);
-      handleNotifications({
-        type:'warning', 
-        title:'Time is out!', 
-        body:'Please click Resend OTP to get a new OTP.'
-      });
-      //console.log('Time is out');                  // Screen notification
-    }
-  }, [time])
 
   return (
     <div className='OTP-Wrappper'>

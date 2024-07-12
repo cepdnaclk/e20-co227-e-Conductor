@@ -1,17 +1,14 @@
 import React from 'react'
-import Navbar from '../Components/Navbars/Navbar2'
-import Footer from '../Components/Footer/Footer2'
 import { Col, Row } from 'react-bootstrap'
 import Menu from '../Components/Dashboard/MenuBar'
 import './Dashboard.css'
 import { Outlet } from 'react-router-dom'
 
 
-export default function Dashboard({ isLogged, setIsLogged, language, setLanguage, setAllowNavigate }) {
+export default function Dashboard({ setIsLogged, language, setAllowNavigate }) {
 
   return (
     <div className='dashboardPage'>
-      <Navbar isLogged={isLogged} setIsLogged={setIsLogged} language={language} setLanguage={setLanguage} setAllowNavigate={setAllowNavigate}/>
 
       <Row className='dashboardArea'>
         <Col className='menu'>
@@ -23,7 +20,6 @@ export default function Dashboard({ isLogged, setIsLogged, language, setLanguage
         </Col> 
       </Row>
       
-      <Footer/>  
     </div>
   )
 }
