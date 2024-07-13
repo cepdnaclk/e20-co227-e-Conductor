@@ -39,29 +39,29 @@ function Transactions({ language }) {
   // Data for table body
   const [transaction, setTransaction] = useState({});
  
+  // Requesting transaction data from node backend
   useEffect(()=>{
+    const getData = async (value) => {
+      // Creating data object
+      const data = {
+        type: 'Trans1',   // Get transaction infomation from backend
+        data: value
+      }
+      console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+  
+      try {
+          const serverResponse = await Request(data, 'transactions');
+          //console.log(`Transactions:: ${JSON.stringify(serverResponse.data)}`);
+          setCredits(serverResponse.data.credits);
+          setTransaction(serverResponse.data.transaction);
+          setFilterList(serverResponse.data.filterList);
+      } catch (error) {
+          console.error('Error fetching devices:', error);
+      }
+    };
+
     getData(userID);
   }, [])
-
-  // Requesting transaction data from node backend
-  const getData = async (value) => {
-    // Creating data object
-    const data = {
-      type: 'Req6',   // Get transaction infomation from backend
-      data: value
-    }
-    console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
-    try {
-        const serverResponse = await Request(data, 'transactions');
-        //console.log(`Transactions:: ${JSON.stringify(serverResponse.data)}`);
-        setCredits(serverResponse.data.credits);
-        setTransaction(serverResponse.data.transaction);
-        setFilterList(serverResponse.data.filterList);
-    } catch (error) {
-        console.error('Error fetching devices:', error);
-    }
-  };
 
   return (
     filterList.length > 0 ? (

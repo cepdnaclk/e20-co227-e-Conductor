@@ -45,34 +45,34 @@ export default function Tickets({ language }) {
   // Data for table body
   const [tickets, setTickets] = useState({});
   
+  // Requesting ticket data from node backend
   useEffect(()=>{
+    const getData = async (value) => {
+      // Creating data object
+      const data = {
+        type: 'Tkt1',   // Get ticket infomation from backend
+        data: value
+      }
+      console.log(`request message::   type: ${data.type}    data: ${data.data}`);
+  
+      try {
+          const serverResponse = await Request(data, 'tickets');
+          //console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}`);
+          setAvailableTickets(serverResponse.data.available);
+          setTickets(serverResponse.data.tickets);
+          setFilterList(serverResponse.data.filterList);
+      } catch (error) {
+          console.error('Error fetching devices:', error);
+      }
+    };
+
     getData(userID);
   }, [])
-
-  // Requesting ticket data from node backend
-  const getData = async (value) => {
-    // Creating data object
-    const data = {
-      type: 'Req7',   // Get ticket infomation from backend
-      data: value
-    }
-    console.log(`request message::   type: ${data.type}    data: ${data.data}`);
-
-    try {
-        const serverResponse = await Request(data, 'tickets');
-        //console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}`);
-        setAvailableTickets(serverResponse.data.available);
-        setTickets(serverResponse.data.tickets);
-        setFilterList(serverResponse.data.filterList);
-    } catch (error) {
-        console.error('Error fetching devices:', error);
-    }
-  };
-  
+ 
   // Handle Button Click
   const handleButton = (e) =>{
     //console.log(`${e.target.id} Clicked.   RefNo: ${e.target.value}`);
-    localStorage.setItem('TicketNo', JSON.stringify(e.target.value));
+    sessionStorage.setItem('TicketNo', JSON.stringify(e.target.value));
     navigate('/invoice');
   }
 

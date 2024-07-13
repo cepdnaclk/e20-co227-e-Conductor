@@ -17,7 +17,7 @@ export default function InvoicePage({ language }) {
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px
 
   // Getting Ticket Id
-  const ticketNo = JSON.parse(localStorage.getItem('TicketNo'));
+  const ticketNo = JSON.parse(sessionStorage.getItem('TicketNo'));
 
   // Ticket data
   const [data, setData] = useState({});
@@ -26,7 +26,7 @@ export default function InvoicePage({ language }) {
   const getData = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req8',   // Get invoice infomation from backend
+      type: 'Tkt2',   // Get invoice infomation from backend
       data: value
     }
     //console.log(`Request message::   type: ${data.type}      data: ${data.data}`);
