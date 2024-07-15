@@ -29,12 +29,13 @@ const headCells = [
 
 function Transactions({ language }) {
   const userID = JSON.parse(localStorage.getItem('userId'));
-  
-  // Variable for storing credits
-  const [credits, setCredits] = useState(0);
+  const userType = JSON.parse(localStorage.getItem('userId'));
   
   // Filter list
-  const [filterList, setFilterList] = useState([]);
+  const filterList = (userType === 'owner') ? ['Payment', 'Top-Up', 'Refund', 'Income'] : ['Payment', 'Top-Up', 'Refund'];
+
+  // Variable for storing credits
+  const [credits, setCredits] = useState(0); 
   
   // Data for table body
   const [transaction, setTransaction] = useState({});
@@ -54,17 +55,16 @@ function Transactions({ language }) {
           //console.log(`Transactions:: ${JSON.stringify(serverResponse.data)}`);
           setCredits(serverResponse.data.credits);
           setTransaction(serverResponse.data.transaction);
-          setFilterList(serverResponse.data.filterList);
       } catch (error) {
           console.error('Error fetching devices:', error);
       }
     };
 
     getData(userID);
-  }, [])
+  }, []);
 
   return (
-    filterList.length > 0 ? (
+    transaction.length > 0 ? (
       <CustomTable
         headerData={headCells}
         bodyData={transaction}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, IconButton, Avatar } from '@mui/material';
 import { styled } from '@mui/system';
-import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import AddAPhotoIcon from '@mui/icons-material/AddAPhoto';
 
 const ProfileImageContainer = styled(Box)({
   position: 'relative',
@@ -31,6 +31,7 @@ function AvatarButton( {image} ) {
     if (file) {
       // Handle the file change logic here
       console.log('Selected file:', file);
+      // API to upload image to a server
     }
   };
 
@@ -47,7 +48,7 @@ function AvatarButton( {image} ) {
         />
         <label htmlFor="icon-button-file">
           <IconButton color="primary" aria-label="upload picture" component="span">
-            <PhotoCamera />
+            <AddAPhotoIcon sx={{color: 'white'}}/>
           </IconButton>
         </label>
       </OverlayButton>

@@ -60,7 +60,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language }) { 
 
   // Function to handle login button
   const loginHandle = () =>{
-    requestLoginAccess(otp);
+    requestLoginAccess({mobile:userData.mobile, email:userData.email, value:otp, origin:'login'});
   }
 
   // Function to get the OTP from server
@@ -83,15 +83,15 @@ export default function OTP({setIsLogged, userData, sendResponse, language }) { 
   const requestLoginAccess = async (values) => {
     // Creating data object
     const data = {
-      type: 'access',
+      type: 'verify',
       data: values
     }
-    //console.log(`request message::   type: ${data.type}      userOTP: ${data.data}`);
+    //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
 
     try {
         const serverRespose = await Request(data, 'OTP');
         //console.log(`Authentication: ${serverRespose.data}`);
-        setAuth(serverRespose.data);
+        setAuth(JSON.stringify(serverRespose.data));
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -122,7 +122,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language }) { 
   // Use effect for the authentication
   useEffect(()=>{
     // Valid OTP
-    if(auth === true){
+    if(auth === 'true'){
       localStorage.setItem('userId', JSON.stringify(userData.userID));
       localStorage.setItem('language', language);
       localStorage.setItem('userType', JSON.stringify(userData.userType));
@@ -140,7 +140,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language }) { 
       sendLog(userData);
     }
     // Invalid OTP
-    else if(auth === false){
+    else if(auth === 'false'){
       handleNotifications({
         type:'error', 
         title:'Invalid OTP!', 

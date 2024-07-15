@@ -32,16 +32,16 @@ const headCells = [
   }
 ];
 
+// Filter list
+const filterList = ['Available', 'Used', 'Refunded'];
+
 export default function Tickets({ language }) {
   const navigate = useNavigate();
   const userID = JSON.parse(localStorage.getItem('userId'));
   
   // Variable for storing credits
   const [availableTickets, setAvailableTickets] = useState(0);
-  
-  // Filter list
-  const [filterList, setFilterList] = useState([]);
-  
+    
   // Data for table body
   const [tickets, setTickets] = useState({});
   
@@ -60,7 +60,6 @@ export default function Tickets({ language }) {
           //console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}`);
           setAvailableTickets(serverResponse.data.available);
           setTickets(serverResponse.data.tickets);
-          setFilterList(serverResponse.data.filterList);
       } catch (error) {
           console.error('Error fetching devices:', error);
       }
@@ -77,7 +76,7 @@ export default function Tickets({ language }) {
   }
 
   return (
-    filterList.length > 0 ? (
+    tickets.length > 0 ? (
       <CustomTable 
         headerData={headCells}
         bodyData={tickets}

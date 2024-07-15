@@ -17,7 +17,7 @@ import General from './Components/Dashboard/General'
 import Transactions from './Components/Dashboard/Transactions'
 import Tickets from './Components/Dashboard/Tickets'
 import Devices from './Components/Dashboard/Devices'
-import Settings from './Components/Dashboard/Settings'
+import Settings from "./Components/Dashboard/Settings";
 import VerifyEmail from "./Pages/VerifyEmail";
 import Terms from "./Pages/TermsConditions";
 import { Post, Request } from "./APIs/NodeBackend";

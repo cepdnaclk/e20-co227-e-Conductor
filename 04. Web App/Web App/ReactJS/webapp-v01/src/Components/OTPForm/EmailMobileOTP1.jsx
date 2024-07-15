@@ -30,7 +30,7 @@ export default function OTP({formData, sendResponse}) {
 
   // Function to handle login button
   const loginHandle = () =>{
-    requestLoginAccess(otp);
+    requestLoginAccess({mobile:formData.mobile, email:formData.email, value:otp, origin:'signup'});
   }
 
   // Function to handle back button
@@ -86,15 +86,15 @@ export default function OTP({formData, sendResponse}) {
   const requestLoginAccess = async (values) => {
     // Creating data object
     const data = {
-      type: 'access',
+      type: 'verify',
       data: values
     }
-    console.log(`request message::   type: ${data.type}      userOTP: ${data.data}`);
+    //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
 
     try {
         const serverRespose = await Request(data, 'OTP');
-        console.log(`Authentication: ${serverRespose.data}`);
-        setAuth(serverRespose.data);
+        //console.log(`Authentication: ${serverRespose.data}`);
+        setAuth(JSON.stringify(serverRespose.data));
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -126,7 +126,7 @@ export default function OTP({formData, sendResponse}) {
 
   // Use effect for the authentication
   useEffect(()=>{
-    if(auth === true){
+    if(auth === 'true'){
       navigate('/verify');
       //setAllowNavigate(true);
       handleNotifications({
@@ -136,7 +136,7 @@ export default function OTP({formData, sendResponse}) {
       });
       sendData(formData);      
     }
-    else if(auth === false){
+    else if(auth === 'false'){
       handleNotifications({
         type:'error', 
         title:'Invalid OTP!', 

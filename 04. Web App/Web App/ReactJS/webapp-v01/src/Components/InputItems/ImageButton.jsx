@@ -1,8 +1,13 @@
 import { Button } from '@mui/material'
-import React from 'react'
-import DialogBox from '../Card/DialogBox';
+import React, { useRef } from 'react'
 
-function ImageButton({image, width, height, onClick}) {
+function ImageButton({image, width, height, onFileChange, icon}) {
+  const fileInputRef = useRef(null);
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <div>
       <Button 
@@ -15,11 +20,17 @@ function ImageButton({image, width, height, onClick}) {
               opacity: '80%'
           }
         }}
-        onClick={onClick}
-
+        onClick={handleClick}
       >
-        <DialogBox ></DialogBox>
+        {icon}
       </Button>
+      <input
+        type="file"
+        style={{ display: 'none' }}
+        ref={fileInputRef}
+        accept={['.jpg', '.png', '.jpeg']}
+        onChange={onFileChange}
+      />
     </div>
   )
 }

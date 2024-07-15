@@ -21,8 +21,9 @@ export default function Devices({setIsLogged, language}) {
   const [isTerminated, setIsTerminated] = useState('none');
 
   useEffect(()=>{
-    //console.log('Getting devices');
+    //console.log(`Getting devices  isTerminated: ${isTerminated}`);
     if(isTerminated === true || isTerminated==='none'){
+      console.log(`Searching Devices`);
       getDevices(userID);
       setIsTerminated(false);
     }
@@ -50,7 +51,7 @@ export default function Devices({setIsLogged, language}) {
   const sessionTerminate = async (values) =>{
     // Creating data object
     const data = {
-      type: 'Post3',  // Terminate session from our backend
+      type: 'Log2',  // Terminate session from our backend
       data: {
         userID: values.userID,
         MAC: values.mac,
@@ -60,8 +61,10 @@ export default function Devices({setIsLogged, language}) {
     //console.log(`post message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
-        await Post(data, 'logs/users');
+        // Need to update with checking status code
         setIsTerminated(true);
+        await Post(data, 'logs/users');
+        console.log('Setting isTerminated to true');
     } catch (error) {
         console.error(`Error in terminating session: ${error} \n Refresh your browser.`);
     }
@@ -75,7 +78,7 @@ export default function Devices({setIsLogged, language}) {
 
   // Handle Button Click
   const handleButton = (e) =>{
-    console.log(`Button is Clicked. Terminate the session with MAC: ${e.target.value} , ${e.target.name}.`);
+    //sconsole.log(`Button is Clicked. Terminate the session with MAC: ${e.target.value} , ${e.target.name}.`);
     handleNotifications({
       type:'success', 
       title:'Successfull Termination', 

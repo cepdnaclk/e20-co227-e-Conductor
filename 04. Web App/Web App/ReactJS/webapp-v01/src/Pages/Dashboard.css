@@ -21,7 +21,8 @@
 }
 
 .dashboardArea .content{
-    background-image: url('../Images/waterfall.jpg');
+    background-image: url('../Images/waterfall.jpg'); 
+    /*background-color:darkgray;*/
     width: calc(100% - 20px);
     margin: 0;
     padding: 10px;
