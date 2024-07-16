@@ -32,6 +32,9 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
     passbook: null
   }
 
+  // Special Input fileds
+  const specialFields = ["nic", "ntc", "licence", "branch", "accNo"];
+
   // Object to store form data
   const [formData, setFormData] = useState( (userType === Data.userType) ? Data : emptyData);
 
@@ -83,10 +86,12 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
   // Handling form data
   const handleFormData = (e) =>{
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const newValue = specialFields.includes(name) ? value.toUpperCase() : value ;
+    //console.log(`newValues: ${JSON.stringify(newValue)}`);
+    setFormData({ ...formData, [name]: newValue });
   }
 
-  // Handling driving licence file change
+  /* // Handling driving licence file change
   const handleDrivingLicenceFileChange = (e) => {
     setFormData({ ...formData, licenceFile: e.target.files });
   };
@@ -95,7 +100,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
   const handleBankPassbookFileChange = (e) => {
     //console.log(`passbook: ${JSON.stringify(e.target.files)}`);
     setFormData({ ...formData, passbook: e.target.files[0] });
-  };
+  }; */
 
   // Handling submit button  
   const handleSubmit = (e) =>{
@@ -245,9 +250,9 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
           // Driving licence validation
           if (!values.licence) { errors.licence = "* This field is required!"; }
 
-          // Driving licence validation
+          /* // Driving licence validation
           if (!values.licenceFile.length) { errors.licenceFile = "* This field is required!"; }
-          else if (values.licenceFile.length < 2) { errors.licenceFile = "* Please upload images of the both sides of your driving licence card as two separate files!"; }
+          else if (values.licenceFile.length < 2) { errors.licenceFile = "* Please upload images of the both sides of your driving licence card as two separate files!"; } */
         }
       }
       
@@ -263,8 +268,8 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
         // Branch validation
         if (!values.branch) { errors.branch = "* This field is required!"; }
 
-        // Passbook validation
-        if (!values.passbook) { errors.passbook = "* This field is required!"; }
+        /* // Passbook validation
+        if (!values.passbook) { errors.passbook = "* This field is required!"; } */
       }
     }
     
@@ -358,6 +363,9 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                     name='birthDay'
                     value={formData.birthDay}
                     onChange={handleFormData}
+                    style={{cursor:'pointer'}}
+                    min="1900-01-01"
+                    max="2200-12-13"
                   />
                 </Form.Group>
                 <p className='signUpErrorMsg'>{formErrors.nic}</p> 
@@ -371,7 +379,9 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                       type="checkbox" 
                       label="I hope to work as a conductor/ driver." 
                       checked = {isEmployee}
-                      onChange={handleEmployee}/>
+                      onChange={handleEmployee}
+                      style={{cursor:'pointer'}}
+                    />
                   </Form.Group>
                 </>
               )}
@@ -380,10 +390,11 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                 // Work as an employer ?
                 <>
                   <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formGridState">
+                    <Form.Group as={Col} controlId="formGridState" >
                       <Form.Label>Work as</Form.Label>
                       <Form.Select 
                         onChange={handleEmpType}
+                        style={{cursor:'pointer'}}
                         defaultValue="Conductor">
                           <option>Driver</option>
                           <option>Conductor</option>
@@ -418,7 +429,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                     <p>{formErrors.licence}</p> 
                   </Form.Group>
 
-                  <Form.Group className="mb-3" controlId="formFileMultiple">
+                  {/* <Form.Group className="mb-3" controlId="formFileMultiple">
                     <Form.Label>Upload images of both sides of your driving license card<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
                     <Form.Control 
                       className='customfile' 
@@ -429,7 +440,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                       onChange={handleDrivingLicenceFileChange}
                     />
                     <p>{formErrors.licenceFile}</p> 
-                  </Form.Group>
+                  </Form.Group> */}
                   
                 </>
               )}
@@ -474,6 +485,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                         name='bank'
                         value={formData.bank}
                         onChange={handleFormData}
+                        style={{cursor:'pointer'}}
                       >
                         <option>Peoples' Bank</option>
                         <option>Bank of Ceylon</option>
@@ -502,7 +514,7 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
 
                   </Row>
 
-                  <Form.Group className="mb-3" controlId="formFileMultiple">
+                  {/* <Form.Group className="mb-3" controlId="formFileMultiple">
                     <Form.Label>Upload an image of your bank passbook<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
                     <Form.Control 
                       className='customfile' 
@@ -512,14 +524,14 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
                       onChange={handleBankPassbookFileChange}
                     />
                     <p>{formErrors.passbook}</p> 
-                  </Form.Group>
+                  </Form.Group> */}
                 </>)}
             </>)         
           }
           
           <Form.Group className="mb-3" id="formGridCheckbox">
             <Container className='termsContainer'>
-              <Form.Check type="checkbox" checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><Link to='/terms'> terms and conditions.</Link>
+              <Form.Check type="checkbox" style={{cursor:'pointer'}} checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><Link to='/terms'> terms and conditions.</Link>
             </Container>
           </Form.Group>
         </Form>
