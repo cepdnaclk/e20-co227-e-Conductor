@@ -99,7 +99,7 @@ function General({ language }) {
             <PaidOutlinedIcon className='card-icon'/>
             <Container>
               <span>Available Credits</span>
-              {data.credits}
+              LKR {data.credits || 0}
               <Button variant='dark' className='dash-button' onClick={()=>{navigate('/topup')}}>Top-Up</Button>
             </Container>
           </Col>

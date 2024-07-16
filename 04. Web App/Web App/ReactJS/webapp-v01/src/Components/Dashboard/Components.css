@@ -217,7 +217,7 @@
 .settingsPage .information{
     padding: 0;
     margin-bottom: 20px;
-    @media (min-width: 1200px) {
+    @media (min-width: 768px) {
         height: calc(100% - 20px);
     }
     
@@ -228,6 +228,7 @@
     flex-direction: column;
     justify-content: space-between;
     height: auto;
+    min-width: 210px;
 }
 
 .settingsPage .information form{
@@ -235,7 +236,7 @@
     display:'flex';
     justify-content:'space-between';
     height: auto;
-    @media (min-width: 1200px) {
+    @media (min-width: 768px) {
         overflow-y: auto;
         overflow-x: hidden;
         max-height: calc(100% - 50px);

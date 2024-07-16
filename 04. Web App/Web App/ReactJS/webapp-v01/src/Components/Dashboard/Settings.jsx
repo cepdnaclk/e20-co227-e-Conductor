@@ -58,6 +58,7 @@ function validateNICAndBirthday(nic, birthday) {
 function Settings() {
   const navigate = useNavigate();
   const timer = 120; // in seconds
+  const toUpperSet = ["nic", "ntc", "licence", "accNo", "branch"];
 
   // Variable to store updated data
   const [userData, setUserData] = useState({});
@@ -318,7 +319,9 @@ function Settings() {
   const handleSubmit = (e) => {
     e.preventDefault();
     //console.log('Form submitted:', formData);
-    setFormData({...formData, userType:role, empType, mobile});
+    const newMobile = mobile.split('+')[1].replace(/\s+/g, '');
+    //console.log(`newMobile: ${newMobile}`);
+    setFormData({...formData, userType:role, empType, mobile:newMobile});
     setIsSubmitted(true);
   };
 
@@ -373,7 +376,8 @@ function Settings() {
   // Handling form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const newValue = (toUpperSet.includes(name)) ? value.toUpperCase() : value;
+    setFormData({ ...formData, [name]: newValue });
   };
 
   // API to request availability of newly updated data
@@ -411,7 +415,7 @@ function Settings() {
           ToastAlert({
             type: 'success',
             title: 'Data is updated successfully!',
-            onClose: refreshPage()
+            onClose: updateData(formData)
           });
           break;
         }
@@ -434,7 +438,7 @@ function Settings() {
       }
     }
     
-    console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
       const serverResponse = await Request(data, 'OTP');
@@ -461,6 +465,38 @@ function Settings() {
     }
   };
 
+  // Function to get the OTP from server
+  const updateData = async (values) => {
+    // Creating data object
+    const data = {
+      type: 'Req7',
+      data: values
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+
+    try {
+        const serverResponse = await Request(data, 'users');
+        //console.log(`ServerResposne: ${JSON.stringify(serverResponse.data)}`);
+        if (serverResponse.data === 'success') {
+          refreshPage();
+        }
+        else{
+          ToastAlert({
+            type: 'warning',
+            title: 'Your connection is unstable.\nPlease reload page again.',
+            onClose: refreshPage
+          });
+        }
+    } catch (error) {
+        console.error('Error updating user:', error);
+        ToastAlert({
+          type: 'warning',
+          title: 'Your connection is unstable.\nPlease reload page again.',
+          onClose: handleReset
+        });
+    }
+  };
+
   return (
     Object.keys(formData).length > 0 ? (
       <Paper sx={{
@@ -480,7 +516,7 @@ function Settings() {
               General
             </Typography>
 
-            <form onSubmit={handleSubmit}>
+            <form>
               <Typography fontFamily='Open Sans' fontWeight='bold' fontSize='20px'>Personal Infomation</Typography>
               <Container>
                 <Row >
