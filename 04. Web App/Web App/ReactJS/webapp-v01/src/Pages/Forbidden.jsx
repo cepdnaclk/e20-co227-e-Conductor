@@ -1,11 +1,10 @@
 import React from 'react'
-import Footer from '../Components/Footer/Footer2'
 
-export default function Forbidden() {
+export default function Forbidden({ language }) {
   return (
     <div className='body'>
       <h1>OOPS!!! 404 FORBIDDEN</h1>
-      <Footer/>  
+      <h1>Language: {language}</h1>
     </div>
   )
 }

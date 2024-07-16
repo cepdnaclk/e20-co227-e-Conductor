@@ -1,0 +1,13 @@
+// Type the isues in point form
+
+1. waiting for bus halts
+2. Over crowded buses
+3. Disasters due to over crowded buses
+4. Long ques 
+5. Wasting Time
+6. Change to alternative methods
+7. issues on getting the Balance 
+8. Cannot check Avalability of busses
+9. No methods Complains
+10. 
+

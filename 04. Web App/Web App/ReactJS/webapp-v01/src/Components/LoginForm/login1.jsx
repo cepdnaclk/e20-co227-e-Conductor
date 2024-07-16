@@ -6,21 +6,38 @@ import { GoPasskeyFill } from 'react-icons/go';
 import { FaApple, FaEnvelope } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Request } from '../../APIs/Connections';
+import { Request } from '../../APIs/NodeBackend';
+import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
+import { Link } from 'react-router-dom';
 
+function Login({ data, sendResponse, language }) {  // language is not implemented yet
+  // possible responses
+  const userTypes = ['passenger', 'employee', 'owner'];
+  const empTypes  = ['None', 'Driver', 'Conductor', 'Both'];
+  const emailPattren = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
-function Login({ user, mobile, language }) {  // language is not implemented yet
   // variable for mobile number
   const [number, setNumber] = useState('');
 
-  // variable for user id
-  const [userId, setUserId] = useState('');
+  // variable for userData
+  const [userData, setUserData] = useState(data);
 
-
+  // Effect to handle session data
+  useEffect(() => {
+    const fetchData = async () => {
+      const sessionData = await getSessionData();
+      //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
+      setUserData({ ...userData, sessionData: sessionData });
+    };
+  
+    fetchData();
+  }, []);
+   
   // Effect to handle user validation after userId state changes
   useEffect(() => {
-    if(userId === 'invalid') {
+    //console.log(`ServerUserId useEffect:: ${userData.userID}    ServerUserEmail:: ${userData.email}`);
+    if(userData.userID === 'invalid' && userData.email === 'invalid' && userData.userType === 'invalid' && userData.empType === 'invalid') {
       handleNotifications({
         type:'error', 
         title:'Invalid mobile number!', 
@@ -28,15 +45,22 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       });
       //console.log('Invalid mobile number!\nTry again!');
       setNumber('+94');
+      setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
     }
-    else if (userId !== '') {
-      console.log(`UserID: ${userId}  mobile: ${number}`);
-      user(userId);   // Send userId to the parent component
-      mobile(number); // Send mobile number to the parent component
+    else if ((Number.isInteger(userData.userID)) && (emailPattren.test(userData.email)) && (userTypes.includes(userData.userType)) && (empTypes.includes(userData.empType))) {
+      //console.log(`user data:: ${JSON.stringify(userData)}`);
+      sendResponse(userData); // Send data to parent component
     }
-    
-  }, [userId]);
-
+    else if (userData.email !== '' || userData.userID !== '' || userData.userType !== '' || userData.empType !== ''){
+      handleNotifications({
+        type: 'warning',
+        title: 'Network Error!',
+        body: 'Network connection is unstable. Please reload page again.'
+      })
+      setNumber('+94');
+      setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
+    }   
+  }, [userData.userID, userData.email, userData.empType, userData.userType]);
 
   // Handling submit 
   const submit = (e) => {
@@ -51,27 +75,28 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
       setNumber('+94');
     } 
     else {
-      requestUser(number);
+      requestUserDetails(number);
     }
   };
 
-  // Use effect for get the OTP from server
-  const requestUser = async (value) => {
+  // Use effect for get the user id and email from our server
+  const requestUserDetails = async (value) => {
     // Creating data object
     const data = {
-      type: 'Req2', // Uservalidation message
-      data: value
+      type: 'Req1', // User validation message
+      data: value   // Mobile number of the user
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
     try {
-        const serverUserId = await Request(data, 'users');
-        //console.log(`ServerUserId:: ${serverUserId}`);
-        setUserId(serverUserId);  // Change here according to the database name
+        const serverResponse = await Request(data, 'users');
+        const {userID, email, userType, empType} = serverResponse.data;
+        //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
+        setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});
+        
     } catch (error) {
         console.error('Error adding user:', error);
-    }
-      
+    }      
       // setUserId('p1234');
   };
 
@@ -109,7 +134,7 @@ function Login({ user, mobile, language }) {  // language is not implemented yet
           <Button variant="light" className='custombutton2'><FaEnvelope className='icon' /><span className='Button-text'>Continue with Email</span></Button>
         </Container>
         <div className='register'>
-          <p>Don't have an account? <a href={`/signup`}>Register</a> </p>
+          <p>Don't have an account? <Link to={`/signup`} /*onClick={()=>{setAllowNavigate(true)}}*/>Register</Link> </p>
         </div>
       </form>
     </div>

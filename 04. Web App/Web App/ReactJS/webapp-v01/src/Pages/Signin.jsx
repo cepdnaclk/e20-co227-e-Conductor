@@ -3,22 +3,32 @@ import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
 
-export default function Signin( { language } ) {
+export default function Signin( { setIsLogged, language } ) {
+  // Empty data set
+  const emptyData = {
+    userID: '',
+    userType: '',
+    empType: '',
+    mobile: '',
+    email: '',
+    sessionData: { }
+  }  
+  
   // Variable for storing current login state.
-  const [isLoging, setIsLogin] = useState(false);   // boolean
-  const [user, setUser] = useState('');             // User ID or none
-  const [mobile, setMobile] = useState('');         // Mobile number 
+  const [isLoging, setIsLogin] = useState(false);      // boolean
+  const [userData, setUserData] = useState(emptyData); // data Object
 
+  // Handling response
   const handleResponse = (response) =>{
     //console.log('New Login:');
-    //console.log(response);
+    //console.log(`Response:: ${JSON.stringify(response)}`);
+
     if(response === 'none'){
       setIsLogin(false);
-      setUser('');
-      setMobile(''); 
+      setUserData(emptyData);
     }
     else{
-      setUser(response);
+      setUserData(response);
       setIsLogin(true);
     }
   }
@@ -28,11 +38,11 @@ export default function Signin( { language } ) {
       {
         !isLoging ? (
           <>
-            <Login user={handleResponse} mobile={e=>{setMobile(e)}} language={language}/>
+            <Login data={userData} sendResponse={handleResponse} language={language} />
           </>
         ):(
           <>
-            <OTP userID={user} mobile={mobile} sendResponse={handleResponse} language={language}/>
+            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} />
           </>
         )
       }

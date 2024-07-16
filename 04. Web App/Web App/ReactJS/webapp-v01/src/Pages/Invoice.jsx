@@ -8,6 +8,8 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useNavigate } from 'react-router-dom';
+import { Request } from '../APIs/NodeBackend';
 
 export default function InvoicePage({ language }) {
   // Sheet sizes
@@ -15,35 +17,38 @@ export default function InvoicePage({ language }) {
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px
 
   // Getting Ticket Id
-  const ticketNo = localStorage.getItem('TicketNo') || null;
+  const ticketNo = JSON.parse(sessionStorage.getItem('TicketNo'));
 
-  // Dummy data
-  const data = {
-    ticketNo: ticketNo,
-    customerName: 'John\u00a0Doe',
-    customerEmail: 'Johndoe@gmail.com',
-    customerMobile: '+94\u00a070-1523456',
-    issuedDate: '2024-05-01',
-    issuedTime: '15:06:49',
-    vehicalNo: 'NC-1550',
-    type: 'Normal',
-    routeNo: '602',
-    route: 'Kandy-Kurunegala',
-    date: '2024-05-05',
-    time: '15:30',
-    from: 'Kurunegala',
-    to: 'Kandy',
-    journey: '43.00',
-    price: '195.00',
-    full: 2,
-    half: 1,
-    seatNos: '12, 15, 54'
+  // Ticket data
+  const [data, setData] = useState({});
+
+  // Requesting transaction data from node backend
+  const getData = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Tkt2',   // Get invoice infomation from backend
+      data: value
+    }
+    //console.log(`Request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        const serverResponse = await Request(data, 'tickets');
+        //console.log(`Invoice Data:: ${JSON.stringify(serverResponse.data)}`);
+        setData(serverResponse.data);
+    } catch (error) {
+        console.error('Error fetching invoice data:', error);
+    }
   };
 
   // Resizing
   const [scale, setScale] = useState(1);
 
+  // Navigating
+  const navigate = useNavigate();
+
   useEffect(() => {
+    getData(ticketNo);
+
     const handleResize = () => {
       const viewportWidth = window.innerWidth;
       const scaleFactor =  (viewportWidth < A4_WIDTH) ? (viewportWidth / A4_WIDTH) : 1;
@@ -81,7 +86,7 @@ export default function InvoicePage({ language }) {
   };
 
   return ticketNo === null ? (
-    <div>404 Page Not Found</div>
+    navigate('/forbidden')
   ) : (
     <Box sx={{ flexGrow: 1, width: '100vw', height: '100vh', overflow: 'hidden'}}>
       <AppBar position="sticky" sx={{ bgcolor: 'rgb(0,0,0,0.8)', width: '100vw', border:'none' }}>
@@ -111,7 +116,7 @@ export default function InvoicePage({ language }) {
             </IconButton>
 
             <Typography
-              onInput={false}
+              //onInput={false}
               sx={{
                 width:'60px', 
                 height: '22px',

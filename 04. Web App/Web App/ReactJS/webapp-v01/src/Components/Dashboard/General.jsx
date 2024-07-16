@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Components.css'
 import { Button, Col, Container, Image, Row } from 'react-bootstrap';
 import image from '../../Images/logo - Bkgrnd.jpg'
@@ -8,25 +8,38 @@ import CommuteTwoToneIcon from '@mui/icons-material/CommuteTwoTone';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined';
 import { useNavigate } from 'react-router-dom';
+import { Request } from '../../APIs/NodeBackend';
 
 function General({ language }) {
-
   const navigate = useNavigate();
 
-  const data = {
-    name: 'John Doe', 
-    role: 'Passenger',
-    mobile: '+94 701 234 567',
-    email: 'johndoe@gmail.com',
-    rides: '250',
-    tickets: '5',
-    credits: 'LKR 500'
-  }
+  // Getting userID from local storage
+  const userID = JSON.parse(localStorage.getItem('userId'));
 
-  // Handle Click Events
-  const handleClick = (e) => {
-    navigate(`/dashboard/${e.target.id}`);
-  }
+  // Getting userData from node backend
+  const [data, setData] = useState({});
+
+  // Requesting device data from node backend
+  useEffect(()=>{
+    const getData = async (value) => {
+      // Creating data object
+      const data = {
+        type: 'Req4', // Get user infomation from backend
+        data: value
+      }
+      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+  
+      try {
+          const serverResponse = await Request(data, 'users');
+          //console.log(`General infomation:: ${JSON.stringify(serverResponse.data)}`);
+          setData(serverResponse.data);
+      } catch (error) {
+          console.error('Error fetching devices:', error);
+      }
+    };
+
+    getData(userID);
+  }, [])
 
   return (
     <div className='contentArea'>
@@ -43,7 +56,7 @@ function General({ language }) {
             <Row >
               <Col xs={12} lg={6} xxl={5} className='name-box'>
                 <h1>{data.name}</h1>
-                <h4>( {data.role} )</h4>
+                <h4>( {data.userType} )</h4>
               </Col>              
 
               <Col xs={12} lg={6} xxl={7} className='contact--row'>
@@ -54,7 +67,7 @@ function General({ language }) {
                   </Col>
                   
                   <Col  xs={12} xxl={4} style={{ width: '160px', justifyContent:'center', alignItems:'center', display:'flex'}} >
-                    <Button variant='dark' className='dash-button' id='settings' onClick={handleClick}>
+                    <Button variant='dark' className='dash-button' id='settings' onClick={()=>{navigate('/dashboard/settings')}}>
                         Edit Profile</Button>
                   </Col>
                 </Row>
@@ -79,14 +92,14 @@ function General({ language }) {
             <Container>
               <span>Available Tickets</span>
               {data.tickets}
-              <Button variant='dark' className='dash-button' id='tickets' onClick={handleClick}>Use Now</Button>
+              <Button variant='dark' className='dash-button' id='tickets' onClick={()=>{navigate('/dashboard/tickets')}}>Use Now</Button>
             </Container>
           </Col>
           <Col>
             <PaidOutlinedIcon className='card-icon'/>
             <Container>
               <span>Available Credits</span>
-              {data.credits}
+              LKR {data.credits || 0}
               <Button variant='dark' className='dash-button' onClick={()=>{navigate('/topup')}}>Top-Up</Button>
             </Container>
           </Col>

@@ -1,13 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Row, Col, Image } from 'react-bootstrap';
 import { FaEnvelope, FaFacebook, FaFacebookMessenger, FaInstagram, FaLinkedin, FaMapMarkerAlt, FaPhoneAlt, FaWhatsappSquare, FaYoutube } from "react-icons/fa";
 import './Footer2.css';
 import { FaXTwitter } from 'react-icons/fa6';
 import logo from '../../Images/logo - no bkgnd.png'
+import { Link, useLocation } from 'react-router-dom';
 
 function Footer() {
+  const location = useLocation();
+  const specialPages = ["signin", "signup", "invoice"];  // Hide Nav bar for this pages
+
+  // Identify current page
+  const [page, setPage] = useState('home');
+
+  useEffect(() => {
+    const path = location.pathname.split('/')[1];
+    //console.log(`page: ${path}`);
+    setPage(path);
+  }, [location.pathname]);
+
   return (
-    <footer className="footer">
+    specialPages.includes(page) ? (<></>):(
+      <footer className="footer">
         <Row className="custom">
           
           <Col sm={6} md={3} className="footer-column-logo">
@@ -18,11 +32,11 @@ function Footer() {
           <Col sm={6} md={3} className="footer-column">
             <h5><b>Company</b></h5>
             <ul>
-              <li><a href="/:language/about">About us</a></li>
-              <li><a href="/:language/contact">Contact us</a></li>
-              <li><a href="/:language/news">Newsroom</a></li>
-              <li><a href="/:language/privacy">Privacy policy</a></li>
-              <li><a href="/:language/terms">Terms & conditions</a></li>
+              <li><Link to="/about">About us</Link></li>
+              <li><Link to="/contact">Contact us</Link></li>
+              <li><Link to="/news">Newsroom</Link></li>
+              <li><Link to="/privacy">Privacy policy</Link></li>
+              <li><Link to="/terms">Terms & conditions</Link></li>
             </ul>
           </Col>
 
@@ -58,7 +72,8 @@ function Footer() {
             <p>Copyright &copy; {new Date().getFullYear()} e-Conductor. All rights reserved.</p>
           </Col>
         </Row>
-    </footer>
+      </footer>
+    )
   );
 }
 

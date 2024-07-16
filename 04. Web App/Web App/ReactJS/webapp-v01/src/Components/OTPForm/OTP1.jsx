@@ -3,19 +3,19 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Post, Request } from '../../APIs/Connections';
+import { Post, Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({userID, mobile, sendResponse, language}) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language }) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
-
-  // Variable for server OTP
-  const [serverOTP, setServerOTP] = useState('');
-
+  
   // Initialize useNavigate hook
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  // Variable for athentication
+  const [auth, setAuth] = useState(null);
 
   // variable where user entered otp is stored
   const [otp, setOtp] = useState('');
@@ -29,90 +29,6 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
   // variable to store reamining time
   const [time, setTime] = useState(endTime);
 
-
-  // Confirm user and mobile comes correctly
-  useEffect(()=>{
-    //console.log(`OTP SEND:: userID: ${userID}    mobile: ${mobile}`);
-    requestOTP(mobile);
-  }, []);
-
-  
-  // Function to get the OTP from server
-  const requestOTP = async (number) => {
-    // Creating data object
-    const data = {
-      type: 'Req1',
-      data: number
-    }
-    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
-    try {
-        const newOTP = await Request(data, 'OTP');
-        console.log(`New OTP:: ${newOTP}`);
-        setServerOTP(newOTP);
-    } catch (error) {
-        console.error('Error adding user:', error);
-    }
-   //setServerOTP('abc123'); // Remove when connected to server
-  };
-
-  // Function to get the OTP from server
-  const sendLog = async (value) => {
-    // Creating data object
-    const data = {
-      type: 'Post1',    // Posting user login informations
-      data: value
-    }
-    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
-    try {
-        await Post(data, 'logs/users');
-    } catch (error) {
-        console.error('Error adding user:', error);
-    }
-  };
-
-
-  // Use effect for the countdown
-  useEffect(()=>{
-    if(time>0){
-      setTimeout(() => {
-        setTime(time-1);
-      }, 1000);
-    }
-    else{
-      setIsDissable(true);
-      setresendDissable(false);
-      handleNotifications({
-        type:'warning', 
-        title:'Time is out!', 
-        body:'Please click Resend OTP to get a new OTP.'
-      });
-    }
-  }, [time])
-
-  // Function to handle login button
-  const loginHandle = () =>{
-    if(serverOTP === otp){
-      //setVisitor(false);
-      localStorage.setItem('userId', JSON.stringify(userID));
-      navigate('/');
-      handleNotifications({
-        type:'success', 
-        title:'Successful Login!', 
-        body:'Welcome to e-Conductor!.'
-      });
-      sendLog(userID);
-    }
-    else{
-      handleNotifications({
-        type:'error', 
-        title:'Invalid OTP!', 
-        body:'OTP is invalid. Try Again!'
-      });
-      setOtp ('');
-    }
-  }
 
   // Function to handle back button
   const backHandle = () =>{
@@ -133,7 +49,7 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
       setIsDissable(false);
       setOtp('');
       setresendDissable(true);
-      requestOTP(mobile);   // function to get the new OTP from the server
+      requestOTP({mobile: userData.mobile, email: userData.email});   // function to get the new OTP from the server
       handleNotifications({
         type:'info', 
         title:'Resend OTP!', 
@@ -142,6 +58,125 @@ export default function OTP({userID, mobile, sendResponse, language}) { // Langu
     }
   }
 
+  // Function to handle login button
+  const loginHandle = () =>{
+    requestLoginAccess({mobile:userData.mobile, email:userData.email, value:otp, origin:'login'});
+  }
+
+  // Function to get the OTP from server
+  const requestOTP = async (values) => {
+    // Creating data object
+    const data = {
+      type: 'loginOTP',
+      data: values
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+
+    try {
+        await Post(data, 'OTP');
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+  // Function to get logging access
+  const requestLoginAccess = async (values) => {
+    // Creating data object
+    const data = {
+      type: 'verify',
+      data: values
+    }
+    //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
+
+    try {
+        const serverRespose = await Request(data, 'OTP');
+        //console.log(`Authentication: ${serverRespose.data}`);
+        setAuth(JSON.stringify(serverRespose.data));
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+  // Function to get the OTP from server
+  const sendLog = async (value) => {
+    // Creating data object
+    const data = {
+      type: 'Log3',    // Posting user login informations
+      data: value
+    }
+    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+
+    try {
+        await Post(data, 'logs/users');
+    } catch (error) {
+        console.error('Error adding user:', error);
+    }
+  };
+
+  // Send mobile and email to the backend and request OTP
+  useEffect(()=>{
+    //console.log(`OTP SEND:: userID: ${userData.userID}    mobile: ${userData.mobile}   email: ${userData.email}`);
+    requestOTP({mobile: userData.mobile, email: userData.email});
+  }, []);
+
+  // Use effect for the authentication
+  useEffect(()=>{
+    // Valid OTP
+    if(auth === 'true'){
+      localStorage.setItem('userId', JSON.stringify(userData.userID));
+      localStorage.setItem('language', language);
+      localStorage.setItem('userType', JSON.stringify(userData.userType));
+      localStorage.setItem('empType', JSON.stringify(userData.empType));
+      sessionStorage.setItem('isLogged', 'true');
+      sessionStorage.setItem('sessionData', JSON.stringify(userData.sessionData));
+      setIsLogged('true');
+      //setAllowNavigate(true);
+      navigate('/');
+      handleNotifications({
+        type:'success', 
+        title:'Successful Login!', 
+        body:'Welcome to e-Conductor!.'
+      });
+      sendLog(userData);
+    }
+    // Invalid OTP
+    else if(auth === 'false'){
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
+      setOtp ('');
+    }
+    // Errors
+    else if (auth !== null) {
+      handleNotifications({
+        type:'warning', 
+        title:'Network Issue!', 
+        body:'Try Again!'
+      });
+      setOtp ('');
+    }
+  }, [auth]);
+
+  // Use effect for the countdown
+  useEffect(()=>{
+    if(time>0){
+      setTimeout(() => {
+        setTime(time-1);
+      }, 1000);
+    }
+    else{
+      setIsDissable(true);
+      setresendDissable(false);
+      handleNotifications({
+        type:'warning', 
+        title:'Time is out!', 
+        body:'Please click Resend OTP to get a new OTP.'
+      });
+    }
+  }, [time]);
+ 
   return (
     <div className='OTP-Wrappper'>
       <h3>Enter Your OTP</h3>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Container } from 'react-bootstrap';
-import MarkEmailUnreadTwoToneIcon from '@mui/icons-material/MarkEmailUnreadTwoTone';
 import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import DevicesTwoToneIcon from '@mui/icons-material/DevicesTwoTone';
 import PaymentTwoToneIcon from '@mui/icons-material/PaymentTwoTone';
@@ -13,7 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './Menu.css';
 
 
-export default function MenuBar({ language }) {
+export default function MenuBar({ setIsLogged, language }) {
   // variable for navigations  
   const navigate = useNavigate();
 
@@ -37,7 +36,7 @@ export default function MenuBar({ language }) {
 
   // handle logout button
   const logout = () =>{
-    localStorage.removeItem('userId');
+    setIsLogged('false');
     navigate('/');
   }
 
@@ -85,14 +84,14 @@ export default function MenuBar({ language }) {
                 <span> Devices</span>
             </Container>
         
-            <Container 
+            {/*<Container 
                 data-id='messages' 
                 onClick={handleState}
                 className={`clickable-container ${state === 'messages' ? 'active' : ''}`}
             >
                 <MarkEmailUnreadTwoToneIcon className='icon'/> 
                 <span> Messages</span>
-            </Container>
+            </Container>*/}
             
             <Container 
                 data-id='settings' 
@@ -146,13 +145,13 @@ export default function MenuBar({ language }) {
                 <DevicesTwoToneIcon className='icon'/> 
             </Container>
         
-            <Container 
+            {/*<Container 
                 data-id='messages' 
                 onClick={handleState}
                 className={`clickable-container ${state === 'messages' ? 'active' : ''}`}
             >
                 <MarkEmailUnreadTwoToneIcon className='icon'/> 
-            </Container>
+            </Container>*/}
             
             <Container 
                 data-id='settings' 

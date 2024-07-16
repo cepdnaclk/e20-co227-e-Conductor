@@ -10,11 +10,12 @@ export default function Signup({ language }) {
 
   // Variable to store user data
   const [data, setData] = useState({
-    role      : '',
+    userType  : '',
+    empType   : 'None',
     fName     : '',
     lName     : '',
     email     : '',
-    mobile    : '',
+    mobile    : '94',
     nic       : '',
     birthDay  : '',
     ntc       : '',
@@ -30,28 +31,26 @@ export default function Signup({ language }) {
   // Handler for new data
   function handleData(newData) {
     setData(newData);
-    /*
-    console.log("Parent Page: ");
-    console.log(newData);
-    console.log('Page: ' + pageState);
-    */
+    //console.log(`Parent Page: ${JSON.stringify(newData)} \n page: ${pageState}`);
   }
-
+/*
+  useEffect(()=>{
+    console.log(`page: ${pageState}`);
+  },[pageState])
+*/
   return (
     <div className='Login-body'>
       { pageState==='0' ? (
-        <CardHolder Response={setPageState}/>
+        <CardHolder Response={setPageState} language={language}/>
       ):(
         <>
           { pageState === '4' ? 
             ( <OTP formData={data} language={language} sendResponse={setPageState} /> ) : 
-            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language}/> )
+            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language} /> )
           }
         </>               
       )
-      }
-
-      
+      }      
     </div>
   )
 }

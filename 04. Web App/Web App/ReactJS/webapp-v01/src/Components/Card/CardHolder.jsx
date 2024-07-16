@@ -4,10 +4,9 @@ import './CardHolder.css'
 import Im1 from '../../Images/passenger.jpg'
 import Im2 from '../../Images/Driver2.jpg'
 import Im3 from '../../Images/Busowner.jpg'
-import { useState } from 'react';
 
 
-export default function Holder({Response}) {
+export default function Holder({Response, language}) {
     // Handle child response
     const HandleResponse = (value) =>{
         Response(value);
@@ -18,7 +17,7 @@ export default function Holder({Response}) {
         <h1>Sign Up</h1>
         <Row className="CardHolder">
           <Card 
-            event = '1'
+            event = 'passenger'
             image={Im1}
             topic='As a Passenger'
             description='Best palce to get a comfatable and secure ride.'
@@ -27,7 +26,7 @@ export default function Holder({Response}) {
           />
 
           <Card 
-            event = '2'
+            event = 'employee'
             image={Im2}
             topic='As a Driver/ Conductor'
             description='Best palce to provide modern and a enjoyable service.'
@@ -36,7 +35,7 @@ export default function Holder({Response}) {
           />
 
           <Card 
-            event = '3'
+            event = 'owner'
             image={Im3}
             topic='As a Bus Owner'
             description='Find your all incomes and monitor your busses freely. '
