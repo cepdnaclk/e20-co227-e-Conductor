@@ -177,15 +177,22 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
 */
 
   // Filtering and Sorting data
-  const filteredRows = bodyData.filter(row => {
-    const matchesSearchTerm = headerData.some(cell => 
-      String(row[cell.id]).toLowerCase().includes(searching.toLowerCase())
-    );
-    const matchesFilter = filter ? row[filterColumn].toLowerCase().includes(filter.toLowerCase()) : true;
-    return matchesSearchTerm && matchesFilter;
-  });
+  let filteredRows;
+  if (bodyData.length > 0 && bodyData[0].id !== null) {
+    filteredRows = bodyData.filter(row => {
+      const matchesSearchTerm = headerData.some(cell => 
+        String(row[cell.id]).toLowerCase().includes(searching.toLowerCase())
+      );
+      const matchesFilter = filter ? row[filterColumn].toLowerCase().includes(filter.toLowerCase()) : true;
+      return matchesSearchTerm && matchesFilter;
+    });
+  }
+  else{
+    filteredRows = [];
+  }
 
   const sortedRows = React.useMemo(() => {
+    console.log(`filtered List:: ${JSON.stringify(filteredRows)}  type:: ${typeof(filteredRows)}`);
     return filteredRows.sort((a, b) => {
       if (orderBy === 'date') {
         const dateA = new Date(a.date);

@@ -59,7 +59,7 @@
     background-color: rgb(0, 0, 0);
     color: rgb(0, 0, 0);
     border-radius: 25px;
-}
+} 
 
 .menuBar .container:hover, .Collapsed-menuBar .container:hover{
     background-color: rgba(78, 78, 78, 0.589);
