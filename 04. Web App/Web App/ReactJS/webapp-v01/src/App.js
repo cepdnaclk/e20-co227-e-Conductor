@@ -28,7 +28,7 @@ function App() {
   /* Top level controlls for the web app */
 
   // To identify the current language of the webapp
-  const localLanguage = localStorage.getItem('language');
+  const localLanguage = localStorage.getItem('language') || sessionStorage.getItem('language');
   const [language, setLanguage] = useState((localLanguage === 'en' || localLanguage === 'sn') ? localLanguage : 'en');
   
   // To identify the login status
@@ -58,7 +58,7 @@ function App() {
 
   // Finding session status
   useEffect(()=>{
-    const userID = JSON.parse(localStorage.getItem('userId'));
+    const userID = JSON.parse((localStorage.getItem('userId'))) || JSON.parse((sessionStorage.getItem('userId')));
     console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
 
     // If session data is not empty
@@ -81,7 +81,7 @@ function App() {
       sessionStorage.setItem('isLogged', 'true');
     }
     else if(isLogged !== 'none'){
-      const userID = JSON.parse(localStorage.getItem('userId'));
+      const userID = JSON.parse(localStorage.getItem('userId')) || JSON.parse(sessionStorage.getItem('userId'));
 
       if(userID !== null){
         sessionTerminate(userID);

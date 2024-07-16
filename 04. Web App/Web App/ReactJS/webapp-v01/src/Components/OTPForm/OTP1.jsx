@@ -7,7 +7,7 @@ import { Post, Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({setIsLogged, userData, sendResponse, language }) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language, rememberMe }) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
   
@@ -123,10 +123,18 @@ export default function OTP({setIsLogged, userData, sendResponse, language }) { 
   useEffect(()=>{
     // Valid OTP
     if(auth === 'true'){
-      localStorage.setItem('userId', JSON.stringify(userData.userID));
-      localStorage.setItem('language', language);
-      localStorage.setItem('userType', JSON.stringify(userData.userType));
-      localStorage.setItem('empType', JSON.stringify(userData.empType));
+      if(rememberMe){
+        localStorage.setItem('userId', JSON.stringify(userData.userID));
+        localStorage.setItem('language', language);
+        localStorage.setItem('userType', JSON.stringify(userData.userType));
+        localStorage.setItem('empType', JSON.stringify(userData.empType));
+      }
+      else{
+        sessionStorage.setItem('userId', JSON.stringify(userData.userID));;
+        sessionStorage.setItem('language', language);
+        sessionStorage.setItem('userType', JSON.stringify(userData.userType));
+        sessionStorage.setItem('empType', JSON.stringify(userData.empType));
+      }
       sessionStorage.setItem('isLogged', 'true');
       sessionStorage.setItem('sessionData', JSON.stringify(userData.sessionData));
       setIsLogged('true');

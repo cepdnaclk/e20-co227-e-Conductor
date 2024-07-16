@@ -10,12 +10,14 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Devices({setIsLogged, language}) {
   const navigate = useNavigate();
+  const currentSession = JSON.parse(sessionStorage.getItem('sessionData'));
 
   // Getting userID from local storage
   const userID = JSON.parse(localStorage.getItem('userId'));
 
   // Device data
-  const [devices, setDevices] = useState({});
+  const [devices, setDevices] = useState([]);
+  const [currentDevice, setCurrentDevice] = useState({});
 
   // Termination status
   const [isTerminated, setIsTerminated] = useState('none');
@@ -27,7 +29,7 @@ export default function Devices({setIsLogged, language}) {
       getDevices(userID);
       setIsTerminated(false);
     }
-  }, [isTerminated])
+  }, [isTerminated]);
 
   // Requesting device data from node backend
   const getDevices = async (value) => {
@@ -37,11 +39,14 @@ export default function Devices({setIsLogged, language}) {
       data: value
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
     try {
         const serverResponse = await Request(data, 'logs/users');
         //console.log(`Devices:: ${JSON.stringify(serverResponse.data)}`);
-        setDevices(serverResponse.data);
+        const rows = serverResponse.data;
+        const filteredRow = rows.filter(row => ((row.MAC === currentSession.MAC) && (row.browser === currentSession.browser)));
+        //console.log(`filtered Row: ${JSON.stringify(filteredRow[0])}`);
+        setCurrentDevice(filteredRow[0]);
+        setDevices(rows);
     } catch (error) {
         console.error('Error fetching devices:', error);
     }
@@ -104,11 +109,11 @@ export default function Devices({setIsLogged, language}) {
       <TableContainer>
         <Table>
           <TableBody>
-            {devices.length>0 ? (devices.map((row)=>(
-              <TableRow key={row.logID}>
+            {Object.keys(currentDevice).length > 0 ? (
+              <TableRow key={currentDevice.logID}>
                 <TableCell align='center'>
                   {(() => {
-                    switch (row.device) {
+                    switch (currentDevice.device) {
                       case 'PC':
                         return(<ComputerIcon sx={{fontSize: '50px'}}/>)
                       case 'Tablet':
@@ -122,66 +127,93 @@ export default function Devices({setIsLogged, language}) {
                 </TableCell>
 
                 <TableCell>
-                  <Typography sx={{whiteSpace: 'nowrap'}}>MAC: {row.MAC}</Typography>
+                  <Typography sx={{whiteSpace: 'nowrap'}}>MAC: {currentDevice.MAC}</Typography>
                 </TableCell>
 
                 <TableCell>
-                  <Typography sx={{whiteSpace: 'nowrap'}}>{row.OS}</Typography>
-                  <Typography sx={{whiteSpace: 'nowrap'}}>{row.country}</Typography>
-                  {(row.date !== 'Your Current Session') ? (
-                    <Typography sx={{whiteSpace: 'nowrap'}}>{row.date} at {row.time}</Typography>
-                  ) : (
-                    <Typography sx={{whiteSpace: 'nowrap', textJustify: 'center'}}>{row.date} <CheckCircleOutlineIcon color='success' fontSize="17px"/></Typography>
-                  )}
-                  <Typography sx={{whiteSpace: 'nowrap'}}>{row.browser}</Typography>                  
+                  <Typography sx={{whiteSpace: 'nowrap'}}>{currentDevice.OS}</Typography>
+                  <Typography sx={{whiteSpace: 'nowrap'}}>{currentDevice.country}</Typography>
+                  <Typography sx={{whiteSpace: 'nowrap', textJustify: 'center'}}>Your Current Session <CheckCircleOutlineIcon color='success' fontSize="17px"/></Typography>
+                  <Typography sx={{whiteSpace: 'nowrap'}}>{currentDevice.browser}</Typography>                  
                 </TableCell>
 
-                <TableCell sx={{width:'200px'}}>
-                  {(row.date !== 'Your Current Session') ? (
-                    <Button 
-                      variant="outlined" 
-                      size="normal"
-                      name = {row.browser}
-                      value = {row.MAC}
-                      onClick={handleButton} 
-                      sx={{ color: 'black', 
-                            borderColor: 'black', 
-                            fontFamily: 'System-UI', 
-                            fontWeight: 'bold',
-                            whiteSpace:'nowrap',
-                            '&:hover': { 
-                              backgroundColor: 'rgb(0,0,0)',
-                              color: 'white', 
-                              border: 'none'
-                            }
-                          }}
-                    >
-                      Terminate
-                    </Button>
-                  ) : (
-                    <Button 
-                      variant="outlined" 
-                      size="normal"
-                      name = {row.browser}
-                      value = {row.MAC}
-                      onClick={logout} 
-                      sx={{ color: 'black', 
-                            borderColor: 'black', 
-                            fontFamily: 'System-UI', 
-                            fontWeight: 'bold',
-                            whiteSpace:'nowrap',
-                            '&:hover': { 
-                              backgroundColor: 'rgb(0,0,0)',
-                              color: 'white', 
-                              border: 'none'
-                            }
-                          }}
-                    >
-                      Logout
-                    </Button>
-                  )}                  
+                <TableCell align='center' sx={{width:'200px'}}>
+                  <Button 
+                    variant="outlined" 
+                    size="normal"
+                    name = {currentDevice.browser}
+                    value = {currentDevice.MAC}
+                    onClick={logout} 
+                    sx={{ color: 'black', 
+                          borderColor: 'black', 
+                          fontFamily: 'System-UI', 
+                          fontWeight: 'bold',
+                          whiteSpace:'nowrap',
+                          '&:hover': { 
+                            backgroundColor: 'rgb(0,0,0)',
+                            color: 'white', 
+                            border: 'none'
+                          }
+                        }}
+                  >
+                    Logout
+                  </Button>
                 </TableCell>
-              </TableRow>
+              </TableRow>  
+            ) : (<></>)}
+            {devices.length>1 ? (devices.map((row)=>(
+              ((row.MAC === currentSession.MAC) && (row.browser === currentSession.browser)) ? (<></>) : (
+                <TableRow key={row.logID}>
+                  <TableCell align='center'>
+                    {(() => {
+                      switch (row.device) {
+                        case 'PC':
+                          return(<ComputerIcon sx={{fontSize: '50px'}}/>)
+                        case 'Tablet':
+                          return(<TabletIcon sx={{fontSize: '50px'}}/>)
+                        case 'Mobile':
+                          return(<PhoneAndroidIcon sx={{fontSize: '50px'}}/>)
+                        default:
+                          break;                    
+                      }
+                    })()}
+                  </TableCell>
+
+                  <TableCell>
+                    <Typography sx={{whiteSpace: 'nowrap'}}>MAC: {row.MAC}</Typography>
+                  </TableCell>
+
+                  <TableCell>
+                    <Typography sx={{whiteSpace: 'nowrap'}}>{row.OS}</Typography>
+                    <Typography sx={{whiteSpace: 'nowrap'}}>{row.country}</Typography>
+                    <Typography sx={{whiteSpace: 'nowrap'}}>{row.date} at {row.time} </Typography>
+                    <Typography sx={{whiteSpace: 'nowrap'}}>{row.browser}</Typography>                  
+                  </TableCell>
+
+                  <TableCell align='center' sx={{width:'200px'}}>
+                      <Button 
+                        variant="outlined" 
+                        size="normal"
+                        name = {row.browser}
+                        value = {row.MAC}
+                        onClick={handleButton} 
+                        sx={{ color: 'black', 
+                              borderColor: 'black', 
+                              fontFamily: 'System-UI', 
+                              fontWeight: 'bold',
+                              whiteSpace:'nowrap',
+                              '&:hover': { 
+                                backgroundColor: 'rgb(0,0,0)',
+                                color: 'white', 
+                                border: 'none'
+                              }
+                            }}
+                      >
+                        Terminate
+                      </Button>
+                  </TableCell>
+                </TableRow>
+              )
             ))) : (<></>)} 
           </TableBody>
         </Table>

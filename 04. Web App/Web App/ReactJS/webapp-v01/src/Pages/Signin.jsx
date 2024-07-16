@@ -17,6 +17,7 @@ export default function Signin( { setIsLogged, language } ) {
   // Variable for storing current login state.
   const [isLoging, setIsLogin] = useState(false);      // boolean
   const [userData, setUserData] = useState(emptyData); // data Object
+  const [rememberMe, setRememberMe] = useState(emptyData); // boolean
 
   // Handling response
   const handleResponse = (response) =>{
@@ -38,11 +39,11 @@ export default function Signin( { setIsLogged, language } ) {
       {
         !isLoging ? (
           <>
-            <Login data={userData} sendResponse={handleResponse} language={language} />
+            <Login setIsLogged={setIsLogged} data={userData} sendResponse={handleResponse} language={language} rememberMe={setRememberMe} />
           </>
         ):(
           <>
-            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} />
+            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} rememberMe={rememberMe}/>
           </>
         )
       }

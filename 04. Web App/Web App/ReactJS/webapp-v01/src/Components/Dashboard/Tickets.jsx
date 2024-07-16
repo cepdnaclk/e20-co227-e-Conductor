@@ -57,11 +57,11 @@ export default function Tickets({ language }) {
   
       try {
           const serverResponse = await Request(data, 'tickets');
-          //console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}`);
+          console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}  Net Ticket Count:: ${serverResponse.data.tickets.length}`);
           setAvailableTickets(serverResponse.data.available);
           setTickets(serverResponse.data.tickets);
       } catch (error) {
-          console.error('Error fetching devices:', error);
+          console.error('Error fetching tickets:', error);
       }
     };
 
@@ -76,7 +76,7 @@ export default function Tickets({ language }) {
   }
 
   return (
-    tickets.length > 0 ? (
+    tickets.length >= 0 ? (
       <CustomTable 
         headerData={headCells}
         bodyData={tickets}
