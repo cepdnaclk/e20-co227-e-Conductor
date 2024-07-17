@@ -4,7 +4,7 @@ import CardHolder from '../Components/Card/CardHolder';
 import OTP from '../Components/OTPForm/EmailMobileOTP1';
 import './Signin.css';
 
-export default function Signup({ language }) {
+export default function Signup({ language, setLoading }) {
   // Variable for current status of the page
   const [pageState, setPageState] = useState('0');
 
@@ -24,8 +24,8 @@ export default function Signup({ language }) {
     accNo     : '',
     bank      : "Peoples' Bank",
     branch    : '',
-    licenceFile: [], 
-    passbook  : null
+   /*  licenceFile: [], 
+    passbook  : null */
   });
 
   // Handler for new data
@@ -45,12 +45,11 @@ export default function Signup({ language }) {
       ):(
         <>
           { pageState === '4' ? 
-            ( <OTP formData={data} language={language} sendResponse={setPageState} /> ) : 
-            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language} /> )
+            ( <OTP formData={data} language={language} sendResponse={setPageState} setLoading={setLoading} /> ) : 
+            ( <RegistrationForm Data={data} userType={pageState} Response={setPageState} userData={handleData} language={language} setLoading={setLoading} /> )
           }
         </>               
-      )
-      }      
+      )}
     </div>
   )
 }

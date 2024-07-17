@@ -10,7 +10,7 @@ import LocalActivityOutlinedIcon from '@mui/icons-material/LocalActivityOutlined
 import { useNavigate } from 'react-router-dom';
 import { Request } from '../../APIs/NodeBackend';
 
-function General({ language }) {
+function General({ language, setLoading }) {
   const navigate = useNavigate();
 
   // Getting userID from local storage
@@ -30,11 +30,14 @@ function General({ language }) {
       //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
       try {
+          setLoading(true);  // Enabling spinner
           const serverResponse = await Request(data, 'users');
           //console.log(`General infomation:: ${JSON.stringify(serverResponse.data)}`);
           setData(serverResponse.data);
       } catch (error) {
           console.error('Error fetching devices:', error);
+      } finally{
+          setLoading(false);  // Disabling spinner
       }
     };
 

@@ -35,7 +35,7 @@ const headCells = [
 // Filter list
 const filterList = ['Available', 'Used', 'Refunded'];
 
-export default function Tickets({ language }) {
+export default function Tickets({ language, setLoading }) {
   const navigate = useNavigate();
   const userID = JSON.parse(localStorage.getItem('userId'));
   
@@ -56,12 +56,15 @@ export default function Tickets({ language }) {
       console.log(`request message::   type: ${data.type}    data: ${data.data}`);
   
       try {
+          setLoading(true);  // Enabling spinner
           const serverResponse = await Request(data, 'tickets');
-          console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}  Net Ticket Count:: ${serverResponse.data.tickets.length}`);
+          //console.log(`Tickets:: ${JSON.stringify(serverResponse.data)}  Net Ticket Count:: ${serverResponse.data.tickets.length}`);
           setAvailableTickets(serverResponse.data.available);
           setTickets(serverResponse.data.tickets);
       } catch (error) {
           console.error('Error fetching tickets:', error);
+      } finally {
+          setLoading(false);  // Disabling spinner
       }
     };
 

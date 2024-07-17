@@ -23,6 +23,7 @@ import Terms from "./Pages/TermsConditions";
 import { Post, Request } from "./APIs/NodeBackend";
 import { getSessionData } from "./Components/SessionData/Sessions";
 import { PrivertRouteToSignin, PrivertRouteToHome } from "./Routes/PrivertRoutes";
+import { MyBars } from "./Components/Spinners/Spinners";
 
 function App() {
   /* Top level controlls for the web app */
@@ -35,6 +36,9 @@ function App() {
   const login = sessionStorage.getItem('isLogged');
   const [isLogged, setIsLogged] = useState(login !== null ? login : 'none');
   const [sessionData, setSessionData] = useState({});
+  
+  // Handling loading spinner
+  const [loading, setLoading] = useState(false);
 
   /*// To identify the navigation status
   const [allowNavigate, setAllowNavigate] = useState( sessionStorage.getItem('allowNavigate') !== null ? sessionStorage.getItem('allowNavigate') : false );
@@ -160,20 +164,20 @@ function App() {
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language}/>} />
             <Route path = "topup" element={<Topups language={language}/>} />
-            <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} />} >
-              <Route path = "" element={<Navigate to="general" replace/>} />
-              <Route path = "general" element={<General language={language} />}/>
-              <Route path = "transactions" element={<Transactions language={language} />} />
-              <Route path = "tickets" element={<Tickets language={language} />} />
-              <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged} />} />
-              <Route path = "settings" element={<Settings language={language} />} />
+            <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
+              <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />
+              <Route path = "general" element={<General language={language} setLoading={setLoading} />}/>
+              <Route path = "transactions" element={<Transactions language={language} setLoading={setLoading} />} />
+              <Route path = "tickets" element={<Tickets language={language} setLoading={setLoading} />} />
+              <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged} setLoading={setLoading} />} />
+              <Route path = "settings" element={<Settings language={language} setLoading={setLoading} />} />
             </Route>
-            <Route path = "invoice" element={<Invoice language={language} />} />
+            <Route path = "invoice" element={<Invoice language={language} setLoading={setLoading} />} />
           </Route>
 
           <Route element={<PrivertRouteToHome isLogged={isLogged}/>} >
-            <Route path = "signin" element={<Signin setIsLogged={setIsLogged} language={language} />} />
-            <Route path = "signup" element={<Signup language={language} />} />
+            <Route path = "signin" element={<Signin setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} />
+            <Route path = "signup" element={<Signup language={language} setLoading={setLoading} />} />
             <Route path = "verify" element={<VerifyEmail language={language} />} />
           </Route>
 
@@ -183,6 +187,8 @@ function App() {
         </Routes>
         
         <Footer/>
+
+        {loading ? <MyBars /> : <></>}
       </BrowserRouter>      
     </div>
   );

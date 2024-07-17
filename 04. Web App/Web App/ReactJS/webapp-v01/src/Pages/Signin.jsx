@@ -2,9 +2,8 @@ import React, { useState } from 'react'
 import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
-import { MyBars } from '../Components/Spinners/Spinners'
 
-export default function Signin( { setIsLogged, language } ) {
+export default function Signin( { setIsLogged, language , setLoading } ) {
   // Empty data set
   const emptyData = {
     userID: '',
@@ -19,7 +18,6 @@ export default function Signin( { setIsLogged, language } ) {
   const [isLoging, setIsLogin] = useState(false);      // boolean
   const [userData, setUserData] = useState(emptyData); // data Object
   const [rememberMe, setRememberMe] = useState(emptyData); // boolean
-  const [loading, setLoading] = useState(false);       // boolean
 
   // Handling response
   const handleResponse = (response) =>{
@@ -49,7 +47,6 @@ export default function Signin( { setIsLogged, language } ) {
           </>
         )
       }
-      { loading ? (<MyBars/>) : (<></>)}
     </div>
   )
 }

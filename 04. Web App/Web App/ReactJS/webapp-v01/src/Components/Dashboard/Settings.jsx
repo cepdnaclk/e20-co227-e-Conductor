@@ -4,7 +4,7 @@ import { TextField, Button, Box, Typography, Paper, FormControl, InputLabel, Sel
 import MenuItem from '@mui/material/MenuItem';
 import { MuiTelInput } from 'mui-tel-input';
 import { Col, Container, Row } from 'react-bootstrap';
-import { Post, Request } from '../../APIs/NodeBackend';
+import { Request } from '../../APIs/NodeBackend';
 import { AndroidSwitch } from '../InputItems/Switches';
 import { ToastAlert } from '../MyNotifications/WindowAlerts';
 import RadioInput from '../InputItems/RadioInput';
@@ -55,7 +55,7 @@ function validateNICAndBirthday(nic, birthday) {
   return extractedBirthday === birthday;
 }
 
-function Settings() {
+function Settings({ language, setLoading }) {
   const navigate = useNavigate();
   const timer = 120; // in seconds
   const toUpperSet = ["nic", "ntc", "licence", "accNo", "branch"];
@@ -97,11 +97,14 @@ function Settings() {
       //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
       try {
+        setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'users');
         //console.log(`Server Response:: ${JSON.stringify(serverResponse.data)}`);
         setUserData(serverResponse.data);
       } catch (error) {
         console.error('Error adding user:', error);
+      } finally {
+        setLoading(false);  // Disabling spinner
       }
     }
 
@@ -391,11 +394,14 @@ function Settings() {
     //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
+      setLoading(true);  // Enabling spinner
       const serverResponse = await Request(data, 'users');
       //console.log(`Server Response:: user availability:${JSON.stringify(serverResponse.data)}`);
       setIsValid(serverResponse.data);
     } catch (error) {
       console.error('Error adding user:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   }
   
@@ -441,11 +447,14 @@ function Settings() {
     //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
+      setLoading(true);  // Enabling spinner
       const serverResponse = await Request(data, 'OTP');
       //console.log(`Server Response:: OTP status:${JSON.stringify(serverResponse.data)}`);
       action(JSON.stringify(serverResponse.data));
     } catch (error) {
       console.error('Error adding user:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   }
   
@@ -459,7 +468,17 @@ function Settings() {
     console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
-        Post(data, 'OTP');
+        setLoading(true);  // Enabling spinner
+        const serverResponse = await Request(data, 'OTP');
+        setLoading(false);  // Disabling spinner
+
+        // Need to handle if needed
+        if( serverResponse.data === 'success') {
+          console.log('otp send!');
+        } else {
+          console.log('error in sending otp!');
+        }
+
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -475,8 +494,10 @@ function Settings() {
     //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
+        setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'users');
         //console.log(`ServerResposne: ${JSON.stringify(serverResponse.data)}`);
+        setLoading(false);  // Disabling spinner
         if (serverResponse.data === 'success') {
           refreshPage();
         }

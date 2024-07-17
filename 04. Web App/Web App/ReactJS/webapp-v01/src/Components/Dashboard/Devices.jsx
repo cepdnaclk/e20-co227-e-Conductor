@@ -5,10 +5,10 @@ import TabletIcon from '@mui/icons-material/Tablet';
 import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Post, Request } from '../../APIs/NodeBackend';
+import { Request } from '../../APIs/NodeBackend';
 import { useNavigate } from 'react-router-dom';
 
-export default function Devices({setIsLogged, language}) {
+export default function Devices({setIsLogged, language, setLoading}) {
   const navigate = useNavigate();
   const currentSession = JSON.parse(sessionStorage.getItem('sessionData'));
 
@@ -25,7 +25,7 @@ export default function Devices({setIsLogged, language}) {
   useEffect(()=>{
     //console.log(`Getting devices  isTerminated: ${isTerminated}`);
     if(isTerminated === true || isTerminated==='none'){
-      console.log(`Searching Devices`);
+      //console.log(`Searching Devices`);
       getDevices(userID);
       setIsTerminated(false);
     }
@@ -40,6 +40,7 @@ export default function Devices({setIsLogged, language}) {
     }
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
     try {
+        setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'logs/users');
         //console.log(`Devices:: ${JSON.stringify(serverResponse.data)}`);
         const rows = serverResponse.data;
@@ -49,6 +50,8 @@ export default function Devices({setIsLogged, language}) {
         setDevices(rows);
     } catch (error) {
         console.error('Error fetching devices:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   } ;
 
@@ -67,11 +70,32 @@ export default function Devices({setIsLogged, language}) {
 
     try {
         // Need to update with checking status code
+        setLoading(true);
+        const serverResponse = await Request(data, 'logs/users');
         setIsTerminated(true);
-        await Post(data, 'logs/users');
+        setLoading(false);
+
+        if(serverResponse.data === 'success'){
+          handleNotifications({
+            type:'success', 
+            title:'Successfull Termination', 
+            body:`Successfully terminate the session with \n MAC: ${values.mac}.`
+          });
+        } else {
+          handleNotifications({
+            type:'error', 
+            title:'Termination is Failed!', 
+            body:`Termination is failed. Try again!`
+          });
+        }
         console.log('Setting isTerminated to true');
     } catch (error) {
         console.error(`Error in terminating session: ${error} \n Refresh your browser.`);
+        handleNotifications({
+          type:'warning', 
+          title:'Network Error!', 
+          body:`Your connection is unstable. Please reload page again!`
+        });
     }
   }
   
@@ -84,12 +108,6 @@ export default function Devices({setIsLogged, language}) {
   // Handle Button Click
   const handleButton = (e) =>{
     //sconsole.log(`Button is Clicked. Terminate the session with MAC: ${e.target.value} , ${e.target.name}.`);
-    handleNotifications({
-      type:'success', 
-      title:'Successfull Termination', 
-      body:`Successfully terminate the session with \n MAC: ${e.target.value}.`
-    });
-
     // Function to API call with backend
     sessionTerminate({userID:userID, mac:e.target.value, browser:e.target.name});
   }
@@ -162,8 +180,8 @@ export default function Devices({setIsLogged, language}) {
               </TableRow>  
             ) : (<></>)}
             {devices.length>1 ? (devices.map((row)=>(
-              ((row.MAC === currentSession.MAC) && (row.browser === currentSession.browser)) ? (<></>) : (
                 <TableRow key={row.logID}>
+                {((row.MAC === currentSession.MAC) && (row.browser === currentSession.browser)) ? (<></>) : (<>
                   <TableCell align='center'>
                     {(() => {
                       switch (row.device) {
@@ -212,9 +230,9 @@ export default function Devices({setIsLogged, language}) {
                         Terminate
                       </Button>
                   </TableCell>
+                </>)}
                 </TableRow>
-              )
-            ))) : (<></>)} 
+             ))) : (<></>) } 
           </TableBody>
         </Table>
       </TableContainer>   
