@@ -3,11 +3,11 @@ import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
-import { Post, Request } from '../../APIs/NodeBackend';
+import { Request } from '../../APIs/NodeBackend';
 import './OTP1.css'
 
 
-export default function OTP({setIsLogged, userData, sendResponse, language, rememberMe }) { // Language is not implemented yet
+export default function OTP({setIsLogged, userData, sendResponse, language, rememberMe, setLoading }) { // Language is not implemented yet
   // Variable for initial count
   let endTime = 120;
   
@@ -46,21 +46,30 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
     }
     else{
       setTime(endTime);
-      setIsDissable(false);
-      setOtp('');
-      setresendDissable(true);
+      setIsDissable(false); // Disable OPT field
       requestOTP({mobile: userData.mobile, email: userData.email});   // function to get the new OTP from the server
+      setOtp('');
       handleNotifications({
         type:'info', 
         title:'Resend OTP!', 
         body:'New OTP is sent to your mobile number.'
-      });
+      }); 
     }
   }
 
   // Function to handle login button
   const loginHandle = () =>{
-    requestLoginAccess({mobile:userData.mobile, email:userData.email, value:otp, origin:'login'});
+    //console.log(`otp: ${otp}`);
+    if (otp !== '') {
+      requestLoginAccess({mobile:userData.mobile, email:userData.email, value:otp, origin:'login'});
+    }
+    else {
+      handleNotifications({
+        type:'error', 
+        title:'Invalid OTP!', 
+        body:'OTP is invalid. Try Again!'
+      });
+    }
   }
 
   // Function to get the OTP from server
@@ -73,9 +82,15 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
     //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
-        await Post(data, 'OTP');
+        setLoading(true);  // Enabling spinner
+        const ServerResponse = await Request(data, 'OTP');
+        if (ServerResponse.data === 'success') {
+          setresendDissable(true);
+        }
     } catch (error) {
         console.error('Error adding user:', error);
+    } finally {
+        setLoading(false);  // Disabling spinner
     }
   };
 
@@ -89,11 +104,14 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
     //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
 
     try {
+        setLoading(true);  // Enabling spinner
         const serverRespose = await Request(data, 'OTP');
         //console.log(`Authentication: ${serverRespose.data}`);
         setAuth(JSON.stringify(serverRespose.data));
     } catch (error) {
         console.error('Error adding user:', error);
+    } finally {
+        setLoading(false);  // Dissabling spinner
     }
   };
 
@@ -107,9 +125,27 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
-        await Post(data, 'logs/users');
+      setLoading(true);  // Enabling spinner
+      const serverRespose = await Request(data, 'logs/users');
+      setLoading(false);  // Dissabling spinner
+      if (serverRespose.data === 'success') {
+        setIsLogged('true');
+        navigate('/');
+        handleNotifications({
+          type:'success', 
+          title:'Successful Login!', 
+          body:'Welcome to e-Conductor!.'
+        });
+      }
+      else{
+        handleNotifications({
+          type:'error', 
+          title:'Login is Failed!', 
+          body:'Try Again!'
+        });
+      }
     } catch (error) {
-        console.error('Error adding user:', error);
+      console.error('Error loggin user:', error);
     }
   };
 
@@ -137,14 +173,6 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
       }
       sessionStorage.setItem('isLogged', 'true');
       sessionStorage.setItem('sessionData', JSON.stringify(userData.sessionData));
-      setIsLogged('true');
-      //setAllowNavigate(true);
-      navigate('/');
-      handleNotifications({
-        type:'success', 
-        title:'Successful Login!', 
-        body:'Welcome to e-Conductor!.'
-      });
       sendLog(userData);
     }
     // Invalid OTP
@@ -165,6 +193,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
       });
       setOtp ('');
     }
+    setAuth(null);
   }, [auth]);
 
   // Use effect for the countdown

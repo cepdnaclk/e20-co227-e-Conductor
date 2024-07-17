@@ -12,7 +12,7 @@ import './login1.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaFacebookF } from 'react-icons/fa';
 
-function Login({ data, sendResponse, language, setIsLogged, rememberMe }) {  // language is not implemented yet
+function Login({ data, sendResponse, language, setIsLogged, rememberMe, setLoading }) {  // language is not implemented yet
   const navigate = useNavigate();
 
   // possible responses
@@ -32,6 +32,16 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe }) {  // 
   // Effect to handle session data
   useEffect(() => {
     const fetchData = async () => {
+      /* try {
+        setLoading(true); // show spinner
+        const sessionData = await getSessionData();
+        //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
+        setUserData({ ...userData, sessionData: sessionData });        
+      } catch (error) {
+        console.log(`Error in sessionData fetching`);
+      } finally {
+        setLoading(false);
+      } */
       const sessionData = await getSessionData();
       //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
       setUserData({ ...userData, sessionData: sessionData });
@@ -100,10 +110,11 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe }) {  // 
       //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
     
       try {
+          setLoading(true);
           const serverResponse = await Request(data, 'other');
-          const {status, userID, email, userType, empType} = serverResponse.data;
+          const {status, userID, userType, empType} = serverResponse.data;
           //console.log(`ServerResponse:: Login is: ${status}  UserId:: ${userID}  ServerUserEmail:: ${email}  serverUserType: ${userType}  serverEmpType: ${empType}`);
-
+          setLoading(false);
           if (status === 'success') {
             console.log('login is successful!');
 
@@ -161,7 +172,7 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe }) {  // 
   // Handling rememberMe
   const handleRemember = () =>{
     setRemember(!remember);
-    console.log('Remember Me:',remember);
+    //console.log('Remember Me:',remember);
   }
 
   // Use effect for get the user id and email from our server
@@ -174,15 +185,16 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe }) {  // 
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
     try {
+        setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'users');
         const {userID, email, userType, empType} = serverResponse.data;
         //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
         setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});
-        
     } catch (error) {
         console.error('Error adding user:', error);
-    }      
-      // setUserId('p1234');
+    } finally {
+      setLoading(false);  // Disabling spinner
+    }
   };
 
   return (

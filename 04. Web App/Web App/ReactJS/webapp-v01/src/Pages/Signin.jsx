@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
+import { MyBars } from '../Components/Spinners/Spinners'
 
 export default function Signin( { setIsLogged, language } ) {
   // Empty data set
@@ -18,6 +19,7 @@ export default function Signin( { setIsLogged, language } ) {
   const [isLoging, setIsLogin] = useState(false);      // boolean
   const [userData, setUserData] = useState(emptyData); // data Object
   const [rememberMe, setRememberMe] = useState(emptyData); // boolean
+  const [loading, setLoading] = useState(false);       // boolean
 
   // Handling response
   const handleResponse = (response) =>{
@@ -39,14 +41,15 @@ export default function Signin( { setIsLogged, language } ) {
       {
         !isLoging ? (
           <>
-            <Login setIsLogged={setIsLogged} data={userData} sendResponse={handleResponse} language={language} rememberMe={setRememberMe} />
+            <Login setIsLogged={setIsLogged} data={userData} sendResponse={handleResponse} language={language} rememberMe={setRememberMe} setLoading={setLoading}/>
           </>
         ):(
           <>
-            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} rememberMe={rememberMe}/>
+            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} rememberMe={rememberMe} setLoading={setLoading}/>
           </>
         )
       }
+      { loading ? (<MyBars/>) : (<></>)}
     </div>
   )
 }
