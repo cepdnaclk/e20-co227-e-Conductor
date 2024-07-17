@@ -44,7 +44,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       const sessionData = await getSessionData();
-      console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
+      //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
       setSessionData(sessionData);
     };
     if(isLogged === 'true'){
@@ -59,11 +59,11 @@ function App() {
   // Finding session status
   useEffect(()=>{
     const userID = JSON.parse((localStorage.getItem('userId'))) || JSON.parse((sessionStorage.getItem('userId')));
-    console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
+    //console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
 
     // If session data is not empty
     if(isLogged!=='true' && Object.keys(sessionData).length > 0){
-      console.log("session validating!");
+      //console.log("session validating!");
       sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
 
       if (userID !== null){
@@ -76,7 +76,7 @@ function App() {
   },[sessionData])
 
   useEffect(()=>{
-    console.log(`isLogged: ${isLogged}  typeof(isLogged):: ${typeof(isLogged)}`);
+    //console.log(`isLogged: ${isLogged}  typeof(isLogged):: ${typeof(isLogged)}`);
     if(isLogged === 'true'){
       sessionStorage.setItem('isLogged', 'true');
     }
@@ -86,7 +86,7 @@ function App() {
       if(userID !== null){
         sessionTerminate(userID);
       }
-      console.log(`removed user : ${userID}`);
+      //console.log(`removed user : ${userID}`);
       localStorage.clear();
       sessionStorage.clear();
     }
@@ -106,7 +106,7 @@ function App() {
 
     try {
         const serverResponse = await Request(data, 'logs/users');
-        console.log(`Session Status:: ${serverResponse.data}`);
+        //console.log(`Session Status:: ${serverResponse.data}`);
         setIsLogged(serverResponse.data==='active' ? 'true' : 'false');
     } catch (error) {
         console.error(`Error finding session status: ${error} \n Refresh your browser.`);
