@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import './OTP1.css'
 import OTPInput from 'react-otp-input'
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications'
-import { Request, Post } from '../../APIs/NodeBackend';
+import { Request } from '../../APIs/NodeBackend';
+import './OTP1.css'
 
-export default function OTP({formData, sendResponse}) {
+export default function OTP({formData, sendResponse, setLoading}) {
   // Variable for initial count
   let endTime = 120;
 
@@ -52,11 +52,8 @@ export default function OTP({formData, sendResponse}) {
     else{
       setTime(endTime);
       setIsDissable(false);
-      //requestOTP(formData.mobile);
       requestOTP({mobile:formData.mobile, email:formData.email});
       setOtp('');
-      setresendDissable(true);
-      // function to get the new OTP from the server
       handleNotifications({
         type:'info', 
         title:'Resend OTP!', 
@@ -76,9 +73,15 @@ export default function OTP({formData, sendResponse}) {
     //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
-        await Post(data, 'OTP');
+        setLoading(true);  // Enabling spinner
+        const ServerResponse = await Request(data, 'OTP');
+        if (ServerResponse.data === 'success') {
+          setresendDissable(true);
+        }
     } catch (error) {
         console.error('Error adding user:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   };
 
@@ -92,11 +95,14 @@ export default function OTP({formData, sendResponse}) {
     //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
 
     try {
+        setLoading(true);  // Enabling spinner
         const serverRespose = await Request(data, 'OTP');
         //console.log(`Authentication: ${serverRespose.data}`);
         setAuth(JSON.stringify(serverRespose.data));
     } catch (error) {
         console.error('Error adding user:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   };
 
@@ -107,11 +113,28 @@ export default function OTP({formData, sendResponse}) {
     type: 'Req3',  // Posting new user login details
     data: value
     }
-    //console.log(`request message::   type: ${data.type}      data: ${data.data.licenceFile[0]}`);
+    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data)}`);
 
     try {
-        await Post(data, 'users');
-        console.log(`Registered Successfully`);
+        setLoading(true);  // Enabling spinner  
+        const serverRespose = await Request(data, 'users');
+        //console.log(`Registered Successfully`);
+        setLoading(false);  // Disabling spinner
+        if (serverRespose.data === 'success') {
+          navigate('/verify');
+          handleNotifications({
+            type:'success', 
+            title:'Registration Successful!', 
+            body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
+          });
+        }
+        else{
+          handleNotifications({
+            type:'error', 
+            title:'Login is Failed!', 
+            body:'Try Again!'
+          });
+        }
     } catch (error) {
         console.error('Error adding user:', error);
     }
@@ -127,13 +150,6 @@ export default function OTP({formData, sendResponse}) {
   // Use effect for the authentication
   useEffect(()=>{
     if(auth === 'true'){
-      navigate('/verify');
-      //setAllowNavigate(true);
-      handleNotifications({
-        type:'success', 
-        title:'Registration Successful!', 
-        body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
-      });
       sendData(formData);      
     }
     else if(auth === 'false'){
@@ -152,6 +168,7 @@ export default function OTP({formData, sendResponse}) {
       });
       setOtp ('');
     }
+    setAuth(null);
   }, [auth]);
 
   // Use effect for the countdown
@@ -193,6 +210,7 @@ export default function OTP({formData, sendResponse}) {
             backgroundColor: 'rgba(255, 255, 255, 0.795)',
             color: 'black',
             fontSize: '20px',
+            cursor: 'pointer'
           }}
         />
       </div>
@@ -203,7 +221,7 @@ export default function OTP({formData, sendResponse}) {
       </div>
       
       {/* Edit URL Here */}
-      <label>Didn't recive an OTP? <span onClick = {resendHandle} disabled = {resendDissable}><b><u> Resend OTP </u></b></span></label>
+      <label>Didn't recive an OTP? <span onClick = {resendHandle} disabled = {resendDissable} style={{cursor:'pointer'}}><b><u> Resend OTP </u></b></span></label>
 
     </div>
   )

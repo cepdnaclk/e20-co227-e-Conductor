@@ -11,7 +11,7 @@ import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 import { Link } from 'react-router-dom';
 
 
-export default function SignUp1({Data, userType, Response, userData, language}) {
+export default function SignUp1({Data, userType, Response, userData, language, setLoading}) {
   // Empty Data set
   const emptyData = {
     userType  : userType,
@@ -28,8 +28,8 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
     accNo     : '',
     bank      : "Peoples' Bank",
     branch    : '',
-    licenceFile: [], 
-    passbook: null
+    /* licenceFile: [], 
+    passbook: null */
   }
 
   // Special Input fileds
@@ -75,11 +75,14 @@ export default function SignUp1({Data, userType, Response, userData, language}) 
     }
     //console.log(`New rquest:: type: ${data.type}   mobile: ${data.data.mobile}   email: ${data.data.email}`);
     try {
+      setLoading(true);  // Enabling spinner
       const serverResponse = await Request(data, 'users');
       //console.log(`User availability:: ${serverResponse.data}`);
       setIsAvailable(serverResponse.data);
     } catch (error) {
       console.error('Error checking availability:', error);
+    } finally {
+      setLoading(false);  // Disabling spinner
     }
   }
 
