@@ -27,7 +27,7 @@ const headCells = [
   },
 ];
 
-function Transactions({ language }) {
+function Transactions({ language, setLoading }) {
   const userID = JSON.parse(localStorage.getItem('userId'));
   const userType = JSON.parse(localStorage.getItem('userId'));
   
@@ -51,12 +51,15 @@ function Transactions({ language }) {
       console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
       try {
+          setLoading(true);  // Enabling spinner
           const serverResponse = await Request(data, 'transactions');
           //console.log(`Transactions:: ${JSON.stringify(serverResponse.data)}`);
           setCredits(serverResponse.data.credits);
           setTransaction(serverResponse.data.transaction);
       } catch (error) {
           console.error('Error fetching devices:', error);
+      } finally {
+          setLoading(false);  // Disabling spinner
       }
     };
 
