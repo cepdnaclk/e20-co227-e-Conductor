@@ -11,7 +11,7 @@ import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { Request } from '../APIs/NodeBackend';
 
-export default function InvoicePage({ language }) {
+export default function InvoicePage({ language, setLoading }) {
   // Sheet sizes
   const A4_WIDTH = 210 * 3.7795275591; // in cm -> px
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px
@@ -32,11 +32,14 @@ export default function InvoicePage({ language }) {
     //console.log(`Request message::   type: ${data.type}      data: ${data.data}`);
 
     try {
+        setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'tickets');
         //console.log(`Invoice Data:: ${JSON.stringify(serverResponse.data)}`);
         setData(serverResponse.data);
     } catch (error) {
         console.error('Error fetching invoice data:', error);
+    } finally {
+        setLoading(false);  // Disabling spinner
     }
   };
 

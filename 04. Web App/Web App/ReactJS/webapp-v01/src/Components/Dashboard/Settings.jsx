@@ -108,7 +108,7 @@ function Settings({ language, setLoading }) {
       }
     }
 
-    const id = localStorage.getItem('userId');
+    const id = (localStorage.getItem('userId') || sessionStorage.getItem('userId'));
     if(id !== null){
       fetch(id);
     }

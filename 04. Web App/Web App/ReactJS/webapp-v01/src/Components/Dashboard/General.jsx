@@ -14,7 +14,7 @@ function General({ language, setLoading }) {
   const navigate = useNavigate();
 
   // Getting userID from local storage
-  const userID = JSON.parse(localStorage.getItem('userId'));
+  const userID = JSON.parse(localStorage.getItem('userId') || JSON.parse(sessionStorage.getItem('userId')));
 
   // Getting userData from node backend
   const [data, setData] = useState({});
