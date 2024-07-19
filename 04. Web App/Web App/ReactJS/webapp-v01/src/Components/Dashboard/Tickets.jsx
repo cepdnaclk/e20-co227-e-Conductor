@@ -37,7 +37,7 @@ const filterList = ['Available', 'Used', 'Refunded'];
 
 export default function Tickets({ language, setLoading }) {
   const navigate = useNavigate();
-  const userID = JSON.parse(localStorage.getItem('userId'));
+  const userID = JSON.parse(localStorage.getItem('userId') || JSON.parse(sessionStorage.getItem('userId')));
   
   // Variable for storing credits
   const [availableTickets, setAvailableTickets] = useState(0);
@@ -53,7 +53,7 @@ export default function Tickets({ language, setLoading }) {
         type: 'Tkt1',   // Get ticket infomation from backend
         data: value
       }
-      console.log(`request message::   type: ${data.type}    data: ${data.data}`);
+      //console.log(`request message::   type: ${data.type}    data: ${data.data}`);
   
       try {
           setLoading(true);  // Enabling spinner

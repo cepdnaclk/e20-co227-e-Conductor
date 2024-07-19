@@ -28,8 +28,8 @@ const headCells = [
 ];
 
 function Transactions({ language, setLoading }) {
-  const userID = JSON.parse(localStorage.getItem('userId'));
-  const userType = JSON.parse(localStorage.getItem('userId'));
+  const userID = JSON.parse(localStorage.getItem('userId') || JSON.parse(sessionStorage.getItem('userId')));
+  const userType = JSON.parse(localStorage.getItem('userType')) || JSON.parse(sessionStorage.getItem('userType'));
   
   // Filter list
   const filterList = (userType === 'owner') ? ['Payment', 'Top-Up', 'Refund', 'Income'] : ['Payment', 'Top-Up', 'Refund'];
@@ -42,13 +42,14 @@ function Transactions({ language, setLoading }) {
  
   // Requesting transaction data from node backend
   useEffect(()=>{
+    //console.log(`userType:: ${userType}  userId: ${userID}`);
     const getData = async (value) => {
       // Creating data object
       const data = {
         type: 'Trans1',   // Get transaction infomation from backend
         data: value
       }
-      console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
   
       try {
           setLoading(true);  // Enabling spinner

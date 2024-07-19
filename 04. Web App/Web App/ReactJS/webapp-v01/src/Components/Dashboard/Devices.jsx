@@ -13,7 +13,7 @@ export default function Devices({setIsLogged, language, setLoading}) {
   const currentSession = JSON.parse(sessionStorage.getItem('sessionData'));
 
   // Getting userID from local storage
-  const userID = JSON.parse(localStorage.getItem('userId'));
+  const userID = JSON.parse(localStorage.getItem('userId') || JSON.parse(sessionStorage.getItem('userId')));
 
   // Device data
   const [devices, setDevices] = useState([]);

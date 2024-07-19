@@ -192,7 +192,7 @@ export default function CustomTable({ headerData, bodyData, title, filterData, f
   }
 
   const sortedRows = React.useMemo(() => {
-    console.log(`filtered List:: ${JSON.stringify(filteredRows)}  type:: ${typeof(filteredRows)}`);
+    //console.log(`filtered List:: ${JSON.stringify(filteredRows)}  type:: ${typeof(filteredRows)}`);
     return filteredRows.sort((a, b) => {
       if (orderBy === 'date') {
         const dateA = new Date(a.date);
