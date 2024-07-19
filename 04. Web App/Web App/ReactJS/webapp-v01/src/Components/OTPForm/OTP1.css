@@ -25,6 +25,10 @@
     width: 100%;
 }
 
+.OTP-Wrappper label span{
+    cursor: pointer;
+}
+
 .otp-area{
     justify-content: center;
     display: flex;
