@@ -301,6 +301,7 @@ function Settings({ language, setLoading }) {
   }, [isValid]);
 
   const refreshPage = () =>{
+    saveState();
     setTimeout(() => {
       //console.log('refresh');
       navigate(0);  
@@ -382,6 +383,23 @@ function Settings({ language, setLoading }) {
     const newValue = (toUpperSet.includes(name)) ? value.toUpperCase() : value;
     setFormData({ ...formData, [name]: newValue });
   };
+
+  // Save new states
+  const saveState = () =>{
+    if (!!localStorage.getItem('userId')){
+      console.log("Save to local storage");
+      localStorage.setItem('userType', JSON.stringify(role));
+      localStorage.setItem('empType', JSON.stringify(empType));
+    }
+    else if (!!sessionStorage.getItem('userId')){
+      console.log("Save to session storage");
+      sessionStorage.setItem('userType', JSON.stringify(role));
+      sessionStorage.setItem('empType', JSON.stringify(empType));
+    }
+    else{
+      console.log('dump');
+    }
+  }
 
   // API to request availability of newly updated data
   const chkAvailability = async(values) =>{

@@ -33,8 +33,7 @@ function App() {
   const [language, setLanguage] = useState((localLanguage === 'en' || localLanguage === 'sn') ? localLanguage : 'en');
   
   // To identify the login status
-  const login = sessionStorage.getItem('isLogged');
-  const [isLogged, setIsLogged] = useState(login !== null ? login : 'none');
+  const [isLogged, setIsLogged] = useState(sessionStorage.getItem('isLogged') || 'none');
   const [sessionData, setSessionData] = useState({});
   
   // Handling loading spinner
@@ -51,13 +50,8 @@ function App() {
       //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
       setSessionData(sessionData);
     };
-    if(isLogged === 'true'){
-      //console.log(sessionStorage.getItem('sessionData'));
-      setSessionData(JSON.parse(sessionStorage.getItem('sessionData')));
-    }
-    else{
-      fetchData();
-    }
+    
+    fetchData();
   }, []);
 
   // Finding session status
@@ -66,7 +60,7 @@ function App() {
     //console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
 
     // If session data is not empty
-    if(isLogged!=='true' && Object.keys(sessionData).length > 0){
+    if(Object.keys(sessionData).length > 0){
       //console.log("session validating!");
       sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
 
@@ -110,8 +104,8 @@ function App() {
 
     try {
         const serverResponse = await Request(data, 'logs/users');
-        //console.log(`Session Status:: ${serverResponse.data}`);
-        setIsLogged(serverResponse.data==='active' ? 'true' : 'false');
+        //console.log(`Server Response:: ${JSON.stringify(serverResponse.data)}`);
+        setIsLogged(serverResponse.data === 'active' ? 'true' : 'false');
     } catch (error) {
         console.error(`Error finding session status: ${error} \n Refresh your browser.`);
     }
@@ -128,10 +122,10 @@ function App() {
         browser: sessionData.browser,
       }
     }
-    console.log(`post message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    //console.log(`Terminate Session::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
-        await Post(data, 'logs/users');
+        Post(data, 'logs/users');
         //console.log(`Session Status:: ${serverResponse.data}`);
     } catch (error) {
         console.error(`Error in terminating session: ${error} \n Refresh your browser.`);
