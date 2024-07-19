@@ -224,6 +224,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
           value={otp}
           onChange={setOtp}
           numInputs={6}
+          //inputType='password'
           renderInput={(props) => <input {...props} disabled={isDissable}/>}
           inputStyle={{
             width: '40px',
@@ -234,6 +235,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
             backgroundColor: 'rgba(255, 255, 255, 0.795)',
             color: 'black',
             fontSize: '20px',
+            cursor: 'pointer'
           }}
         />
       </div>
