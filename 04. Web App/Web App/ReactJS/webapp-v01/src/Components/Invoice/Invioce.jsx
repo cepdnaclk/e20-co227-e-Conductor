@@ -168,7 +168,7 @@ export default function Invoice({data, language}) {
                 <Item sx={{flexGrow:1, textAlign: 'left', pl:'15px'}}>{data.seatNos}</Item>
               </Grid>
             </Box>
-          </Grid>       
+          </Grid>        
 
           <Grid sx={{ display: 'flex', alignItems: 'center', width: '100%'}}>
             <Typography sx={{ fontFamily: 'Open Sans', fontWeight: 'bold', fontSize: '16px', paddingBottom: '10px' }}>

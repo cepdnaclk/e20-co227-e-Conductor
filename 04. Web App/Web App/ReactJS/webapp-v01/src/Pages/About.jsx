@@ -1,13 +1,12 @@
 import React from 'react'
+import './Home.css'
 
-export default function About({ language }) {
+export default function Home({ language }) {
+
   return (
-    <div className='body'>
-      <h1>ABOUT</h1>
-      <h1>Language: {language}</h1>
+    <div >
+      <h1>About</h1>
+      <h3>Language: {language} </h3>
     </div>
   )
 }
-
-
-

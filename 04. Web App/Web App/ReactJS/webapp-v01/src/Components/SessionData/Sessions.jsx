@@ -1,42 +1,43 @@
 import { GetGeoData } from '../../APIs/GeoDataBackend';
 import { isMobile, isTablet, isBrowser, browserName, osName } from 'react-device-detect';
-//const { address } = require('address');
+import { Response } from '../../APIs/NodeBackend';
+
+// Mac Address Pattern
+const macAddressPattern = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$|^([0-9A-Fa-f]{4}\.){2}([0-9A-Fa-f]{4})$/;
 
 // Function for Device Data
-export const getDeviceData = () => {
-  let deviceType = 'Unknown';
+export const getDeviceData = async() =>{
+  try {
+    const serverResponse = await Response('mac');
+    const mac = serverResponse.data;
+    console.log(`mac: ${mac}`);
 
-  if (isMobile) {
-    deviceType = 'Mobile';
-  } else if (isTablet) {
-    deviceType = 'Tablet';
-  } else if (isBrowser) {
-    deviceType = 'PC';
-  }
+    if(macAddressPattern.test(mac)){
+      let deviceType = 'Unknown';
 
-  // Get Device MAC Address
-  //const mac = getMACAddrerss();
-  //console.log(`MAC Address: ${mac}`);
+      // Find device type
+      if (isMobile) {
+        deviceType = 'Mobile';
+      } else if (isTablet) {
+        deviceType = 'Tablet';
+      } else if (isBrowser) {
+        deviceType = 'PC';
+      }
 
-  return {
-    browser: browserName,
-    os: osName,
-    device: deviceType,
-    mac: '86:61:be:3d:97:3a', //mac  :: use this if there is an issue in the backend
-  };
-};
+      return {
+        browser: browserName,
+        os: osName,
+        device: deviceType,
+        mac: mac,
+      }       
+    }
+    return 'error';
 
-/*
-// Function for Device MAC Address
-const getMACAddrerss = () =>{
-  let mac = "";
-  address((err, addrs) => {
-    console.log(addrs.ip, addrs.ipv6, addrs.mac);
-    mac = addrs.mac;
-  });
-  return mac;
+  } catch (error) {
+    console.log('Error in getting MAC');
+    return 'error';
+  }  
 }
-*/
 
 // Function for Session Data
 export const getSessionData = async () => {
@@ -51,7 +52,7 @@ export const getSessionData = async () => {
     const time = session.toLocaleTimeString(); 
 
     // Get Device Data
-    const deviceData = getDeviceData();
+    const deviceData = await getDeviceData();
     //console.log(`${JSON.stringify(deviceData)}`);  
 
     // Update userData
