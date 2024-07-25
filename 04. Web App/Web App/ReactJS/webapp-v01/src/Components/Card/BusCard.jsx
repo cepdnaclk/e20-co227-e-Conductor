@@ -1,9 +1,13 @@
 import React from 'react';
 import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
 
-
-
 const BusCard = ({bus , onClick}) => {
+  // Function to calculate available seats
+  const available = () => {
+    const bookedSeats = bus.booked ? bus.booked.length : 0;
+    return parseInt(bus.seats) - bookedSeats;
+  }
+
   return (
     <Card variant="outlined" sx={{ marginBottom: 2 }}>
       <CardContent>
@@ -32,12 +36,12 @@ const BusCard = ({bus , onClick}) => {
                 <Typography variant='caption' whiteSpace='nowrap'>Billing Closing Date</Typography>
                 <Typography variant='body1' whiteSpace='nowrap' fontFamily='Open Sans' fontWeight='bold'>{bus.closing}</Typography>
                 <Typography variant='caption' whiteSpace='nowrap'>Available Seats</Typography>
-                <Typography variant='body1' fontFamily='Open Sans' fontWeight='bold'>{bus.available}</Typography>                
+                <Typography variant='body1' fontFamily='Open Sans' fontWeight='bold'>{available()}</Typography>                
               </Grid>
 
               <Grid item xs={6} sm={12} lg={6} sx={{display:'flex', alignItems:'center'}}>
-                  {bus.available > 0 ? 
-                    <Button variant='contained' onClick={onClick}>Continue</Button> : 
+                  {available() > 0 ? 
+                    <Button variant='contained' id={bus.id} onClick={onClick}>Continue</Button> : 
                     <Button variant='outlined' color='error'> Sold&nbsp;Out</Button>}
               </Grid>
             </Grid>

@@ -2,13 +2,16 @@ import { Box, Grid, TextField, Typography } from '@mui/material';
 import React from 'react';
 
 export const StyledTextField = ({
+  id,
   label,
   placeholder,
   type = "text",
   readOnly = false,
   value,
   onChange,
+  helperText,
   inputProps,
+  error = false
 }) => (
   <Box sx={{ display: 'flex', alignItems: 'baseline', width: '100%' }}>
     <Grid container alignItems="baseline">
@@ -21,10 +24,13 @@ export const StyledTextField = ({
       )}
       <Grid item xs={12}>
         <TextField
+          id={id}
           fullWidth
+          error={error}
           placeholder={placeholder}
           type={type}
           value={value}
+          helperText={helperText}
           onChange={onChange}
           InputProps={{
             readOnly: readOnly,
@@ -34,12 +40,13 @@ export const StyledTextField = ({
           InputLabelProps={{ shrink: true }}
           sx={{
             '& .MuiOutlinedInput-root': {
-              '& fieldset': { borderColor: 'black' },
-              '&:hover fieldset': { borderColor: 'black' },
-              '&.Mui-focused fieldset': { borderColor: 'black' },
+              '& fieldset': { borderColor: error ? 'red' : 'black' },
+              '&:hover fieldset': { borderColor: error ? 'red' : 'black' },
+              '&.Mui-focused fieldset': { borderColor: error ? 'red' : 'black' },
               color: 'black',
             },
           }}
+          inputProps={inputProps}
         />
       </Grid>
     </Grid>

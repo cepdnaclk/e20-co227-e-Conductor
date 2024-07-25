@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Typography, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Grid } from '@mui/material';
 import { TbSteeringWheel } from 'react-icons/tb';
 import CircleIcon from '@mui/icons-material/Circle';
 
@@ -16,10 +16,11 @@ const SeatGenerator = ({
   const createSeats = (
     rows,
     columns,
-    emptyRows, // Updated parameter name
+    emptyRows,
     emptySeatColumn,
     bookedSeats,
-    reservedSeats
+    reservedSeats,
+    selectedSeats
   ) => {
     let seats = [];
   
@@ -64,7 +65,7 @@ const SeatGenerator = ({
     // Renumber seats continuously in the specified format
     let currentNumber = 1;
     for (let colIndex = 0; colIndex < columns; colIndex++) {
-      for (let rowIndex = (rows+(emptyRows.length)-1); rowIndex >= 0; rowIndex--) {
+      for (let rowIndex = (rows + emptyRows.length - 1); rowIndex >= 0; rowIndex--) {
         if (
           seats[rowIndex] &&
           seats[rowIndex][colIndex] &&
@@ -113,8 +114,12 @@ const SeatGenerator = ({
   };
   
   const [seats, setSeats] = useState(
-    createSeats(rows, columns, emptyRows, emptySeatColumn, bookedSeats, reservedSeats)
+    createSeats(rows, columns, emptyRows, emptySeatColumn, bookedSeats, reservedSeats, selectedSeats)
   );
+
+  useEffect(() => {
+    setSeats(createSeats(rows, columns, emptyRows, emptySeatColumn, bookedSeats, reservedSeats, selectedSeats));
+  }, [selectedSeats, bookedSeats, reservedSeats, emptyRows, emptySeatColumn, rows, columns]);
 
   const handleSeatClick = (rowIndex, colIndex) => {
     const seat = seats[rowIndex][colIndex];
@@ -125,16 +130,6 @@ const SeatGenerator = ({
       seat.status !== 'booked' &&
       seat.status !== 'reserved'
     ) {
-      
-      setSeats(prevSeats =>
-        prevSeats.map((row, rIndex) =>
-          row.map((s, cIndex) =>
-            rIndex === rowIndex && cIndex === colIndex
-              ? { ...s, status: s.status === 'selected' ? 'available' : 'selected' }
-              : s
-          )
-        )
-      );
       onSeatClick(seat.number);
     }
   };
@@ -180,7 +175,7 @@ const SeatGenerator = ({
             border:'2px solid black', 
             borderRadius:'10px'
         }}>
-            <Grid container spacing={2} direction="column" alignItems="center">
+            <Grid container spacing={1} direction="column" alignItems="center">
             {seats.map((row, rowIndex) => (
                 <Grid item key={rowIndex} xs={12}>
                     <Grid container spacing={1}>
@@ -190,8 +185,8 @@ const SeatGenerator = ({
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                width: '50px',
-                                height: '50px',
+                                width: '40px',
+                                height: '40px',
                                 borderRadius: '8px',
                                 backgroundColor: rowIndex === 0 ? 'black' : 'transparent',
                                 position: 'relative',
@@ -216,8 +211,8 @@ const SeatGenerator = ({
                                 seat.status !== 'reserved'
                                 ? 'pointer'
                                 : 'default',
-                                width: '50px', // Size of the seat
-                                height: '50px', // Size of the seat
+                                width: '40px', // Size of the seat
+                                height: '40px', // Size of the seat
                                 borderRadius: '8px', // Curved corners
                                 backgroundColor: seat ? getSeatColor(seat.status) : 'transparent',
                                 position: 'relative',
@@ -235,7 +230,7 @@ const SeatGenerator = ({
                             {seat && seat.status !== 'space' && seat.status !== 'emptySeat' && (
                                 <Typography
                                 variant="caption"
-                                sx={{ position: 'absolute', color: 'white', fontWeight: 'bold', fontFamily:'Open Sans', fontSize:'14px' }}
+                                sx={{ position: 'absolute', color: 'white', fontWeight: 'bold' }}
                                 >
                                 {seat.number}
                                 </Typography>
@@ -249,45 +244,27 @@ const SeatGenerator = ({
             </Grid>
         </Box>
 
-        <Box sx={{width:'100%', height:'auto', border:'black 2px solid', borderRadius:'7px'}}>
-            <Grid container spacing={1} display={'flex'} justifyContent={'space-between'} m={0} p={'5px'} alignItems={'center'}>
-                <Grid item>
-                    <FormControlLabel
-                        control={<Checkbox icon={<CircleIcon />} checkedIcon={<CircleIcon />} checked={true} color='default' />}
-                        label="Available Seats"
-                        labelPlacement="end"
-                    />                    
-                </Grid>
-
-                <Grid item>
-                    <FormControlLabel
-                        control={<Checkbox icon={<CircleIcon />} checkedIcon={<CircleIcon />} checked={true} color='error' />}
-                        label="Booked Seats"
-                        labelPlacement="end"
-                    />                    
-                </Grid>
-
-                <Grid item>
-                    <FormControlLabel
-                        control={<Checkbox icon={<CircleIcon />} checkedIcon={<CircleIcon />} checked={true} color='primary' />}
-                        label="Processing Seats"
-                        labelPlacement="end"
-                    />                    
-                </Grid>
-
-                <Grid item>
-                    <FormControlLabel
-                        control={<Checkbox icon={<CircleIcon />} checkedIcon={<CircleIcon />} checked={true} sx={{
-                            color:'#e68a00',
-                            '&.Mui-checked': {
-                                color: '#e68a00',
-                            },
-                        }} />}
-                        label="Reserved Seats"
-                        labelPlacement="end"
-                    />                    
-                </Grid>
-            </Grid>               
+        <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={4} mt={2} mb={2}>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={0.5}>
+                <CircleIcon sx={{color:'black', fontSize:'20px'}}/>
+                <Typography fontSize={16}>Driver Seat</Typography>
+            </Box>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={0.5}>
+                <CircleIcon sx={{color:'#666666', fontSize:'20px'}}/>
+                <Typography fontSize={16}>Available Seats</Typography>
+            </Box>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={0.5}>
+                <CircleIcon sx={{color:'#cc0000', fontSize:'20px'}}/>
+                <Typography fontSize={16}>Booked seats</Typography>
+            </Box>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={0.5}>
+                <CircleIcon sx={{color:'#e68a00', fontSize:'20px'}}/>
+                <Typography fontSize={16}>Reserved Seats</Typography>
+            </Box>
+            <Box display={'flex'} justifyContent={'center'} alignItems={'center'} gap={0.5}>
+                <CircleIcon sx={{color:'blue', fontSize:'20px'}}/>
+                <Typography fontSize={16}>Selected Seats</Typography>
+            </Box>
         </Box>
       </Box>
   );

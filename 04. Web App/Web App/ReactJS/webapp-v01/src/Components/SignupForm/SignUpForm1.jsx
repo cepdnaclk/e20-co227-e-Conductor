@@ -77,7 +77,7 @@ export default function SignUp1({Data, userType, Response, userData, language, s
     try {
       setLoading(true);  // Enabling spinner
       const serverResponse = await Request(data, 'users');
-      //console.log(`User availability:: ${serverResponse.data}`);
+      console.log(`User availability:: ${serverResponse.data}`);
       setIsAvailable(serverResponse.data);
     } catch (error) {
       console.error('Error checking availability:', error);
