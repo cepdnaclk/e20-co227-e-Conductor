@@ -86,9 +86,20 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
         const ServerResponse = await Request(data, 'OTP');
         if (ServerResponse.data === 'success') {
           setresendDissable(true);
+        } else {
+          handleNotifications({
+            type:'warning', 
+            title:'Something went wrong!', 
+            body:'Please try again in few second.'
+          });
         }
     } catch (error) {
         console.error('Error adding user:', error);
+        handleNotifications({
+          type:'warning', 
+          title:'Something went wrong!', 
+          body:'Please try again in few second.'
+        });
     } finally {
         setLoading(false);  // Disabling spinner
     }

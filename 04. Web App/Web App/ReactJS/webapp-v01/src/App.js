@@ -33,8 +33,7 @@ function App() {
   const [language, setLanguage] = useState((localLanguage === 'en' || localLanguage === 'sn') ? localLanguage : 'en');
   
   // To identify the login status
-  const login = sessionStorage.getItem('isLogged');
-  const [isLogged, setIsLogged] = useState(login !== null ? login : 'none');
+  const [isLogged, setIsLogged] = useState(sessionStorage.getItem('isLogged') || 'none');
   const [sessionData, setSessionData] = useState({});
   
   // Handling loading spinner
@@ -48,26 +47,21 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       const sessionData = await getSessionData();
-      //console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
+      console.log(`SessionData:: ${JSON.stringify(sessionData)}`);
       setSessionData(sessionData);
     };
-    if(isLogged === 'true'){
-      //console.log(sessionStorage.getItem('sessionData'));
-      setSessionData(JSON.parse(sessionStorage.getItem('sessionData')));
-    }
-    else{
-      fetchData();
-    }
+    
+    fetchData();
   }, []);
 
   // Finding session status
   useEffect(()=>{
     const userID = JSON.parse((localStorage.getItem('userId'))) || JSON.parse((sessionStorage.getItem('userId')));
-    //console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
+    console.log(`UID: ${userID}  sessionDataIsNull: ${Object.keys(sessionData).length === 0}`);      
 
     // If session data is not empty
-    if(isLogged!=='true' && Object.keys(sessionData).length > 0){
-      //console.log("session validating!");
+    if(Object.keys(sessionData).length > 0){
+      console.log("session validating!");
       sessionStorage.setItem('sessionData', JSON.stringify(sessionData));
 
       if (userID !== null){
@@ -80,7 +74,7 @@ function App() {
   },[sessionData])
 
   useEffect(()=>{
-    //console.log(`isLogged: ${isLogged}  typeof(isLogged):: ${typeof(isLogged)}`);
+    console.log(`isLogged: ${isLogged}  typeof(isLogged):: ${typeof(isLogged)}`);
     if(isLogged === 'true'){
       sessionStorage.setItem('isLogged', 'true');
     }
@@ -90,7 +84,7 @@ function App() {
       if(userID !== null){
         sessionTerminate(userID);
       }
-      //console.log(`removed user : ${userID}`);
+      console.log(`removed user : ${userID}`);
       localStorage.clear();
       sessionStorage.clear();
     }
@@ -106,12 +100,12 @@ function App() {
         session: sessionData,
       }
     }
-    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
         const serverResponse = await Request(data, 'logs/users');
-        //console.log(`Session Status:: ${serverResponse.data}`);
-        setIsLogged(serverResponse.data==='active' ? 'true' : 'false');
+        console.log(`Server Response:: ${JSON.stringify(serverResponse.data)}`);
+        setIsLogged(serverResponse.data === 'active' ? 'true' : 'false');
     } catch (error) {
         console.error(`Error finding session status: ${error} \n Refresh your browser.`);
     }
@@ -128,10 +122,10 @@ function App() {
         browser: sessionData.browser,
       }
     }
-    console.log(`post message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    //console.log(`Terminate Session::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
-        await Post(data, 'logs/users');
+        Post(data, 'logs/users');
         //console.log(`Session Status:: ${serverResponse.data}`);
     } catch (error) {
         console.error(`Error in terminating session: ${error} \n Refresh your browser.`);
@@ -162,7 +156,7 @@ function App() {
           <Route path = "about" element={<About language={language} />} />
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
-            <Route path = "booking" element={<Bookings language={language}/>} />
+            <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
             <Route path = "topup" element={<Topups language={language}/>} />
             <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
               <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />

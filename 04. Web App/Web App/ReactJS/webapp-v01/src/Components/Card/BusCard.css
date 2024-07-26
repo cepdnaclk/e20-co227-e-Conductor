@@ -1,0 +1,73 @@
+.booking-page {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .booking-header h2 {
+    margin: 0;
+  }
+  
+  .booking-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .booking-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .bus-info {
+    flex: 2;
+  }
+  
+  .bus-info div {
+    margin-bottom: 5px;
+  }
+  
+  .bus-pricing {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .bus-pricing .class {
+    margin-bottom: 5px;
+  }
+  
+  .booking-actions {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .booking-actions button {
+    margin-bottom: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .book-button {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .waitlist-button {
+    background-color: #ffc107;
+    color: white;
+  }
+  

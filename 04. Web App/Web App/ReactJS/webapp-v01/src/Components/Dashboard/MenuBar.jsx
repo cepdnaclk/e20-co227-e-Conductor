@@ -28,11 +28,18 @@ export default function MenuBar({ setIsLogged, language }) {
   }
 
   // Handling states
-  const handleState = (e) =>{
+  const handleState = (e) => {
     const newState = e.currentTarget.getAttribute('data-id');
-    //console.log(`1. Dashboard State: ${newState}`);  
-    navigate(`/dashboard/${newState}`);
-  }
+  
+    if (newState === 'settings') {
+      // Direct navigation to the settings page using href functionality
+      window.location.href = '/dashboard/settings';
+    } else {
+      // Use the navigate function for other states
+      navigate(`/dashboard/${newState}`);
+    }
+  };
+  
 
   // handle logout button
   const logout = () =>{
