@@ -57,7 +57,7 @@ function validateNICAndBirthday(nic, birthday) {
 
 function Settings({ language, setLoading }) {
   const navigate = useNavigate();
-  const timer = 120; // in seconds
+  const timer = 20; // in seconds
   const toUpperSet = ["nic", "ntc", "licence", "accNo", "branch"];
 
   // Variable to store updated data
@@ -203,7 +203,7 @@ function Settings({ language, setLoading }) {
     //console.log(`isValid :: ${isValid}`);
 
     const handleOTP = ({ button, value, origin }) => {
-      //console.log(`${button} is Clicked. Value is: ${value} origin: ${origin}`);
+      console.log(`${button} is Clicked. Value is: ${value} origin: ${origin}`);
       switch (button) {
         case 'confirm': {
           verifyOTP({value, origin, email: formData.email, mobile: formData.mobile});
@@ -433,7 +433,7 @@ function Settings({ language, setLoading }) {
 
     // Function to get action
     const action = (value) => {
-      //console.log(`Get action. OTP is: ${value}  type(OTP): ${typeof(value)}`);
+      console.log(`Get action. OTP is: ${value}  type(OTP): ${typeof(value)}`);
       switch (value) {
         case 'true':{
           ToastAlert({
@@ -462,12 +462,12 @@ function Settings({ language, setLoading }) {
       }
     }
     
-    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+    console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
 
     try {
       setLoading(true);  // Enabling spinner
       const serverResponse = await Request(data, 'OTP');
-      //console.log(`Server Response:: OTP status:${JSON.stringify(serverResponse.data)}`);
+      console.log(`Server Response:: OTP status:${JSON.stringify(serverResponse.data)}`);
       action(JSON.stringify(serverResponse.data));
     } catch (error) {
       console.error('Error adding user:', error);

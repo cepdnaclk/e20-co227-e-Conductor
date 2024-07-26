@@ -30,6 +30,8 @@ export default function Purchasing({bookingData, activeStep, steps, handleBack, 
           //console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
           const {name, mobile, email} = serverResponse.data;
 
+          // NEED TO DO ERROR HANDLING
+
           // Calculating date and time
           const session = new Date();
           const date = session.toDateString();
