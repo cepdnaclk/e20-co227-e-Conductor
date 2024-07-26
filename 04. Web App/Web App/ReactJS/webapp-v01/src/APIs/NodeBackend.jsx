@@ -57,9 +57,9 @@ export const GetRequest = async (sendData, page) => {
     try {
         const destination = `${API_BASE_URL}/${page}`;
         console.log(`GETRequest from: ${destination}`);
-        console.log(`Data: ${JSON.stringify(sendData)}`);
+        //console.log(`Data: ${JSON.stringify(sendData)}`);
         const ServerResponse = await Axios.get(`${destination}`, sendData);   // Note::  format: {ReqType, data}
-        console.log(`NODEServer Response: ${JSON.stringify(ServerResponse.data)}`);
+        //console.log(`NODEServer Response: ${JSON.stringify(ServerResponse.data)}`);
         return ServerResponse; 
     } catch (error) {
         console.error('There was an error adding the user!', error);
@@ -74,7 +74,7 @@ export const GetResponse = async (page) => {
         const destination = `${API_BASE_URL}/${page}`;
         console.log(`GETResponse from: ${destination}`);
         const ServerResponse = await Axios.get(`${destination}`,'');   
-        console.log(`Server Response: ${JSON.stringify(ServerResponse.data)}`);
+        //console.log(`Server Response: ${JSON.stringify(ServerResponse.data)}`);
         return ServerResponse; 
     } catch (error) {
         console.error('There was an error adding the user!', error);

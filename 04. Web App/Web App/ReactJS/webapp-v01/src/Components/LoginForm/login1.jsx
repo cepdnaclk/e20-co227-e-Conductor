@@ -188,7 +188,7 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe, setLoadi
         setLoading(true);  // Enabling spinner
         const serverResponse = await Request(data, 'users');
         const {userID, email, userType, empType} = serverResponse.data;
-        //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
+        console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
         setUserData({...userData, userID:userID, mobile:number, email:email, userType:userType, empType: empType});
     } catch (error) {
         console.error('Error adding user:', error);

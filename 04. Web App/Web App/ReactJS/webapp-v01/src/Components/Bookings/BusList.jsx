@@ -40,8 +40,8 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
     };
 
     fetch({
-      from: bookingData.from,
-      to: bookingData.to,
+      from: bookingData.from.id,
+      to: bookingData.to.id,
       date: bookingData.date
     });
   }, [bookingData]);

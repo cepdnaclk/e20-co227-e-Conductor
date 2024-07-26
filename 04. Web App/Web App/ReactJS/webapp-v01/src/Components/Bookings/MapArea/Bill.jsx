@@ -49,7 +49,7 @@ export default function Bill({bookingData}) {
                         <Grid item xs={6} lg={3}>
                             <StyledTextField 
                                 label={'From'}
-                                value={`${bookingData.from} (${bookingData.aproxAriT})`}
+                                value={`${bookingData.from.name} (${bookingData.aproxAriT})`}
                                 readOnly
                             />
                         </Grid>
@@ -57,7 +57,7 @@ export default function Bill({bookingData}) {
                         <Grid item xs={6} lg={3}>
                             <StyledTextField 
                                 label={'To'}
-                                value={`${bookingData.to} (${bookingData.aproxDepT})`}
+                                value={`${bookingData.to.name} (${bookingData.aproxDepT})`}
                                 readOnly
                             />
                         </Grid>
