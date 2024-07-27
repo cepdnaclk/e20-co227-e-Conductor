@@ -1,4 +1,4 @@
-import { Box, Card, Grid, IconButton } from '@mui/material'
+import { Box, Card, Grid, IconButton, Tooltip } from '@mui/material'
 import React from 'react'
 import Texts from '../InputItems/Texts'
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -38,34 +38,40 @@ export default function TicketCard({data, handleCancel}) {
         </Box>
 
         <Grid container spacing={1} justifyContent={'space-between'} padding={'5px 8px'}>
-            <Grid item width={'170px'} >
+            <Grid item width={'165px'} >
                 <Box display={'flex'} flexDirection={'column'}>
                     <Texts variant='body2' fontSize='12px'>Origin</Texts>
                     <Texts variant='h5'>{data.fromT}</Texts>
                     <Texts variant='h6'>{data.from}</Texts>
                 </Box>
             </Grid>
-            <Grid item width={'170px'} >
+            <Grid item width={'165px'} >
                 <Box display={'flex'} flexDirection={'column'}>
                     <Texts variant='body2' fontSize='12px'>Destination</Texts>
                     <Texts variant='h5'>{data.toT}</Texts>
                     <Texts variant='h6'>{data.to}</Texts>
                 </Box>
             </Grid>
-            <Grid item width={'40px'} >
+            <Grid item width={'48spx'} >
                 <Box display={'flex'} flexDirection={'column'} height={'100%'} justifyContent={'space-between'} >
-                    <IconButton onClick={()=>handleView(data.refNo)} >
+                    <Tooltip title='View Ticket'>
+                      <IconButton onClick={()=>handleView(data.refNo)} >
                         <VisibilityIcon sx={{color:'black', opacity:'30%'}}/>
-                    </IconButton>
+                      </IconButton>
+                    </Tooltip>
                     {tracking &&
-                        <IconButton onClick={()=>handleTrack(data.refNo)}>
+                        <Tooltip title='Start Tracking'>
+                          <IconButton onClick={()=>handleTrack(data.refNo)}>
                             <MapIcon sx={{color:'black', opacity:'30%'}}/>
-                        </IconButton>
+                          </IconButton>
+                        </Tooltip>
                     }
                     {cancel && 
-                        <IconButton onClick={()=>handleCancel(data.refNo)}>
+                        <Tooltip title='Cancel Ticket'>
+                          <IconButton onClick={()=>handleCancel(data.refNo)}>
                             <DeleteForeverOutlinedIcon sx={{color:'black', opacity:'30%'}}/>
-                        </IconButton>
+                          </IconButton>
+                        </Tooltip>
                     }                    
                 </Box>
             </Grid>
