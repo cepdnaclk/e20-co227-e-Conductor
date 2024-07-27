@@ -62,7 +62,7 @@ export default function LocationForm({
   // Fetching bus stop names from backend
   useEffect(()=>{
     const fetch = async() => {
-      console.log('Fetching busstop names');
+      //console.log('Fetching busstop names');
       try {
         setLoading(true);  // Enabling spinner
         const serverResponse = await GetResponse('busstops/names');
