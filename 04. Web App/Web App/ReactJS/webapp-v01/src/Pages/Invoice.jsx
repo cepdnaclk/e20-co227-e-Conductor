@@ -50,7 +50,8 @@ export default function InvoicePage({ language, setLoading }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getData(ticketNo);
+    const userID = JSON.parse(localStorage.getItem('userId')) || JSON.parse(sessionStorage.getItem('userId'));
+    getData({refNo:ticketNo, userID});
 
     const handleResize = () => {
       const viewportWidth = window.innerWidth;

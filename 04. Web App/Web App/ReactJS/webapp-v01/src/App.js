@@ -24,6 +24,8 @@ import { Post, Request } from "./APIs/NodeBackend";
 import { getSessionData } from "./Components/SessionData/Sessions";
 import { PrivertRouteToSignin, PrivertRouteToHome } from "./Routes/PrivertRoutes";
 import { MyBars } from "./Components/Spinners/Spinners";
+import AvailableTickets from "./Pages/AvailableTickets";
+import Tracking from "./Pages/Tracking";
 
 function App() {
   /* Top level controlls for the web app */
@@ -157,6 +159,8 @@ function App() {
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
+            <Route path = "avtickets" element={<AvailableTickets language={language} setLoading={setLoading} />} />
+            <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} />
             <Route path = "topup" element={<Topups language={language}/>} />
             <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
               <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Location from '../Components/Bookings/Location'
 import './Home.css'
 import BusList from '../Components/Bookings/BusList'

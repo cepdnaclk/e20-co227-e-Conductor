@@ -65,6 +65,7 @@ export default function LocationForm({
         setLoading(true);  // Enabling spinner
         const serverResponse = await GetResponse('busstops/names');
         //console.log(`busStopNames:: ${JSON.stringify(serverResponse.data)}`);
+        sessionStorage.setItem('busStopNames', serverResponse.data);
         setNames(serverResponse.data);
       } catch (error) {
         console.log('error in fetching busstop names');
@@ -73,7 +74,7 @@ export default function LocationForm({
       }
     }
 
-    fetch();
+    if(names.lngth === 0) fetch();
   }, []);
 
   return (

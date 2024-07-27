@@ -95,7 +95,7 @@ function General({ language, setLoading }) {
             <Container>
               <span>Available Tickets</span>
               {data.tickets}
-              <Button variant='dark' className='dash-button' id='tickets' onClick={()=>{navigate('/dashboard/tickets')}}>Use Now</Button>
+              <Button variant='dark' className='dash-button' id='tickets' onClick={()=>{navigate('/avtickets')}}>Use Now</Button>
             </Container>
           </Col>
           <Col>
