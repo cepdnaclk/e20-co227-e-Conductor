@@ -56,16 +56,18 @@ export default function LocationForm({
   handleClick, 
 }) {
   // Variable to store text field states
-  const [names, setNames] = useState(JSON.parse(sessionStorage.getItem('busStopNames')) || []);
+  const sessionNames = sessionStorage.getItem('busStopNames');
+  const [names, setNames] = useState(!sessionNames ? [] : JSON.parse(sessionNames));
 
   // Fetching bus stop names from backend
   useEffect(()=>{
     const fetch = async() => {
+      console.log('Fetching busstop names');
       try {
         setLoading(true);  // Enabling spinner
         const serverResponse = await GetResponse('busstops/names');
         //console.log(`busStopNames:: ${JSON.stringify(serverResponse.data)}`);
-        sessionStorage.setItem('busStopNames', serverResponse.data);
+        sessionStorage.setItem('busStopNames', JSON.stringify(serverResponse.data));
         setNames(serverResponse.data);
       } catch (error) {
         console.log('error in fetching busstop names');
@@ -74,7 +76,8 @@ export default function LocationForm({
       }
     }
 
-    if(names.lngth === 0) fetch();
+    //console.log(`number of stops: ${names.length}`);
+    if(names.length === 0) {fetch();}
   }, []);
 
   return (
