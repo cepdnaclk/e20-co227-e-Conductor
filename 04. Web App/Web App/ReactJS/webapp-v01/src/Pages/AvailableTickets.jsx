@@ -7,7 +7,7 @@ import { Request } from '../APIs/NodeBackend';
 import { handleNotifications } from '../Components/MyNotifications/FloatingNotifications';
 import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
 import {ToastAlert} from '../Components/MyNotifications/WindowAlerts'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function ConfirmBox({data, open, handleClose, handleAgree}) {
   const descriptionElementRef = useRef(null);
@@ -30,18 +30,32 @@ function ConfirmBox({data, open, handleClose, handleAgree}) {
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
       >
-        <DialogTitle id="scroll-dialog-title" whiteSpace={'noWrap'} fontFamily='Open Sans' fontWeight='bold'>
-          Ticket Cancelation Form
+        <DialogTitle id="scroll-dialog-title" whiteSpace={'noWrap'} fontFamily='Open Sans' fontWeight='bold' variant='h5'>
+          Refund Request From
         </DialogTitle>
 
         <DialogContent dividers={true} ref={descriptionElementRef} tabIndex={-1}>
-          <Texts variant='h6'>Billing Details</Texts>
-          <Texts>Billing: On {data.billingDate} at {data.billingTime}</Texts>
-          <Texts>Billing Amount: LKR {data.amount}</Texts>
+          <Grid container spacing={2}>
+            <Grid item>
+              <Texts variant='h6'>Billing Information</Texts>
+              <Texts>Reference No: {data.refNo}</Texts>
+              <Texts>Date of Purchase: {data.billingDate} at {data.billingTime}</Texts>
+              <Texts>Billing Amount: LKR {data.amount}</Texts>
+            </Grid>
+            <Grid item>
+              <Texts variant='h6'>Refund Information</Texts>
+              <Texts>Refund Request Date: {data.cancelDate} at {data.cancelTime}</Texts>
+              <Texts>You have request the rerfund after {data.duration}.</Texts>
+              <Texts>Refund Amount: LKR {data.refund}</Texts>
+            </Grid>
+            <Grid item>
+              <Texts fontColor='secondarytext' fontWeight='normal' fontStyle='italic'>
+                Note: The refund amount is calculated based on our <Link to={'/terms'} sx={{cursor:'pointer'}}>refund policy</Link> , which may include cancellation fees or deductions.
+              </Texts>
+            </Grid>
+          </Grid>
 
-          <Texts variant='h6'>Refund Details</Texts>
-          <Texts>Requesting: On {data.cancelDate} at {data.cancelTime}</Texts>
-          <Texts>Refunding Amount: LKR {data.refund}</Texts>
+          
         </DialogContent>
         
         <DialogActions >
@@ -197,6 +211,7 @@ export default function AvailableTickets({language, setLoading}) {
   // Handling agree and continue button
   const handleAgree = () => {
     //console.log(`User agree to refund`);
+    setOpen(false);
     confirmRefund(formData);
   }
   

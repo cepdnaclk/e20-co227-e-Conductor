@@ -10,7 +10,7 @@ import Signup from "./Pages/Signup";
 import About from "./Pages/About";
 import Dashboard from "./Pages/Dashboard";
 import Bookings from "./Pages/Bookings";
-import Topups from "./Pages/Topups";
+import Reload from "./Pages/Reload";
 import Invoice from "./Pages/Invoice";
 import Forbidden from "./Pages/Forbidden";
 import General from './Components/Dashboard/General'
@@ -161,7 +161,7 @@ function App() {
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
             <Route path = "avtickets" element={<AvailableTickets language={language} setLoading={setLoading} />} />
             <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} />
-            <Route path = "topup" element={<Topups language={language}/>} />
+            <Route path = "reload" element={<Reload language={language} setLoading={setLoading}/>} />
             <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
               <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />
               <Route path = "general" element={<General language={language} setLoading={setLoading} />}/>

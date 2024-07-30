@@ -75,8 +75,7 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage }) {
                 <>
                   <Nav.Link className="tab" eventKey="booking"  onClick={() => handleNavigate('/booking')} >{language==='sn' ? (<>වෙන්කිරීම්</>): (<>Booking</>)}</Nav.Link>
                   <Nav.Link className="tab" eventKey="avtickets"  onClick={() => handleNavigate('/avtickets')} >{language==='sn' ? (<>සක්‍රීය ප්‍රවේශපත්‍ර</>): (<>Available Tickets</>)}</Nav.Link>
-                  <Nav.Link className="tab" eventKey="schedule" onClick={() => handleNavigate('/schedule')}>{language==='sn' ? (<>කාලසටහන්</>): (<>Schedule</>)}</Nav.Link>
-                  <Nav.Link className="tab" eventKey="topup"   onClick={() => handleNavigate('/topup')}  >{language==='sn' ? (<>ටොප්-අප්</>): (<>Topups</>)}</Nav.Link>
+                  <Nav.Link className="tab" eventKey="reload"   onClick={() => handleNavigate('/reload')}  >{language==='sn' ? (<>රීලෝඩ්</>): (<>Reload</>)}</Nav.Link>
                   {/* Clasification accroding to userType and empType */}
                 </> : <></>
               }

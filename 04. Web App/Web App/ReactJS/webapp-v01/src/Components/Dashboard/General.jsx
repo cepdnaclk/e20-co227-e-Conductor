@@ -103,7 +103,7 @@ function General({ language, setLoading }) {
             <Container>
               <span>Available Credits</span>
               LKR {data.credits || 0}
-              <Button variant='dark' className='dash-button' onClick={()=>{navigate('/topup')}}>Top-Up</Button>
+              <Button variant='dark' className='dash-button' onClick={()=>{navigate('/reload')}}>Reload</Button>
             </Container>
           </Col>
         </Row>
