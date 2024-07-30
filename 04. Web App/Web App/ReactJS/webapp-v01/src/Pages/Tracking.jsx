@@ -29,10 +29,9 @@ export default function Tracking() {
       <Texts>Lat: {location.lat}</Texts>
       <Texts>Lng: {location.lng}</Texts>
       <Texts>spd: {location.speed}</Texts>
-      <Texts>hed: {location.lng}</Texts>
-      <Texts>alt: {location.lng}</Texts>
-      <Texts>acc: {location.lng}</Texts>
-      <Texts>Lng: {location.lng}</Texts>
+      <Texts>hed: {location.heading}</Texts>
+      <Texts>alt: {location.altitude}</Texts>
+      <Texts>acc: {location.accuracy}</Texts>
     </Box>
   )
 }
