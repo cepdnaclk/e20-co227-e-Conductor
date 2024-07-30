@@ -6,8 +6,8 @@ import Axios from 'axios';
 
 // Base API of the server
 //const API_BASE_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
-//const API_BASE_URL = process.env.REACT_APP_RAILWAY_BACKEND_URL;
-const API_BASE_URL = process.env.REACT_APP_RAILWAY_DEMO_BACKEND_URL;
+const API_BASE_URL = process.env.REACT_APP_RAILWAY_BACKEND_URL;
+//const API_BASE_URL = process.env.REACT_APP_RAILWAY_DEMO_BACKEND_URL;
 
 // Get data from backend
 export const Response = async (page) => {
