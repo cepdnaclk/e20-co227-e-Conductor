@@ -6,6 +6,10 @@ export default function Tracking() {
   const [location, setLocation] = useState({
     lat:0,
     lng:0,
+    speed:0,
+    heading:0,
+    altitude: 0,
+    accuracy: 0
   })
 
   /* navigator.geolocation.getCurrentPosition(position => {
@@ -15,14 +19,19 @@ export default function Tracking() {
   }); */
 
   navigator.geolocation.watchPosition(position => {
-    const { latitude, longitude } = position.coords;
-    setLocation({lat: latitude, lng: longitude});
+    const { latitude, longitude, speed, heading, altitude, accuracy } = position.coords;
+    setLocation({lat: latitude, lng: longitude, speed, altitude, accuracy, heading});
     // Show a map centered at latitude / longitude.
   });
 
   return (
     <Box width={"100vw"} height={"calc(100vh - 100px)"} bgcolor={'lightblue'}>
       <Texts>Lat: {location.lat}</Texts>
+      <Texts>Lng: {location.lng}</Texts>
+      <Texts>spd: {location.speed}</Texts>
+      <Texts>hed: {location.lng}</Texts>
+      <Texts>alt: {location.lng}</Texts>
+      <Texts>acc: {location.lng}</Texts>
       <Texts>Lng: {location.lng}</Texts>
     </Box>
   )
