@@ -6,6 +6,7 @@ import useCurrentGPSLocation from '../SessionData/useCurrentGPSLocation';
 import { BusStopMarker, FromMarker, PersonMarker, ToMarker } from './AdvancedMarkers';
 import { GetRequest } from '../../APIs/NodeBackend';
 import Texts from '../InputItems/Texts'
+import useLiveLocation from '../SessionData/useLiveLocation';
 
 // Default center location - Colombo Sri Lanka
 const center = { lat: 6.927218696598834, lng: 79.86022185737559 };
@@ -28,7 +29,7 @@ export default function GoogleMaps({page, from, to}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
-  const location = useCurrentGPSLocation();
+  const location = useLiveLocation();
 
   // Variable to hold Target location
   const [target, setTarget] = useState({active:false, coordinates:center});
@@ -43,7 +44,7 @@ export default function GoogleMaps({page, from, to}) {
   // Goto my target location
   const showMyLocation = () => {
     if(location.loaded && !location.error){
-      setTarget({active:true, coordinates:location.coordinates});
+      setTarget({active:true, coordinates:{lat:location.coordinates.latitude, lng:location.coordinates.longitude} });
     }
     else{
       alert(location.error.message);
@@ -195,7 +196,15 @@ export default function GoogleMaps({page, from, to}) {
                     return (
                       <>
                         {/* Rendering user's current location */}
-                        {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />}
+                        {location.loaded && !location.error && <PersonMarker 
+                          title={'Me'} 
+                          position={{lat:location?.coordinates?.latitude, lng:location.coordinates.longitude}} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:{lat:location?.coordinates?.latitude, lng:location?.coordinates?.longitude}, 
+                            label:"My Location"
+                          })}}
+                        />}
 
                         {/* Rendering FROM - TO location */}
                         {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
@@ -208,7 +217,7 @@ export default function GoogleMaps({page, from, to}) {
                     return (
                       <>
                         {/* Rendering user's current location */}
-                        {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />}
+                        {/* {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />} */}
 
                         {/* Rendering FROM - TO location */}
                         {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
