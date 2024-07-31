@@ -24,7 +24,7 @@ const border = {
   stylers: [{ visibility: "off" }],
 }]; */
 
-export default function GoogleMaps({page, setLoading, from, to}) {
+export default function GoogleMaps({page, from, to}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
@@ -105,6 +105,7 @@ export default function GoogleMaps({page, setLoading, from, to}) {
     }
 
     fetch(camera);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[bounds]);
 
   // Finding the overall captured map area
@@ -133,6 +134,7 @@ export default function GoogleMaps({page, setLoading, from, to}) {
       // update bounds
       setBounds(newBound);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[camera]);
 
   // Show targets
@@ -190,6 +192,19 @@ export default function GoogleMaps({page, setLoading, from, to}) {
               {(()=>{
                 switch (page) {
                   case 'booking':{
+                    return (
+                      <>
+                        {/* Rendering user's current location */}
+                        {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />}
+
+                        {/* Rendering FROM - TO location */}
+                        {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
+                        {!!(to) && <ToMarker title={to?.name} position={to?.location} onClick={()=>{setInfoWindow({state:true, position:to?.location, label:to?.name})}} />}
+                      </>
+                    );
+                  }
+
+                  case 'busTracking':{
                     return (
                       <>
                         {/* Rendering user's current location */}
