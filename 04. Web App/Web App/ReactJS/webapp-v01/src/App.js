@@ -156,12 +156,11 @@ function App() {
           <Route path = "home" element={<Home language={language}/>} />
           
           <Route path = "about" element={<About language={language} />} />
-          <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} />
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
             <Route path = "avtickets" element={<AvailableTickets language={language} setLoading={setLoading} />} />
-            {/* <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} /> */}
+            <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} />
             <Route path = "reload" element={<Reload language={language} setLoading={setLoading}/>} />
             <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
               <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />
