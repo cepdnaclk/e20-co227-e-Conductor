@@ -1,5 +1,6 @@
 import React from 'react'
 import './Home.css'
+import TempMap from '../Components/Map/TempMap'
 
 export default function Home({ language }) {
 
@@ -7,6 +8,7 @@ export default function Home({ language }) {
     <div >
       <h1>About</h1>
       <h3>Language: {language} </h3>
+      <TempMap/>
     </div>
   )
 }

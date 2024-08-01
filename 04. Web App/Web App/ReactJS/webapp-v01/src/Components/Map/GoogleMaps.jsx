@@ -1,12 +1,12 @@
-import { Box, IconButton, Skeleton } from '@mui/material'
+import { Box, IconButton, Skeleton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { APIProvider, InfoWindow, Map } from '@vis.gl/react-google-maps';
-import useCurrentGPSLocation from '../SessionData/useCurrentGPSLocation';
-import { BusStopMarker, FromMarker, PersonMarker, ToMarker } from './AdvancedMarkers';
+import { BusMarker, BusStopMarker, FromMarker, PersonMarker, ToMarker } from './AdvancedMarkers';
 import { GetRequest } from '../../APIs/NodeBackend';
 import Texts from '../InputItems/Texts'
 import useLiveLocation from '../SessionData/useLiveLocation';
+import Directions from './Directions';
 
 // Default center location - Colombo Sri Lanka
 const center = { lat: 6.927218696598834, lng: 79.86022185737559 };
@@ -25,7 +25,7 @@ const border = {
   stylers: [{ visibility: "off" }],
 }]; */
 
-export default function GoogleMaps({page, from, to}) {
+export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
@@ -38,13 +38,14 @@ export default function GoogleMaps({page, from, to}) {
   const [infoWindow, setInfoWindow] = useState({
     state: false, // window is closed
     label:'',
+    body:'',
     position: center,
   });
 
   // Goto my target location
   const showMyLocation = () => {
     if(location.loaded && !location.error){
-      setTarget({active:true, coordinates:{lat:location.coordinates.latitude, lng:location.coordinates.longitude} });
+      setTarget({active:true, coordinates:location.coordinates });
     }
     else{
       alert(location.error.message);
@@ -171,7 +172,7 @@ export default function GoogleMaps({page, from, to}) {
             <Map 
               mapId='DEMO-MAP-ID'
               defaultZoom={zoom}
-              defaultCenter={center}
+              defaultCenter={page !== "booking" ? location?.coordinates : center}
               center={target.active ? target.coordinates : null}
               zoom={target.active ? 16 : null}
               onCenterChanged={()=>{setTarget({...target, active:false})}}
@@ -187,7 +188,7 @@ export default function GoogleMaps({page, from, to}) {
               {/* MAP COMPONENETS */}
               {/* Rendering Bus Stops */}
               {zoom > 14 && busStops.length > 0 && busStops.map(place => (
-                <BusStopMarker key={place.id} title={place.name} position={place.location} onClick={()=>{setInfoWindow({state:true, position:place.location, label:place.name})}} />
+                <BusStopMarker key={place.id} title={place.name} position={place.location} onClick={()=>{setInfoWindow({state:true, position:place.location, label:place.name, body:place.routes})}} />
               ))}
 
               {(()=>{
@@ -198,10 +199,10 @@ export default function GoogleMaps({page, from, to}) {
                         {/* Rendering user's current location */}
                         {location.loaded && !location.error && <PersonMarker 
                           title={'Me'} 
-                          position={{lat:location?.coordinates?.latitude, lng:location.coordinates.longitude}} 
+                          position={location?.coordinates} 
                           onClick={()=>{setInfoWindow({
                             state:true, 
-                            position:{lat:location?.coordinates?.latitude, lng:location?.coordinates?.longitude}, 
+                            position:location?.coordinates, 
                             label:"My Location"
                           })}}
                         />}
@@ -216,12 +217,61 @@ export default function GoogleMaps({page, from, to}) {
                   case 'busTracking':{
                     return (
                       <>
-                        {/* Rendering user's current location */}
-                        {/* {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />} */}
+                        {/* Rendering user's live location */}
+                        {location.loaded && !location.error && <PersonMarker 
+                          title={'Me'} 
+                          position={location?.coordinates} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:location?.coordinates, 
+                            label:"My Location"
+                          })}}
+                        />}
 
-                        {/* Rendering FROM - TO location */}
-                        {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
-                        {!!(to) && <ToMarker title={to?.name} position={to?.location} onClick={()=>{setInfoWindow({state:true, position:to?.location, label:to?.name})}} />}
+                        {/* Rendering bus live location */}
+                        {!!(busLocation) && <BusMarker 
+                          title={busData.regNo} 
+                          position={busLocation} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busLocation, 
+                            label:busData?.regNo,
+                            body: `${busData.route}\n${busData.org}\n${busData.service}\n${busData.routeType}`
+                          })}} 
+                        />}
+
+                        {/* Rendering FROM - TO locations */}
+                        {!!(busData?.from) && <FromMarker 
+                          title={busData.from?.name} 
+                          position={busData.from?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.from?.location, 
+                            label:`Origin: ${busData.from?.name}`,
+                            body: `Arrived at: ${estmData.fromArT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
+                        {!!(busData?.to) && <ToMarker 
+                          title={busData.to?.name} 
+                          position={busData.to?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.to?.location, 
+                            label:`Destination: ${busData.to?.name}`,
+                            body: `Arrived at: ${estmData.toArT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
+
+                        {/* Rendering path */}
+
+                        {/* Rendering trip path */}
+                        {routeLocations.length > 1 && routeLocations.map((point, index) => {
+                          if (index < routeLocations.length - 1) {
+                            return <Directions key={index} point1={routeLocations[index]} point2={routeLocations[index+1]} polylineOptions={{strokeColor: '#FF0000', strokeOpacity: 0.7, strokeWeight: 5 }}/>
+                          } else {
+                            return null;
+                          }
+                        })}
                       </>
                     );
                   }
@@ -238,7 +288,7 @@ export default function GoogleMaps({page, from, to}) {
                 position={infoWindow?.position} 
                 onClose={()=>{setInfoWindow({...infoWindow, state:false})}} 
               >
-                {infoWindow?.routes}
+                <Typography sx={{ fontFamily:'Open Sans', fontSize:'14px', whiteSpace: 'pre-wrap' }}>{infoWindow?.body}</Typography>
               </InfoWindow>} 
             </Map>
 
@@ -247,7 +297,7 @@ export default function GoogleMaps({page, from, to}) {
                 position: 'relative',
                 top: '-70px',
                 left: '15px',
-                zIndex: 9999,
+                zIndex: 10,
                 color:'#404040',
                 padding: '10px',
                 bgcolor:'#f2f2f2',

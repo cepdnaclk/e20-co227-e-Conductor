@@ -5,13 +5,14 @@ export default function useLiveLocation() {
   const [liveData, setLiveData] = useState({
     loaded: false,
     coordinates:{
-      latitude: 0,
-      longitude: 0,
+      lat: 0,
+      lng: 0,
+      /* IF NEEDED UNCOMMENT AND USE THEM
       altitude: 0,
       heading: 0,
       speed: 0,
       accuracy: 0,
-      reqCount:0
+      reqCount:0 */
     }    
   }); 
 
@@ -28,11 +29,11 @@ export default function useLiveLocation() {
   
     // When event is success
     const onSuccess = position => {
-      const { accuracy, latitude, longitude, altitude, heading, speed } = position.coords;
+      const { latitude, longitude } = position.coords;
       
       setLiveData(prev => ({
         loaded: true,
-        coordinates: { latitude, longitude, accuracy, heading, speed, altitude, reqCount: prev.coordinates.reqCount + 1 },
+        coordinates: { lat:latitude, lng:longitude/* , accuracy, heading, speed, altitude, reqCount: prev.coordinates.reqCount + 1 */ }, // IF NEED UNCOMMENT HERE
       }));
     };
 

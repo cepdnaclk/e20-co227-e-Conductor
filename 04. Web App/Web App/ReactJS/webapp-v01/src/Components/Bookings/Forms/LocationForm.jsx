@@ -78,6 +78,7 @@ export default function LocationForm({
 
     //console.log(`number of stops: ${names.length}`);
     if(names.length === 0) {fetch();}
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
