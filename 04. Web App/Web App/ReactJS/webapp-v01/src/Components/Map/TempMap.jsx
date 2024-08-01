@@ -21,7 +21,7 @@ const stops = [
 ]
 
 const p1 = { "lat": 7.243630047731192, "lng": 80.59471319873906 };
-const p2 = { "lat": 7.487374596081241, "lng": 80.36510890682715 }
+const p2 = { "lat": 7.415043808414396, "lng": 80.31872010492351 };
 
 export default function TempMap() {
   const liveLocation = useLiveLocation();
