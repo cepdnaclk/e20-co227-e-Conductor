@@ -26,7 +26,7 @@ export default function TicketCard({data, handleCancel}) {
   // Handling tracking button
   const handleTrack = (refNo) => {
     console.log(`Tracking button is clicked ${refNo}`);    
-    sessionStorage.setItem('TicketNo', JSON.stringify(refNo));
+    sessionStorage.setItem('TicketID', JSON.stringify(refNo));
     navigate('/tracking');
   }
   

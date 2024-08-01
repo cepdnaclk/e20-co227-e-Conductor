@@ -3,6 +3,7 @@ import { APIProvider, Map } from '@vis.gl/react-google-maps'
 import React from 'react'
 import Directions from './Directions';
 import useLiveLocation from '../SessionData/useLiveLocation'
+import { PersonMarker, ToMarker } from './AdvancedMarkers';
 
 
 // Default center location - Colombo Sri Lanka
@@ -38,7 +39,9 @@ export default function TempMap() {
                 defaultCenter={center}
                 reuseMap
             >
-                <Directions point1={liveLocation?.coordinates}  point2={p2}/>
+                <PersonMarker position={liveLocation?.coordinates}/>
+                <ToMarker position={stops[0]} />
+                <Directions point1={liveLocation?.coordinates}  point2={stops[0]}/>
                 {/* <Directions p1={stops[1]}  p2={stops[2]}/> */}
                 {/* {stops.map((stop, index) => {
                     if (index < stops.length - 1) {

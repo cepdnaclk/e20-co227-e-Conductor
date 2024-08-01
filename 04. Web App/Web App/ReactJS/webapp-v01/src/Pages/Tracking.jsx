@@ -1,7 +1,7 @@
 import { Box, Card, Grid } from '@mui/material'
 import Texts from '../Components/InputItems/Texts'
-import React from 'react'
-import TrackingMap from '../Components/Tracking/TrackingMap'
+import React, { useEffect, useState } from 'react'
+import GoogleMaps from '../Components/Map/GoogleMaps'
 
 // Dummy data about bus general info
 const data = {
@@ -11,6 +11,7 @@ const data = {
   org: 'SLTB',
   service: 'Semi-Luxury',
   routeType: 'expressway',
+  startT: '06:10',
   from: {
     "name": "Kurunduwatte",
     "location" : { "lat": 7.243630047731192, "lng": 80.59471319873906 }    
@@ -18,6 +19,10 @@ const data = {
   to:  {
     "name": "Akbar",
     "location" : { "lat": 7.25235057321553, "lng": 80.59333382765641 }
+  },
+  start:  {
+    "name": "Kandy Market",
+    "location" : { "lat": 7.2933810742053575, "lng":80.63447065398826 }
   },
 }
 
@@ -34,18 +39,38 @@ const estmData = {
 // Dummy route location data
 const routeLocations = [ 
   { "lat": 7.243630047731192, "lng": 80.59471319873906 },
-  { "lat": 7.25235057321553, "lng": 80.59333382765641 },
-  { "lat": 7.2631666355550575, "lng": 80.59296904470439 },
   { "lat": 7.2656183598161075, "lng": 80.59577370836975 },
-  { "lat": 7.2675836946042915, "lng": 80.59648176923187 },
-  { "lat": 7.268000173687011, "lng": 80.59916263694033 },
-  { "lat": 7.268047028533296, "lng": 80.60223751719053 },
-  { "lat": 7.270664240431243, "lng": 80.60479764429803 },
-  { "lat": 7.288209595790418, "lng": 80.63166044283383 }
+  { "lat": 7.288209595790418, "lng": 80.63166044283383 },
+  { "lat": 7.2933810742053575, "lng":80.63447065398826 },
 ]
 
 export default function Tracking() {
-  const now = "10:40";
+  // Calculating current time
+  const d = new Date();
+  const now = `${d.getHours()}:${d.getMinutes()}`;
+
+  // Get ticket ID and userID
+  const userID = JSON.parse(localStorage.getItem('userId')) || JSON.stringify(sessionStorage.getItem('userId'));
+  const ticketID = JSON.parse(sessionStorage.getItem('TicketID'));
+
+  // Variable to hold the bus info
+  const [busInfo, setBusInfo] = useState({});
+
+  // Variable to hold bus Live location
+  const [liveLocation, setLiveLocation] = useState({});
+
+  // Variable to hold the route points
+  const [route, setRoute] = useState([]);
+
+  // Variable to hold the estimated data
+  const [estmData, setEstmData] = useState({});
+
+  // Fetching busInfo and route points from the backend
+  useEffect(()=>{
+    const fetch = async() => {
+
+    }
+  },[]);
 
   return (
     <Box width={"100%"} height={"fit-content"} bgcolor={"ghostwhite"} padding={"20px"}>
@@ -76,7 +101,8 @@ export default function Tracking() {
       </Card>
 
       <Card sx={{width:'100%', height:'calc(100vh - 240px)', mb:"20px", borderRadius:'10px'}} >
-        <TrackingMap 
+        <GoogleMaps
+          page={'busTracking'}
           busData={data}
           routeLocations={routeLocations}
           busLocation={liveData}

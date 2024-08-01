@@ -2,7 +2,7 @@ import { Box, IconButton, Skeleton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { APIProvider, InfoWindow, Map } from '@vis.gl/react-google-maps';
-import { BusMarker, BusStopMarker, FromMarker, PersonMarker, ToMarker } from './AdvancedMarkers';
+import { BusMarker, BusStopMarker, FromMarker, PersonMarker, StartMarker, ToMarker } from './AdvancedMarkers';
 import { GetRequest } from '../../APIs/NodeBackend';
 import Texts from '../InputItems/Texts'
 import useLiveLocation from '../SessionData/useLiveLocation';
@@ -172,7 +172,7 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
             <Map 
               mapId='DEMO-MAP-ID'
               defaultZoom={zoom}
-              defaultCenter={page !== "booking" ? location?.coordinates : center}
+              defaultCenter={page === "busTracking" ? busLocation : center}
               center={target.active ? target.coordinates : null}
               zoom={target.active ? 16 : null}
               onCenterChanged={()=>{setTarget({...target, active:false})}}
@@ -240,7 +240,7 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                           })}} 
                         />}
 
-                        {/* Rendering FROM - TO locations */}
+                        {/* Rendering FROM, TO, and START locations */}
                         {!!(busData?.from) && <FromMarker 
                           title={busData.from?.name} 
                           position={busData.from?.location} 
@@ -261,10 +261,18 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                             body: `Arrived at: ${estmData.toArT} Hrs\nRoute: ${busData.route}`
                           })}} 
                         />}
+                        {!!(busData?.start) && <StartMarker 
+                          title={busData.start?.name} 
+                          position={busData.start?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.start?.location, 
+                            label:`Starting point: ${busData.start?.name}`,
+                            body: `Departure at: ${busData.startT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
 
                         {/* Rendering path */}
-
-                        {/* Rendering trip path */}
                         {routeLocations.length > 1 && routeLocations.map((point, index) => {
                           if (index < routeLocations.length - 1) {
                             return <Directions key={index} point1={routeLocations[index]} point2={routeLocations[index+1]} polylineOptions={{strokeColor: '#FF0000', strokeOpacity: 0.7, strokeWeight: 5 }}/>

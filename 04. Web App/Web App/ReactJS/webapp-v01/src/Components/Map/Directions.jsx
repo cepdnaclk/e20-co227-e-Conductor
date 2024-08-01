@@ -13,7 +13,8 @@ export default function Directions({point1, point2, polylineOptions }) {
     setDirService(new routesLibrary.DirectionsService());
     setDirRender(new routesLibrary.DirectionsRenderer({
       map, 
-      //suppressMarkers: true,
+      suppressMarkers: true,
+      preserveViewport: true,
       polylineOptions:polylineOptions
     }));
 
@@ -32,7 +33,6 @@ export default function Directions({point1, point2, polylineOptions }) {
     }).then(response => {
         dirRender.setDirections(response);
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[dirService, dirRender, point1, point2]);
 
   return null;    

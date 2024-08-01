@@ -16,7 +16,7 @@ export function LocationMarker({position, onClick}) {
 
 export function FromMarker({position, onClick, title}) {
   return (
-    <AdvancedMarker position={position} onClick={onClick} title={`Origin: ${title}`} zIndex={1} >
+    <AdvancedMarker position={position} onClick={onClick} title={`Origin: ${title}`} zIndex={2} >
       <Pin scale={1.3} >
         <Texts fontColor='white'>A</Texts>
       </Pin>
@@ -26,7 +26,7 @@ export function FromMarker({position, onClick, title}) {
 
 export function ToMarker({position, onClick, title}) {
   return (
-    <AdvancedMarker position={position} onClick={onClick} title={`Destination: ${title}`} zIndex={1} >
+    <AdvancedMarker position={position} onClick={onClick} title={`Destination: ${title}`} zIndex={2} >
       <Pin scale={1.3} >
         <Texts fontColor='white'>B</Texts>
       </Pin>
@@ -34,9 +34,19 @@ export function ToMarker({position, onClick, title}) {
   )
 }
 
+export function StartMarker({position, onClick, title}) {
+  return (
+    <AdvancedMarker position={position} onClick={onClick} title={`Destination: ${title}`} zIndex={1} >
+      <Pin scale={1.3} background={'#04aa6d'} borderColor={'white'} >
+        <Texts fontColor='white'>O</Texts>
+      </Pin>
+    </AdvancedMarker>
+  )
+}
+
 export function PersonMarker({position, onClick, title}) {
     return (
-      <AdvancedMarker title={title} position={position} onClick={onClick} zIndex={3}>
+      <AdvancedMarker title={title} position={position} onClick={onClick} zIndex={4}>
         <Man2Icon sx={{fontSize:'40px', width:'40px', height:'40px'}} />
       </AdvancedMarker>
     )
@@ -54,7 +64,7 @@ export function BusStopMarker({ position, onClick, title }) {
 
 export function BusMarker({position, onClick, title}) {
   return (
-    <AdvancedMarker title={title} position={position} onClick={onClick} zIndex={2} >
+    <AdvancedMarker title={title} position={position} onClick={onClick} zIndex={3} >
       <AirportShuttleIcon sx={{fontSize:'40px', width:'40px', height:'40px', color:'#e60000'}} />
     </AdvancedMarker>
   )
