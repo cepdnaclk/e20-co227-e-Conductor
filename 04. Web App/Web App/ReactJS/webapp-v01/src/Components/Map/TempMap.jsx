@@ -1,9 +1,10 @@
 import { Box } from '@mui/material';
 import { APIProvider, Map } from '@vis.gl/react-google-maps'
-import React from 'react'
+import React, { useEffect } from 'react'
 import Directions from './Directions';
-import useLiveLocation from '../SessionData/useLiveLocation'
 import { PersonMarker, ToMarker } from './AdvancedMarkers';
+import useBusLiveLocation from '../SessionData/useBusLiveLocation';
+import { GetRequest, Request } from '../../APIs/NodeBackend';
 
 
 // Default center location - Colombo Sri Lanka
@@ -24,8 +25,46 @@ const stops = [
 const p1 = { "lat": 7.243630047731192, "lng": 80.59471319873906 };
 const p2 = { "lat": 7.415043808414396, "lng": 80.31872010492351 };
 
+const TIME_STEP = 1000;
+
 export default function TempMap() {
-  const liveLocation = useLiveLocation();
+  const liveLocation = useBusLiveLocation();
+
+  // Fetching bus live location and send to the DB
+  useEffect(() => {
+    if (!liveLocation.loaded) return;
+
+    let isMounted = true; // To handle cleanup
+
+    const sendLocation = async () => {
+      const data = {
+        regNo: 'NA-1234',
+        lat: liveLocation.coordinates.lat || 0,
+        lng: liveLocation.coordinates.lng || 0,
+        speed: liveLocation.coordinates.speed || 0,
+      }
+
+      console.log(`Bus Data: ${JSON.stringify(data)}`);
+
+      try {
+        const serverResponse = await Request(data, 'tracking/livebus');
+        if (isMounted) {
+          console.log(`Sending Live location: ${JSON.stringify(serverResponse.data)}`);
+        }
+      } catch (error) {
+        console.error('Error in sending bus live location!', error);
+      }
+    };
+
+    const intervalId = setInterval(sendLocation, TIME_STEP);
+
+     return () => {
+      isMounted = false;
+      clearInterval(intervalId); // Clean up interval on component unmount
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+  }, [liveLocation]);
 
   return (
     <Box width={"100vw"} height={"100vh"}>
@@ -39,9 +78,9 @@ export default function TempMap() {
                 defaultCenter={center}
                 reuseMap
             >
-                <PersonMarker position={liveLocation?.coordinates}/>
+                <PersonMarker position={{lat:liveLocation?.coordinates?.lat, lng:liveLocation?.coordinates?.lng}}/>
                 <ToMarker position={stops[0]} />
-                <Directions point1={liveLocation?.coordinates}  point2={stops[0]}/>
+                <Directions point1={{lat:liveLocation?.coordinates?.lat, lng:liveLocation?.coordinates?.lng}}  point2={stops[0]}/>
                 {/* <Directions p1={stops[1]}  p2={stops[2]}/> */}
                 {/* {stops.map((stop, index) => {
                     if (index < stops.length - 1) {
