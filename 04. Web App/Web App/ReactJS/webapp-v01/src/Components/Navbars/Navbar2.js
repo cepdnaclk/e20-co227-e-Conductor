@@ -14,16 +14,20 @@ import logo from '../../Images/logo - no bkgnd.png';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { FaUserCircle } from 'react-icons/fa';
-import { TbLogout } from 'react-icons/tb';
-import { AiFillDashboard } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import SettingsIcon from '@mui/icons-material/Settings';
+import DashboardCustomizeIcon from '@mui/icons-material/DashboardCustomize';
+import LogoutIcon from '@mui/icons-material/Logout';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import './Navbar2.css';
 
 function NavScrollExample({isLogged, setIsLogged, language, setLanguage }) {  
   const navigate = useNavigate();
   const location = useLocation();
   const specialPages = ["signin", "signup", "invoice"];  // Hide Nav bar for this pages
+  const userType = JSON.parse(localStorage.getItem('userType')) || JSON.parse(sessionStorage.getItem('userType'));
 
   // Identify current page 
   const [page, setPage] = useState('home');
@@ -73,11 +77,19 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage }) {
               <Nav.Link className="tab" eventKey="about" onClick={() => handleNavigate('/about')} >{language==='sn' ? (<>විස්තර</>): (<>About</>)}</Nav.Link>
               {isLogged === 'true' ? 
                 <>
+                  {/* Common Tabs */}
                   <Nav.Link className="tab" eventKey="booking"  onClick={() => handleNavigate('/booking')} >{language==='sn' ? (<>වෙන්කිරීම්</>): (<>Booking</>)}</Nav.Link>
                   <Nav.Link className="tab" eventKey="avtickets"  onClick={() => handleNavigate('/avtickets')} >{language==='sn' ? (<>සක්‍රීය ප්‍රවේශපත්‍ර</>): (<>Available Tickets</>)}</Nav.Link>
-                  <Nav.Link className="tab" eventKey="reload"   onClick={() => handleNavigate('/reload')}  >{language==='sn' ? (<>රීලෝඩ්</>): (<>Reload</>)}</Nav.Link>
-                  {/* Clasification accroding to userType and empType */}
-                </> : <></>
+                  
+                  {/* Clasification accroding to userType - web app no specifications on employees */}
+                  {userType === 'owner' && 
+                    <>
+                      <Nav.Link className="tab" eventKey="mybuses"  onClick={() => handleNavigate('/mybuses')} >{language==='sn' ? (<>මගේ බස්රථ</>): (<>My Buses</>)}</Nav.Link>
+                    </>
+                  }
+                </> : <>
+                  <Nav.Link className="tab" eventKey="help"  onClick={() => handleNavigate('/help')} >{language==='sn' ? (<>උදව්</>): (<>Help</>)}</Nav.Link>
+                </>
               }
               
               <Container fluid className='d-flex justify-content-between align-items-top'>
@@ -99,8 +111,11 @@ function NavScrollExample({isLogged, setIsLogged, language, setLanguage }) {
                       <FaUserCircle className='icon'/>
                       </Dropdown.Toggle>
                       <Dropdown.Menu>                
-                        <Dropdown.Item onClick={() => handleNavigate('/dashboard')}><AiFillDashboard /> {language==='sn' ? (<>අයිතම පුවරුව</>): (<>Dashboard</>)}</Dropdown.Item>
-                        <Dropdown.Item onClick={logout}><TbLogout /> {language==='sn' ? (<>ඉවත්වන්න</>): (<>Logout</>)}</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleNavigate('/dashboard')}><DashboardCustomizeIcon /> {language==='sn' ? (<>අයිතම පුවරුව</>): (<>Dashboard</>)}</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleNavigate('/reload')}><PaymentsIcon /> {language==='sn' ? (<>රීලෝඩ්</>): (<>Reload</>)}</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleNavigate('/dashboard/settings')}><SettingsIcon /> {language==='sn' ? (<>සැකසුම්</>): (<>Settings</>)}</Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleNavigate('/help')}><HelpOutlineIcon /> {language==='sn' ? (<>උදව්</>): (<>Help</>)}</Dropdown.Item>
+                        <Dropdown.Item onClick={logout}><LogoutIcon /> {language==='sn' ? (<>ඉවත්වන්න</>): (<>Logout</>)}</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>                   
                   )

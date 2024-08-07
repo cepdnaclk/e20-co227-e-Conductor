@@ -20,12 +20,19 @@ import Devices from './Components/Dashboard/Devices'
 import Settings from "./Components/Dashboard/Settings";
 import VerifyEmail from "./Pages/VerifyEmail";
 import Terms from "./Pages/TermsConditions";
-import { Post, Request } from "./APIs/NodeBackend";
-import { getSessionData } from "./Components/SessionData/Sessions";
-import { PrivertRouteToSignin, PrivertRouteToHome } from "./Routes/PrivertRoutes";
-import { MyBars } from "./Components/Spinners/Spinners";
+import Help from './Pages/Help';
 import AvailableTickets from "./Pages/AvailableTickets";
 import Tracking from "./Pages/Tracking";
+import MyBusses from "./Pages/MyBusses";
+import Earnings from "./Components/Dashboard/Earnings";
+import BusTracking from "./Components/MyBusses/Bus.Tracking";
+import BusGeneral from "./Components/MyBusses/Bus.General";
+import BusDetail from "./Components/MyBusses/Bus.Detail";
+import { Post, Request } from "./APIs/NodeBackend";
+import { getSessionData } from "./Components/SessionData/Sessions";
+import { PrivertRouteToSignin, PrivertRouteToHome, PrivertRouteToForbidden } from "./Routes/PrivertRoutes";
+import { MyBars } from "./Components/Spinners/Spinners";
+
 
 function App() {
   /* Top level controlls for the web app */
@@ -73,6 +80,7 @@ function App() {
         setIsLogged('false');
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[sessionData])
 
   useEffect(()=>{
@@ -90,6 +98,7 @@ function App() {
       localStorage.clear();
       sessionStorage.clear();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogged])
 
   // Function to get session status
@@ -153,15 +162,22 @@ function App() {
         
         <Routes>
           <Route path = "/" element={<Navigate to="home"/>} />
-          <Route path = "home" element={<Home language={language}/>} />
-          
+          <Route path = "home" element={<Home language={language}/>} />          
           <Route path = "about" element={<About language={language} />} />
+          <Route path = "help" element={<Help language={language} />} />
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
             <Route path = "avtickets" element={<AvailableTickets language={language} setLoading={setLoading} />} />
             <Route path = "tracking" element={<Tracking language={language} setLoading={setLoading} />} />
             <Route path = "reload" element={<Reload language={language} setLoading={setLoading}/>} />
+            <Route element={<PrivertRouteToForbidden/>} >
+              <Route path = "mybuses" element={<MyBusses language={language} setLoading={setLoading}/>} >
+                <Route path = "" element={<BusGeneral language={language} setLoading={setLoading} />}/>  
+                <Route path = "tracking" element={<BusTracking language={language} setLoading={setLoading} />}/>
+                <Route path = "busdetails" element={<BusDetail language={language} setLoading={setLoading} />}/>
+              </Route>
+            </Route>
             <Route path = "dashboard" element={<Dashboard setIsLogged={setIsLogged} language={language} setLoading={setLoading} />} >
               <Route path = "" element={<Navigate to="general" replace/>} setLoading={setLoading} />
               <Route path = "general" element={<General language={language} setLoading={setLoading} />}/>
@@ -169,6 +185,9 @@ function App() {
               <Route path = "tickets" element={<Tickets language={language} setLoading={setLoading} />} />
               <Route path = "devices" element={<Devices language={language} setIsLogged={setIsLogged} setLoading={setLoading} />} />
               <Route path = "settings" element={<Settings language={language} setLoading={setLoading} />} />
+              <Route element={<PrivertRouteToForbidden/>} >
+                <Route path = "earnings" element={<Earnings language={language} setLoading={setLoading} />} />
+              </Route>
             </Route>
             <Route path = "invoice" element={<Invoice language={language} setLoading={setLoading} />} />
           </Route>
@@ -186,7 +205,7 @@ function App() {
         
         <Footer/>
 
-        {loading ? <MyBars /> : <></>}
+        {loading && <MyBars />}
       </BrowserRouter>      
     </div>
   );

@@ -69,6 +69,7 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
     bWest:0
   })
 
+  /* Need to implement an alternative fetching mechanism */
   // Fetching bus stops API
   useEffect(()=>{
     // Storing algorithm
@@ -106,6 +107,7 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
       }
     }
 
+    //console.log('Fetching');
     fetch(camera);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[bounds]);
@@ -134,7 +136,21 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
       newBound.bWest  = (bWest  > west)  || (bWest === 0)  ? west  : bWest ;
       
       // update bounds
-      setBounds(newBound);
+      const keys = ['bNorth', 'bSouth', 'bEast', 'bWest'];
+
+      let update = false;
+
+      keys.forEach(key => {
+        //console.log(`bound: ${bounds[key]} , newBound: ${newBound[key]}`);
+        if (bounds[key] !== newBound[key]) {
+          update = true;
+          //console.log(`${bounds[key]} != ${newBound[key]} need to be updated!`);
+        }
+      });
+
+      if (update) {
+        setBounds(newBound);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[camera]);
