@@ -2,7 +2,7 @@ import { Box, IconButton, Skeleton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { APIProvider, InfoWindow, Map } from '@vis.gl/react-google-maps';
-import { BusMarker, BusStopMarker, FromMarker, PersonMarker, StartMarker, ToMarker } from './AdvancedMarkers';
+import { BusMarker, BusStopMarker, FromMarker, LocationMarker, PersonMarker, StartMarker, ToMarker } from './AdvancedMarkers';
 import { GetRequest } from '../../APIs/NodeBackend';
 import Texts from '../InputItems/Texts'
 import useLiveLocation from '../SessionData/useLiveLocation';
@@ -25,7 +25,7 @@ const border = {
   stylers: [{ visibility: "off" }],
 }]; */
 
-export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation}) {
+export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation, myBusesLocation}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
@@ -67,7 +67,7 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
     bSouth:0,
     bEast:0,
     bWest:0
-  })
+  });
 
   /* Need to implement an alternative fetching mechanism */
   // Fetching bus stops API
@@ -207,22 +207,22 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                 <BusStopMarker key={place.id} title={place.name} position={place.location} onClick={()=>{setInfoWindow({state:true, position:place.location, label:place.name, body:place.routes})}} />
               ))}
 
+              {/* Rendering user's live location */}
+              {location.loaded && !location.error && <PersonMarker 
+                title={'Me'} 
+                position={location?.coordinates} 
+                onClick={()=>{setInfoWindow({
+                  state:true, 
+                  position:location?.coordinates, 
+                  label:"My Location"
+                })}}
+              />}
+
               {(()=>{
                 switch (page) {
                   case 'booking':{
                     return (
                       <>
-                        {/* Rendering user's current location */}
-                        {location.loaded && !location.error && <PersonMarker 
-                          title={'Me'} 
-                          position={location?.coordinates} 
-                          onClick={()=>{setInfoWindow({
-                            state:true, 
-                            position:location?.coordinates, 
-                            label:"My Location"
-                          })}}
-                        />}
-
                         {/* Rendering FROM - TO location */}
                         {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
                         {!!(to) && <ToMarker title={to?.name} position={to?.location} onClick={()=>{setInfoWindow({state:true, position:to?.location, label:to?.name})}} />}
@@ -233,17 +233,6 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                   case 'busTracking':{
                     return (
                       <>
-                        {/* Rendering user's live location */}
-                        {location.loaded && !location.error && <PersonMarker 
-                          title={'Me'} 
-                          position={location?.coordinates} 
-                          onClick={()=>{setInfoWindow({
-                            state:true, 
-                            position:location?.coordinates, 
-                            label:"My Location"
-                          })}}
-                        />}
-
                         {/* Rendering bus live location */}
                         {!!(busLocation) && <BusMarker 
                           title={busData.regNo} 
@@ -296,6 +285,26 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                             return null;
                           }
                         })}
+                      </>
+                    );
+                  }
+
+                  case 'myBuses' : {
+                    return(
+                      <>
+                        {/* Rendering the buses location */}
+                        {myBusesLocation.loaded && myBusesLocation.data.map(bus => (
+                          <LocationMarker 
+                            key={bus.regNo}
+                            title={bus.regNo}
+                            position={bus.location}
+                            onClick={()=>{setInfoWindow({
+                              state: true,
+                              position:bus.location,
+                              label:bus.regNo
+                            })}}
+                          />
+                        ))}
                       </>
                     );
                   }

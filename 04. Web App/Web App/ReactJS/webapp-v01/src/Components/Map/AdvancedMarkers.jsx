@@ -6,9 +6,9 @@ import AirportShuttleIcon from '@mui/icons-material/AirportShuttle';
 import Texts from '../InputItems/Texts';
 
 
-export function LocationMarker({position, onClick}) {
+export function LocationMarker({position, onClick, title}) {
   return (
-    <AdvancedMarker position={position} onClick={onClick}>
+    <AdvancedMarker position={position} onClick={onClick} title={title} zIndex={2}>
       <Pin background={'#FBBC04'} glyphColor={'#000'} borderColor={'#000'} />
     </AdvancedMarker>
   )
