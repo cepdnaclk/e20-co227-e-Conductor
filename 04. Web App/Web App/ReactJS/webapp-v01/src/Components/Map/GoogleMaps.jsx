@@ -1,4 +1,4 @@
-import { Box, IconButton, Skeleton, Typography } from '@mui/material'
+import { Box, IconButton, Skeleton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { APIProvider, InfoWindow, Map } from '@vis.gl/react-google-maps';
@@ -25,7 +25,7 @@ const border = {
   stylers: [{ visibility: "off" }],
 }]; */
 
-export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation, myBusesLocation}) {
+export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation, myBusesLocation, generalData}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
@@ -177,6 +177,22 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
     }
   },[infoWindow]);
 
+  // Function to find the bus informations
+  const busInfo = (regNo) => {
+    if (generalData.length > 0) {
+      const details = generalData.filter(bus => bus.regNo === regNo);
+      console.log('Filterd bus details: ', JSON.stringify(details[0]));
+      return `${details[0].route}\n${details[0].routeType}\nDriver: ${details[0].driver}\nConductor: ${details[0].conductor}`;
+    } 
+    return null;
+  };
+
+  // Function to split bus stop name
+  const splitedName = (routes, name) => {
+    const nameParts = name.split(',');
+    return `${routes}\n${nameParts[1].trim()}\n${nameParts[2].trim()}`;
+  }
+
   return (
     <Box width='100%' height='100%'>
       <APIProvider
@@ -204,7 +220,16 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
               {/* MAP COMPONENETS */}
               {/* Rendering Bus Stops */}
               {zoom > 14 && busStops.length > 0 && busStops.map(place => (
-                <BusStopMarker key={place.id} title={place.name} position={place.location} onClick={()=>{setInfoWindow({state:true, position:place.location, label:place.name, body:place.routes})}} />
+                <BusStopMarker 
+                  key={place.id} 
+                  title={place.name.split(',')[0]} 
+                  position={place.location} 
+                  onClick={()=>{setInfoWindow({
+                    state:true, 
+                    position:place.location, 
+                    label:place.name.split(',')[0], 
+                    body:splitedName(place.routes, place.name)
+                  })}} />
               ))}
 
               {/* Rendering user's live location */}
@@ -301,7 +326,8 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
                             onClick={()=>{setInfoWindow({
                               state: true,
                               position:bus.location,
-                              label:bus.regNo
+                              label:bus.regNo,
+                              body: busInfo(bus.regNo)
                             })}}
                           />
                         ))}
@@ -316,12 +342,13 @@ export default function GoogleMaps({page, from, to, busData, routeLocations, est
 
               {/* Rendering popup window */}
               {infoWindow?.state && <InfoWindow 
-                headerContent={(<Texts fontSize='14px' fontWeight='normal'>{infoWindow.label}</Texts>)} 
+                headerContent={(<Texts fontSize='14px' >{infoWindow.label}</Texts>)} 
                 style={{minWidth:'120px', display:'flex', justifyContent:'center'}} 
                 position={infoWindow?.position} 
+                pixelOffset={[0,-30]}
                 onClose={()=>{setInfoWindow({...infoWindow, state:false})}} 
               >
-                <Typography sx={{ fontFamily:'Open Sans', fontSize:'14px', whiteSpace: 'pre-wrap' }}>{infoWindow?.body}</Typography>
+                <Texts whiteSpace='pre-wrap' fontWeight='normal'>{infoWindow?.body}</Texts>
               </InfoWindow>} 
             </Map>
 

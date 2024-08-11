@@ -17,6 +17,9 @@ export default function BusTracking({language, setLoading}) {
   // Variable to hold the confirmed bus list
   const [busList, setBusList] = useState([]);
 
+  // Variable to hold the bus's general details
+  const [busDetails, setBusDetails] = useState([]);
+
   // Variable to hold the bus numbers
   const [busNumbers, setBusNumbers] = useState([]);
 
@@ -34,14 +37,15 @@ export default function BusTracking({language, setLoading}) {
     }
   };
 
-  // Fetching user's bus numbers
+  // Fetching user's bus numbers and details
   useEffect(()=>{
     const GetBusNumbers = async() => {
       try {
         setLoading(true);  // Enabling spinner
         const serverResponse = await GetRequest(userID, 'bus/mybuses');
-        console.log('My Buses: ', serverResponse.data);
-        setBusNumbers(serverResponse.data);
+        console.log('My Buses: ', JSON.stringify(serverResponse.data));
+        setBusNumbers(serverResponse.data.regNos);
+        setBusDetails(serverResponse.data.general);
       } catch (error) {
         console.log(`Error in fetching my buses.`);
       } finally {
@@ -96,6 +100,7 @@ export default function BusTracking({language, setLoading}) {
           <GoogleMaps
             page={'myBuses'}
             myBusesLocation={busLocations}
+            generalData={busDetails}
           />          
         </Paper>
       </Box>

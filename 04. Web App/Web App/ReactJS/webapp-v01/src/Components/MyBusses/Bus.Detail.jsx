@@ -36,7 +36,7 @@ const MONTH = today.getMonth() + 1;
 const DATE  = today.getDate();
 
 // Function to create a card
-function QuickCard({amount, increment, title, icon}) {
+export function QuickCard({amount, increment, title, icon}) {
   return(
     <Card sx={{width:'300px', height:'150px', borderRadius:'10px', display:'flex', padding:'15px', flexDirection:'column', opacity:'80%', cursor:'pointer'}}>
       <Box width={'100%'} height={'30px'} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>

@@ -29,6 +29,7 @@ export default function Location({activeStep, setActiveStep, bookingData, setBoo
 
   // Handling continue button
   const handleClick = () =>{
+    //console.log(`from: ${JSON.stringify(from)}  to: ${JSON.stringify(to)}   date err: ${JSON.stringify(dateError)}  date:${JSON.stringify(date)}`)
     if((!!from && !!from.id) && (!!to && !!to.id) && !dateError && !!date){
       // Update booking data
       setBookingData({...bookingData, from:from, to:to, date:date});
