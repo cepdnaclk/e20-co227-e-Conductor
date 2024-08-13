@@ -75,13 +75,13 @@ function FeedbackCard({loaded, feedback}){
         }
         <Box height={'100%'} display={'flex'} flexDirection={'column'} justifyContent={'space-between'} ml={2}>
           {loaded ? 
-            <Texts fontSize={'body1'}>{feedback.name}</Texts>
+            <Texts fontSize='17px'>{feedback.name}</Texts>
           : 
             <Skeleton animation="wave" variant="rounded" width={150} height={20}/>
           }
 
           {loaded ? 
-            <Texts variant={'body2'} fontColor='textSecondary'>{feedback.userType}</Texts>
+            <Texts variant={'subtitle1'} fontColor='textSecondary'>{feedback.userType}</Texts>
           : 
             <Skeleton animation="wave" variant="rounded" width={100} height={15}/>
           }

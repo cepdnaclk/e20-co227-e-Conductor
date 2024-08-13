@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Location from '../Components/Bookings/Location'
-import './Home.css'
 import BusList from '../Components/Bookings/BusList'
 import SeatArrangement from '../Components/Bookings/SeatArrangement'
 import Payment from '../Components/Bookings/Payment'

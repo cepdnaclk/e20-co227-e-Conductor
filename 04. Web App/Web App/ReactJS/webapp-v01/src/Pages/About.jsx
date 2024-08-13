@@ -1,73 +1,190 @@
 import React from 'react';
-import { Box, Typography, Grid, Card, CardContent, Avatar, Button } from '@mui/material';
-import teamImage from '../Images/passenger.jpg'; // Replace with your team image path
+import { Box, Typography, Grid, Card, Avatar, Button, CardContent } from '@mui/material';
+import team from '../Images/team2.jpg';
+import Texts from '../Components/InputItems/Texts';
+import RocketLaunchIcon from '@mui/icons-material/RocketLaunch';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import SecurityIcon from '@mui/icons-material/Security';
+import DirectionsBusIcon from '@mui/icons-material/DirectionsBus';
+import DirectionsBusFilledIcon from '@mui/icons-material/DirectionsBusFilled';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import a1 from '../Images/Busowner.jpg'
+import a2 from '../Images/easy booking.jpg'
+import { useNavigate } from 'react-router-dom';
 
-export default function AboutUs() {
-  const teamMembers = [
-    { name: "John Doe", title: "CEO", bio: "John is the visionary behind eConductor.", avatar: "../Images/Busowner.jpg" },
-    { name: "Jane Smith", title: "CTO", bio: "Jane leads the technology team with a focus on innovation.", avatar: "/path/to/avatar2.jpg" },
-    // Add more team members here
-  ];
+const values = [
+  {
+    title: 'Reliability',
+    description: 'We are committed to providing dependable service to our customers. Punctuality and consistency are at the core of our operations, ensuring a seamless travel experience for everyone.',
+    icon: <SecurityIcon sx={{ fontSize: 45, color: '#ffcc00' }}/>, 
+    color: '#ffcc00'
+  },
+  {
+    title: 'Customer-Centric',
+    description: 'Our customers are at the heart of every decision we make. We prioritize safety, comfort, and convenience to ensure that our passengers have a positive and hassle-free journey.',
+    icon: <DirectionsBusIcon sx={{ fontSize: 45, color: '#00bfff' }}/>, 
+    color: '#00bfff'
+  },
+  {
+    title: 'Innovation',
+    description: 'We continually explore new technologies and approaches to enhance the booking process, improve safety features, and provide a superior travel experience.',
+    icon: <AutorenewIcon sx={{ fontSize: 45, color: '#32cd32' }}/>, 
+    color: '#32cd32'
+  },
+  {
+    title: 'Community',
+    description: 'We are dedicated to giving back to the communities we serve by supporting local businesses, reducing our environmental footprint, and promoting safe and sustainable travel.',
+    icon: <VolunteerActivismIcon sx={{ fontSize: 45, color: '#ff0066' }}/>,
+    color: '#ff0066'
+  }
+];
 
+const teamMembers = [
+  { name: "John Doe", title: "CEO", bio: "John is the visionary behind eConductor.", avatar: a1 },
+  { name: "Jane Smith", title: "CTO", bio: "Jane leads the technology team with a focus on innovation.", avatar: a2 },
+  { name: "Johnathen Stethon", title: "Director", bio: "Johnathen leads the technology team with a focus on innovation.", avatar: a1 },
+  { name: "Anne Eater", title: "Director", bio: "Anne leads the technology team with a focus on innovation.", avatar: a2 },
+];
+
+const impact = [
+  {icon:<ConfirmationNumberIcon  sx={{ fontSize: 45, color: '#127be4' }}/> , bgc:'#d0e5fa', bc:'#127be4', title:'1M+', text:'Tickets Booked'},
+  {icon:<DirectionsBusFilledIcon sx={{ fontSize: 45, color: '#04aa6d' }}/> , bgc:'#cdeee2', bc:'#04aa6d', title:'500+', text:'Buses Registered'},
+  {icon:<HowToRegIcon sx={{ fontSize: 45, color: '#de0032' }}/> , bgc:'#f8ccd6', bc:'#de0032', title:'10K+', text:'Employees Registerd'},
+  {icon:<EmojiEmotionsIcon sx={{ fontSize: 45, color: '#ffcc00' }}/> , bgc:'#fff5cc', bc:'#ffcc00', title:'50K+', text:'Satisfied Customers'}
+]
+
+export default function About() {
+  const navigate = useNavigate();
+
+  const handleButton = () => {
+    console.log('Signin');
+    navigate('/signin');
+  }
   return (
-    <Box p={3} width="100%">
+    <Box width="100%" bgcolor={'ghostwhite'} pb={5}>
       {/* Header Section */}
-      <Box textAlign="center" mb={6}>
-        <Typography variant="h3" mb={2}>About Us</Typography>
-        <Typography variant="h6">Empowering the Future of Public Transportation</Typography>
+      <Box textAlign="center" mb={7} sx={{
+        backgroundImage:`url(${team})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        height:'300px',
+        display:'flex',
+        justifyContent:'start' ,
+        alignItems:'end',
+        padding:'0 5%',
+        '@media (max-width: 600px)': {
+          height: 'auto', 
+          aspectRatio: '3/1',
+          backgroundSize: 'contain', 
+          p:'20px 0',
+          justifyContent:'center',
+        },
+      }}>
+        <Texts variant="h3" fontColor={{xs:'white', md:'black'}} mb={2}>About Us</Texts>
       </Box>
 
       {/* Our Story */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Our Story</Typography>
-        <Typography variant="body1" mb={2}>
-          eConductor started with a simple idea: to make public transportation more efficient and accessible for everyone. 
+      <Box mb={7} px={'10%'}>
+        <Texts variant="h4" mb={2}>Our Story</Texts>
+        <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
+          e-conductor started with a simple idea: to make public transportation more efficient and accessible for everyone. 
           Over the years, we've grown into a leading platform for bus ticket booking and management, offering live bus tracking, 
           easy seat reservation, and more.
-        </Typography>
-        <Typography variant="body1">
+        </Texts>
+        <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
           From our humble beginnings, we've expanded our services to meet the growing needs of passengers and bus operators alike. 
           Today, eConductor is a trusted name in the industry, known for our commitment to innovation and customer satisfaction.
-        </Typography>
+        </Texts>
       </Box>
 
       {/* Mission & Vision */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Our Mission & Vision</Typography>
-        <Typography variant="h6" mb={1}>Mission:</Typography>
-        <Typography variant="body1" mb={2}>
-          To revolutionize public transportation by providing a seamless, user-friendly platform that connects passengers and bus operators, 
-          enhancing the travel experience for everyone.
-        </Typography>
-        <Typography variant="h6" mb={1}>Vision:</Typography>
-        <Typography variant="body1">
-          To be the global leader in public transportation solutions, ensuring safe, reliable, and sustainable travel for millions of people every day.
-        </Typography>
+      <Box mb={7} px={'10%'} >
+        <Texts variant="h4" mb={2}>Vision & Mission</Texts>
+        <Grid container spacing={3}>
+          {/* Vision Card */}
+          <Grid item xs={12} sm={6} justifyContent="center" display={'flex'} >
+            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <RemoveRedEyeIcon sx={{ fontSize: 50, color: '#FFA500' }} /> 
+                <Typography variant="h6" fontWeight="bold" mt={2}>
+                  VISION
+                </Typography>
+                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
+                  To be the global leader in public transportation solutions, ensuring safe, reliable, and sustainable travel for millions of people every day.
+                </Texts>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Mission Card */}
+          <Grid item xs={12} sm={6} justifyContent="center" display={'flex'} >
+            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <RocketLaunchIcon sx={{ fontSize: 50, color: '#FF4500' }} />
+                <Typography variant="h6" fontWeight="bold" mt={2}>
+                  MISSION
+                </Typography>
+                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
+                  To revolutionize public transportation by providing a seamless, user-friendly platform that connects passengers and bus operators, 
+                  enhancing the travel experience for everyone.
+                </Texts>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Values Card */}
+          {/* <Grid item xs={12} sm={4} justifyContent="center" display={'flex'} >
+            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
+              <CardContent sx={{ textAlign: 'center' }}>
+                <RocketLaunchIcon sx={{ fontSize: 50, color: '#1E90FF' }} />
+                <Typography variant="h6" fontWeight="bold" mt={2}>
+                  Values
+                </Typography>
+                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </Texts>
+              </CardContent>
+            </Card>
+          </Grid>*/}
+        </Grid>
       </Box>
 
       {/* Our Values */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Our Values</Typography>
-        <Typography variant="body1" mb={1}>- Customer Focus: We prioritize the needs and satisfaction of our customers in every decision we make.</Typography>
-        <Typography variant="body1" mb={1}>- Innovation: We embrace technology and creativity to drive progress in public transportation.</Typography>
-        <Typography variant="body1" mb={1}>- Integrity: We conduct our business with honesty and transparency.</Typography>
-        <Typography variant="body1" mb={1}>- Community: We believe in contributing to the communities we serve.</Typography>
-        <Typography variant="body1">- Sustainability: We are committed to promoting environmentally responsible practices.</Typography>
+      <Box mb={7} px={'10%'} >
+        <Texts variant="h4" mb={2}>Our Values</Texts>
+        <Grid container spacing={3} >
+          {values.map((value, index) => (
+            <Grid item xs={12} sm={4} md={3} key={index} justifyContent="center" display={'flex'}>
+              <Card sx={{ borderRadius: '16px', borderTop: `4px solid ${value.color}`, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', height:'100%', width:'100%', maxWidth:'230px' }}>
+                <CardContent>
+                  <Box display="flex" justifyContent="center" mb={2}>
+                    {value.icon}
+                  </Box>
+                  <Typography variant="h6" textAlign="center" fontWeight={'bold'} gutterBottom>{value.title}</Typography>
+                  <Texts variant="body2" textAlign="center" fontWeight='normal' whiteSpace='normal'>{value.description}</Texts>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
       </Box>
 
       {/* Meet the Team */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Meet the Team</Typography>
-        <Grid container spacing={4}>
+      <Box mb={7} px={'10%'} >
+        <Texts variant="h4" mb={2}>Meet the Team</Texts>
+        <Grid container spacing={3}>
           {teamMembers.map((member, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
-              <Card>
-                <Box display="flex" flexDirection="column" alignItems="center" p={2}>
-                  <Avatar src={member.avatar} alt={member.name} sx={{ width: 100, height: 100, mb: 2 }} />
-                  <Typography variant="h6">{member.name}</Typography>
-                  <Typography variant="subtitle1" color="textSecondary">{member.title}</Typography>
-                  <Typography variant="body2" mt={1} textAlign="center">{member.bio}</Typography>
-                </Box>
+            <Grid item xs={12} sm={6} md={3} key={index} justifyContent="center" display={'flex'}>
+              <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", flexDirection:"column", alignItems:"center", p:2, textAlign:'center'}}>
+                <Avatar src={member.avatar} alt={member.name} sx={{ width: 100, height: 100, mb: 2 }} />
+                <Texts variant="h6" whiteSpace='normal'>{member.name}</Texts>
+                <Texts variant="subtitle1" color="textSecondary">{member.title}</Texts>
+                <Texts variant="body2" fontWeight='normal' mt={1} textAlign="center" whiteSpace='normal'>{member.bio}</Texts>
               </Card>
             </Grid>
           ))}
@@ -75,26 +192,29 @@ export default function AboutUs() {
       </Box>
 
       {/* Our Impact */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Our Impact</Typography>
-        <Typography variant="body1" mb={1}>- 1 Million+ Tickets Booked</Typography>
-        <Typography variant="body1" mb={1}>- 500+ Buses Registered</Typography>
-        <Typography variant="body1">- 50,000+ Satisfied Customers</Typography>
-      </Box>
-
-      {/* Contact Information */}
-      <Box mb={6}>
-        <Typography variant="h4" mb={2}>Contact Us</Typography>
-        <Typography variant="body1" mb={1}>Email: support@econductor.com</Typography>
-        <Typography variant="body1" mb={1}>Phone: +123 456 7890</Typography>
-        <Typography variant="body1">Follow us on social media:</Typography>
-        {/* Add social media icons/links here */}
+      <Box mb={7} px={'10%'} >
+        <Texts variant="h4" mb={2}>Our Impact</Texts>
+        <Grid container spacing={3}>
+          {impact.map((item, index)=>
+            <Grid item key={index} xs={12} md={6} lg={3} justifyContent={'space-around'} display={'flex'}>
+              <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'15px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", alignItems:"center", justifyContent:'space-around', p:2,}}>
+                <Box minWidth={'60px'} minHeight={'60px'} bgcolor={item.bgc} border={`2px solid ${item.bc}`} borderRadius={'15px'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                  {item.icon}
+                </Box>
+                <Box>
+                  <Texts variant={'h4'} fontColor={item.bc}>{item.title}</Texts>
+                  <Texts variant={'subtitle'} fontColor={item.bc}>{item.text}</Texts>
+                </Box>
+              </Card>
+            </Grid>
+          )}          
+        </Grid>
       </Box>
 
       {/* Call to Action */}
       <Box textAlign="center" mt={6}>
-        <Typography variant="h5" mb={3}>Ready to Join Us?</Typography>
-        <Button variant="contained" color="primary">Sign Up Now</Button>
+        <Texts variant="h5" mb={3}>Ready to Join Us?</Texts>
+        <Button variant="contained" color="primary" onClick={handleButton}>Sign Up Now</Button>
       </Box>
     </Box>
   );
