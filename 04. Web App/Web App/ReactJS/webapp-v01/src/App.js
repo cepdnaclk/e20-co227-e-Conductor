@@ -162,7 +162,7 @@ function App() {
         
         <Routes>
           <Route path = "/" element={<Navigate to="home"/>} />
-          <Route path = "home" element={<Home language={language}/>} />          
+          <Route path = "home" element={<Home language={language} setLoading={setLoading}/>} />          
           <Route path = "about" element={<About language={language} />} />
           <Route path = "help" element={<Help language={language} />} />
           

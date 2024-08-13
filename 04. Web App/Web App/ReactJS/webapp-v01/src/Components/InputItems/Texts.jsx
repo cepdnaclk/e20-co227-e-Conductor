@@ -61,7 +61,8 @@ export default function Texts({
     variant, 
     fontWeight='bold',
     fontColor='black',
-    whiteSpace='noWrap'
+    whiteSpace='noWrap',
+    ...props
 }) {
   return (
     <Typography 
@@ -72,6 +73,7 @@ export default function Texts({
         fontWeight={fontWeight}
         color={fontColor}
         whiteSpace={whiteSpace}
+        {...props}
     >
         {children}
     </Typography>
