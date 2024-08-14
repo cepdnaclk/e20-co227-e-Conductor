@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, Card, CardContent, CardMedia, Button } from '@mui/material';
+import { Box, Grid, Card, CardContent, CardMedia } from '@mui/material';
 import Texts from '../Components/InputItems/Texts';
 import { GetResponse } from '../APIs/NodeBackend';
 
@@ -57,14 +57,6 @@ const NewsRoom = ({setLoading, language}) => {
                 <Texts variant="body2" color="textSecondary" whiteSpace='normal' >
                   {item.date}
                 </Texts>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  href={item.link} 
-                  sx={{ fontFamily: 'Open Sans', fontWeight: 'bold', mt:1 }}
-                >
-                  Read More
-                </Button>
               </CardContent>
             </Card> 
           </Grid>
