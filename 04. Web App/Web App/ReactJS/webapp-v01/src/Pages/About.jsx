@@ -136,28 +136,13 @@ export default function About() {
               </CardContent>
             </Card>
           </Grid>
-
-          {/* Values Card */}
-          {/* <Grid item xs={12} sm={4} justifyContent="center" display={'flex'} >
-            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <RocketLaunchIcon sx={{ fontSize: 50, color: '#1E90FF' }} />
-                <Typography variant="h6" fontWeight="bold" mt={2}>
-                  Values
-                </Typography>
-                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </Texts>
-              </CardContent>
-            </Card>
-          </Grid>*/}
         </Grid>
       </Box>
 
       {/* Our Values */}
       <Box mb={7} px={'10%'} >
         <Texts variant="h4" mb={2}>Our Values</Texts>
-        <Grid container spacing={3} >
+        <Grid container spacing={3} justifyContent={'space-around'}>
           {values.map((value, index) => (
             <Grid item xs={12} sm={4} md={3} key={index} justifyContent="center" display={'flex'}>
               <Card sx={{ borderRadius: '16px', borderTop: `4px solid ${value.color}`, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', height:'100%', width:'100%', maxWidth:'230px' }}>
@@ -177,7 +162,7 @@ export default function About() {
       {/* Meet the Team */}
       <Box mb={7} px={'10%'} >
         <Texts variant="h4" mb={2}>Meet the Team</Texts>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent={'space-around'}>
           {teamMembers.map((member, index) => (
             <Grid item xs={12} sm={6} md={3} key={index} justifyContent="center" display={'flex'}>
               <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", flexDirection:"column", alignItems:"center", p:2, textAlign:'center'}}>
@@ -194,7 +179,7 @@ export default function About() {
       {/* Our Impact */}
       <Box mb={7} px={'10%'} >
         <Texts variant="h4" mb={2}>Our Impact</Texts>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justifyContent={'space-around'}>
           {impact.map((item, index)=>
             <Grid item key={index} xs={12} md={6} lg={3} justifyContent={'space-around'} display={'flex'}>
               <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'15px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", alignItems:"center", justifyContent:'space-around', p:2,}}>

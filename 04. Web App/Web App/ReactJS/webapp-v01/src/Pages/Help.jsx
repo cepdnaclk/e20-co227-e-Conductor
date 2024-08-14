@@ -54,7 +54,7 @@ export default function Help() {
         Help & Tutorials
       </Texts>
 
-      <Grid container spacing={3} mb={6}>
+      <Grid container spacing={3} mb={6} justifyContent={'space-around'}>
         {tutorials.map((tutorial, index) => (
           <Grid item key={index} xs={12} md={6} xl={4} display={'flex'} justifyContent={'space-around'}>
             <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'500px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', p:2, textAlign:'center'}}>
