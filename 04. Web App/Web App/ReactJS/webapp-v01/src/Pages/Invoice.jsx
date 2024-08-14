@@ -63,6 +63,7 @@ export default function InvoicePage({ language, setLoading }) {
     window.addEventListener('resize', handleResize); // Adjust scale on window resize
 
     return () => window.removeEventListener('resize', handleResize);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Manual Zooming

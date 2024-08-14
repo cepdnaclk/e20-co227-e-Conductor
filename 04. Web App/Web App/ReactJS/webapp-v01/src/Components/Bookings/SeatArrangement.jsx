@@ -43,6 +43,7 @@ export default function SeatArrangement({activeStep, setActiveStep, bookingData,
     }
 
     validating();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[adults, children]);
 
   // Handle back button

@@ -69,6 +69,7 @@ export default function Tickets({ language, setLoading }) {
     };
 
     getData(userID);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
  
   // Handle Button Click

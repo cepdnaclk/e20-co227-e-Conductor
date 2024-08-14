@@ -25,6 +25,7 @@ export default function Location({activeStep, setActiveStep, bookingData, setBoo
     } else {
       setDateError(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[date]); 
 
   // Handling continue button

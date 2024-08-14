@@ -46,6 +46,7 @@ export default function Purchasing({bookingData, activeStep, steps, handleBack, 
     };
 
     fetch(bookingData.userID);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   // Confirmation handle
@@ -70,6 +71,7 @@ export default function Purchasing({bookingData, activeStep, steps, handleBack, 
       });
       setConfirm(null);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[confirm])
 
   // Ticket price calculation

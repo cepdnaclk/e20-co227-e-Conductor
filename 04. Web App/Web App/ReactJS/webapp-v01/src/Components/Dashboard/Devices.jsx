@@ -29,6 +29,7 @@ export default function Devices({setIsLogged, language, setLoading}) {
       getDevices(userID);
       setIsTerminated(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTerminated]);
 
   // Requesting device data from node backend

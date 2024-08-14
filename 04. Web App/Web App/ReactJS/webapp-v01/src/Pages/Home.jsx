@@ -14,6 +14,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GetRequest, GetResponse } from '../APIs/NodeBackend';
 import { ToastAlert } from '../Components/MyNotifications/WindowAlerts';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const QNA = [{
   "que": "Suspendisse accumsan tortor quis turpis.",
@@ -222,6 +223,11 @@ export default function Home({setLoading, language}) {
           },
         }}
       >
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1 }}
+        >
         <Box 
           sx={{
             display:'flex',
@@ -237,6 +243,7 @@ export default function Home({setLoading, language}) {
             variant='h1' 
             fontWeight={'bold'}
             color={'black'}
+            whiteSpace={'nowrap'}
             sx={{
               fontSize: '2rem', // Default font size
               '@media (min-width: 600px)': {
@@ -268,6 +275,7 @@ export default function Home({setLoading, language}) {
             Buy Your Ticket
           </Button>     
         </Box>
+        </motion.div>
       </Box>
 
       {/* Features Section */}

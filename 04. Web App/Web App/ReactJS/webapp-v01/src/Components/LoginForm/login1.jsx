@@ -3,14 +3,14 @@ import { Button, Container } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { GoPasskeyFill } from 'react-icons/go';
-import { FaApple } from 'react-icons/fa';
+//import { FaApple } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 import { Request } from '../../APIs/NodeBackend';
 import { getSessionData } from '../SessionData/Sessions';
 import './login1.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaFacebookF } from 'react-icons/fa';
+//import { FaFacebookF } from 'react-icons/fa';
 
 function Login({ data, sendResponse, language, setIsLogged, rememberMe, setLoading }) {  // language is not implemented yet
   const navigate = useNavigate();
@@ -48,6 +48,7 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe, setLoadi
     };
   
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
    
   // Effect to handle user validation after userId state changes
@@ -77,6 +78,7 @@ function Login({ data, sendResponse, language, setIsLogged, rememberMe, setLoadi
       setNumber('+94');
       setUserData({...userData, userID: '', email: '', userType: '', empType: ''});
     }   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData.userID, userData.email, userData.empType, userData.userType]);
 
   // Handling submit 
