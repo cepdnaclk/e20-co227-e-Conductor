@@ -33,6 +33,7 @@ import { getSessionData } from "./Components/SessionData/Sessions";
 import { PrivertRouteToSignin, PrivertRouteToHome, PrivertRouteToForbidden } from "./Routes/PrivertRoutes";
 import { MyBars } from "./Components/Spinners/Spinners";
 import ContactUs from "./Pages/ContactUs";
+import NewsRoom from "./Pages/NewsRoom";
 
 
 function App() {
@@ -167,6 +168,7 @@ function App() {
           <Route path = "about" element={<About language={language} />} />
           <Route path = "help" element={<Help language={language} />} />
           <Route path = "contact" element={<ContactUs language={language} setLoading={setLoading}/>} />
+          <Route path = "news" element={<NewsRoom language={language} setLoading={setLoading}/>} />
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />
