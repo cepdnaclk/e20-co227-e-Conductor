@@ -32,6 +32,7 @@ import { Post, Request } from "./APIs/NodeBackend";
 import { getSessionData } from "./Components/SessionData/Sessions";
 import { PrivertRouteToSignin, PrivertRouteToHome, PrivertRouteToForbidden } from "./Routes/PrivertRoutes";
 import { MyBars } from "./Components/Spinners/Spinners";
+import ContactUs from "./Pages/ContactUs";
 
 
 function App() {
@@ -165,6 +166,7 @@ function App() {
           <Route path = "home" element={<Home language={language} setLoading={setLoading}/>} />          
           <Route path = "about" element={<About language={language} />} />
           <Route path = "help" element={<Help language={language} />} />
+          <Route path = "contact" element={<ContactUs language={language} setLoading={setLoading}/>} />
           
           <Route element={<PrivertRouteToSignin isLogged={isLogged}/>}>
             <Route path = "booking" element={<Bookings language={language} setLoading={setLoading}/>} />

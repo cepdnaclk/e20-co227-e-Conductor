@@ -145,6 +145,7 @@ export default function SignUp1({Data, userType, Response, userData, language, s
       setFormData(emptyData); // Reset form
       setIsDisable(true);     // Reset accepting terms and conditions
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[isAvailable])
 
   // Handling the is employee checkbox
@@ -152,6 +153,7 @@ export default function SignUp1({Data, userType, Response, userData, language, s
     if(!isEmployee){
       setFormData({...formData, ntc: '', licence: '', licenceFile: []});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEmployee])
 
   
@@ -160,6 +162,7 @@ export default function SignUp1({Data, userType, Response, userData, language, s
       // Check user availability
       userAvailability({mobile: formData.mobile, email: formData.email})  
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValid])
 
   // Handling back button
