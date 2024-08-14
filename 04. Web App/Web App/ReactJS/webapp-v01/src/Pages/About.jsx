@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Grid, Card, Avatar, Button, CardContent } from '@mui/material';
 import team from '../Images/team2.jpg';
 import Texts from '../Components/InputItems/Texts';
@@ -12,9 +12,8 @@ import AutorenewIcon from '@mui/icons-material/Autorenew';
 import ConfirmationNumberIcon from '@mui/icons-material/ConfirmationNumber';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
-import a1 from '../Images/Busowner.jpg'
-import a2 from '../Images/easy booking.jpg'
 import { useNavigate } from 'react-router-dom';
+import { GetResponse } from '../APIs/NodeBackend';
 
 const values = [
   {
@@ -43,13 +42,6 @@ const values = [
   }
 ];
 
-const teamMembers = [
-  { name: "John Doe", title: "CEO", bio: "John is the visionary behind eConductor.", avatar: a1 },
-  { name: "Jane Smith", title: "CTO", bio: "Jane leads the technology team with a focus on innovation.", avatar: a2 },
-  { name: "Johnathen Stethon", title: "Director", bio: "Johnathen leads the technology team with a focus on innovation.", avatar: a1 },
-  { name: "Anne Eater", title: "Director", bio: "Anne leads the technology team with a focus on innovation.", avatar: a2 },
-];
-
 const impact = [
   {icon:<ConfirmationNumberIcon  sx={{ fontSize: 45, color: '#127be4' }}/> , bgc:'#d0e5fa', bc:'#127be4', title:'1M+', text:'Tickets Booked'},
   {icon:<DirectionsBusFilledIcon sx={{ fontSize: 45, color: '#04aa6d' }}/> , bgc:'#cdeee2', bc:'#04aa6d', title:'500+', text:'Buses Registered'},
@@ -57,13 +49,39 @@ const impact = [
   {icon:<EmojiEmotionsIcon sx={{ fontSize: 45, color: '#ffcc00' }}/> , bgc:'#fff5cc', bc:'#ffcc00', title:'50K+', text:'Satisfied Customers'}
 ]
 
-export default function About() {
+export default function About({setLoading, language}) {
   const navigate = useNavigate();
-
+ 
+  // Variable to hold the team members data
+  const [teamMembers, setTeamMembers] = useState({
+    loaded: false,
+    members:[]
+  });
+  
   const handleButton = () => {
     console.log('Signin');
     navigate('/signin');
-  }
+  }  
+
+  // Getting all members
+  useEffect(()=>{
+    const fetch = async() => {
+      try {
+        setLoading(true);  // Enabling spinner
+        const serverResponse = await GetResponse('team');
+        console.log('Members: ', serverResponse.data);
+        setTeamMembers({loaded:true, members:serverResponse.data});
+      } catch (error) {
+        console.log('Error in fetching news');
+      } finally {
+        setLoading(false);  // Disabling spinner
+      }
+    }
+
+    fetch();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
   return (
     <Box width="100%" bgcolor={'ghostwhite'} pb={5}>
       {/* Header Section */}
@@ -163,7 +181,7 @@ export default function About() {
       <Box mb={7} px={'10%'} >
         <Texts variant="h4" mb={2}>Meet the Team</Texts>
         <Grid container spacing={3} justifyContent={'space-around'}>
-          {teamMembers.map((member, index) => (
+          {teamMembers.loaded && teamMembers.members.map((member, index) => (
             <Grid item xs={12} sm={6} md={3} key={index} justifyContent="center" display={'flex'}>
               <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", flexDirection:"column", alignItems:"center", p:2, textAlign:'center'}}>
                 <Avatar src={member.avatar} alt={member.name} sx={{ width: 100, height: 100, mb: 2 }} />
