@@ -8,6 +8,7 @@ import { handleNotifications } from '../Components/MyNotifications/FloatingNotif
 import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
 import {ToastAlert} from '../Components/MyNotifications/WindowAlerts'
 import { Link, useNavigate } from 'react-router-dom';
+import { OnceFadeIn } from '../Components/Animations/Entrance.Once';
 
 function ConfirmBox({data, open, handleClose, handleAgree}) {
   const descriptionElementRef = useRef(null);
@@ -219,7 +220,9 @@ export default function AvailableTickets({language, setLoading}) {
     <Box sx={{width:'100%', height:'fit-content', bgcolor:'ghostwhite', minHeight:'calc(100vh - 500px)'}}>
       {tickets.length > 0 && 
         <Box bgcolor='#fff7e6' mb={2} width='100%' height='50px' display='flex' justifyContent='space-around' alignItems='center' padding='0 10px' >
-          <Texts fontColor='#ff9900'> <InfoOutlinedIcon fontSize='16px' sx={{mr:'5px', color:'#ff9900'}} /> Here are the estimated times. They may change.</Texts>            
+          <OnceFadeIn >
+            <Texts fontColor='#ff9900'> <InfoOutlinedIcon fontSize='16px' sx={{mr:'5px', color:'#ff9900'}} /> Here are the estimated times. They may change.</Texts>            
+          </OnceFadeIn>
         </Box>
       }      
       <Box sx={{width:'100%', height:'fit-content', padding:'10px'}}>

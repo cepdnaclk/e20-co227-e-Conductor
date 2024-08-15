@@ -5,7 +5,7 @@ export function OnceFadeIn({ children, duration = 1000, delay = 0 }){
   return (
     <motion.div
       initial={{ opacity: 0 }}
-      transition={{ duration, delay }}
+      transition={{ duration:duration/1000, delay:delay/1000 }}
       animate={{ opacity: 1 }}
     >
       {children}

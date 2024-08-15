@@ -18,7 +18,7 @@ export function ViewFlyInX({ direction = 'left', duration = 1000, delay = 0, chi
   return (
     <motion.div
       initial={{ x: direction === 'left' ? -100 : 100, opacity: 0 }}
-      whileInView={{ x:0, opacity:1 }}
+      whileInView={{ x:0, opacity:1 }} 
       transition={{ duration:duration/1000, delay:delay/1000 }}
       style={sx}
     >
