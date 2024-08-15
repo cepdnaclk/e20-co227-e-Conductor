@@ -14,7 +14,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { GetRequest, GetResponse } from '../APIs/NodeBackend';
 import { ToastAlert } from '../Components/MyNotifications/WindowAlerts';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { ViewZoomIn, ViewFlyInY } from '../Components/Animations/Entrance.View';
+import { ViewFadeIn } from '../Components/Animations/Entrance.View';
+import { ViewFlyInX } from '../Components/Animations/Entrance.View';
 
 const QNA = [{
   "que": "Suspendisse accumsan tortor quis turpis.",
@@ -52,44 +54,46 @@ const APP_URL = 'https://econductornew.pages.dev/';
 
 function FeedbackCard({loaded, feedback}){
   return(
-    <Card elevation={3} sx={{ height:'100%', width:'100%', padding:'20px', display:'flex', flexDirection:'column', alignItems:'start', maxWidth:'400px', justifyContent:'space-between', gap:'10px'}}>
-      {loaded ? 
-        <Rating value={feedback.rating} precision={1} readOnly />
-      : 
-        <Skeleton animation="wave" variant="rounded" width={200} height={16}/>
-      }
-      
-      <Box height={'calc(100% - 80px)'} width={'100%'}>
+    <ViewZoomIn duration={1000} sx={{ height:'100%', width:'100%', display:'flex', justifyContent:'space-around'}}>
+      <Card elevation={3} sx={{ height:'100%', width:'100%', padding:'20px', display:'flex', flexDirection:'column', alignItems:'start', maxWidth:'400px', justifyContent:'space-between', gap:'10px'}}>
         {loaded ? 
-          <Texts variant={'body2'} fontWeight='normal' whiteSpace='pre-line' textAlign={'justify'}>
-            {feedback.note}
-          </Texts>  
+          <Rating value={feedback.rating} precision={1} readOnly />
         : 
-          <Skeleton animation="wave" variant="rounded" width={'100%'} height={200}/>
+          <Skeleton animation="wave" variant="rounded" width={200} height={16}/>
         }
-      </Box>
-      <Box width={'100%'} display={'flex'} alignItems={'center'}>
-        {loaded ? 
-          <Avatar {...stringAvatar(feedback.name)}/>
-        :
-          <Skeleton animation="wave" variant="circular" width={40} height={40}/>
-        }
-        <Box height={'100%'} display={'flex'} flexDirection={'column'} justifyContent={'space-between'} ml={2}>
+        
+        <Box height={'calc(100% - 80px)'} width={'100%'}>
           {loaded ? 
-            <Texts fontSize='17px'>{feedback.name}</Texts>
+            <Texts variant={'body2'} fontWeight='normal' whiteSpace='pre-line' textAlign={'justify'}>
+              {feedback.note}
+            </Texts>  
           : 
-            <Skeleton animation="wave" variant="rounded" width={150} height={20}/>
+            <Skeleton animation="wave" variant="rounded" width={'100%'} height={200}/>
           }
-
-          {loaded ? 
-            <Texts variant={'subtitle1'} fontColor='textSecondary'>{feedback.userType}</Texts>
-          : 
-            <Skeleton animation="wave" variant="rounded" width={100} height={15}/>
-          }
-          
         </Box>
-      </Box>
-    </Card>
+        <Box width={'100%'} display={'flex'} alignItems={'center'}>
+          {loaded ? 
+            <Avatar {...stringAvatar(feedback.name)}/>
+          :
+            <Skeleton animation="wave" variant="circular" width={40} height={40}/>
+          }
+          <Box height={'100%'} display={'flex'} flexDirection={'column'} justifyContent={'space-between'} ml={2}>
+            {loaded ? 
+              <Texts fontSize='17px'>{feedback.name}</Texts>
+            : 
+              <Skeleton animation="wave" variant="rounded" width={150} height={20}/>
+            }
+
+            {loaded ? 
+              <Texts variant={'subtitle1'} fontColor='textSecondary'>{feedback.userType}</Texts>
+            : 
+              <Skeleton animation="wave" variant="rounded" width={100} height={15}/>
+            }
+            
+          </Box>
+        </Box>
+      </Card>
+    </ViewZoomIn>
   );
 };
 
@@ -223,59 +227,55 @@ export default function Home({setLoading, language}) {
           },
         }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1 }}
-        >
-        <Box 
-          sx={{
-            display:'flex',
-            flexDirection:'column',
-            alignItems:'center',
-            pr:'5%',
-            '@media (max-width: 600px)': {
-              padding: '10px', // Adjust padding for smaller screens
-            },
-          }}
-        >
-          <Typography 
-            variant='h1' 
-            fontWeight={'bold'}
-            color={'black'}
-            whiteSpace={'nowrap'}
+        <ViewZoomIn duration={1500}>
+          <Box 
             sx={{
-              fontSize: '2rem', // Default font size
-              '@media (min-width: 600px)': {
-                fontSize: '3rem', // Adjust font size for larger screens
-              },
-              '@media (min-width: 960px)': {
-                fontSize: '4rem', // Adjust font size for even larger screens
+              display:'flex',
+              flexDirection:'column',
+              alignItems:'center',
+              pr:'5%',
+              '@media (max-width: 600px)': {
+                padding: '10px', // Adjust padding for smaller screens
               },
             }}
           >
-            Welcome to e-conductor
-          </Typography>  
+            <Typography 
+              variant='h1' 
+              fontWeight={'bold'}
+              color={'black'}
+              whiteSpace={'nowrap'}
+              sx={{
+                fontSize: '2rem', // Default font size
+                '@media (min-width: 600px)': {
+                  fontSize: '3rem', // Adjust font size for larger screens
+                },
+                '@media (min-width: 960px)': {
+                  fontSize: '4rem', // Adjust font size for even larger screens
+                },
+              }}
+            >
+              Welcome to e-conductor
+            </Typography>  
 
-          <Typography 
-            variant='body2'
-            fontWeight={'bold'} 
-            color={'textSecondary'}
-            sx={{
-              fontSize: '1rem', // Default font size
-              '@media (min-width: 600px)': {
-                fontSize: '1.7rem', // Adjust font size for larger screens
-              },
-            }}
-          >
-            Your Smart Bus Ticket Booking Solution
-          </Typography>  
+            <Typography 
+              variant='body2'
+              fontWeight={'bold'} 
+              color={'textSecondary'}
+              sx={{
+                fontSize: '1rem', // Default font size
+                '@media (min-width: 600px)': {
+                  fontSize: '1.7rem', // Adjust font size for larger screens
+                },
+              }}
+            >
+              Your Smart Bus Ticket Booking Solution
+            </Typography>  
 
-          <Button variant="contained" color="primary" size="large" sx={{mt:'10px'}} onClick={()=>handleButtons('booking')}>
-            Buy Your Ticket
-          </Button>     
-        </Box>
-        </motion.div>
+            <Button variant="contained" color="primary" size="large" sx={{mt:'10px'}} onClick={()=>handleButtons('booking')}>
+              Buy Your Ticket
+            </Button>     
+          </Box>
+        </ViewZoomIn>
       </Box>
 
       {/* Features Section */}
@@ -283,57 +283,63 @@ export default function Home({setLoading, language}) {
         <Texts variant="h4" textAlign="center" mb={4}>Our Features</Texts>
         <Grid container spacing={3} justifyContent="center">
           <Grid item xs={12} sm={6} md={4} justifyContent={'center'} display={'flex'}>
-            <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
-              <CardMedia
-                sx={{ width:'100%', aspectRatio:'3/2' }}
-                image={easyBookking}
-              />
-              <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
-                <Texts textAlign={'center'} variant="h6">Easy Booking</Texts>
-                <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
-                  Experience a hassle-free ticket booking process with our user-friendly platform. Quickly find and reserve your seat on any bus, anytime, with just a few clicks. No more waiting in lines-book your journey from the comfort of your home.
-                </Texts>
-              </CardContent>
-              <CardActions sx={{mb:1}}>
-                <Button size="small" variant='outlined' onClick={()=>handleButtons('booking')}>Book Now</Button>
-              </CardActions>
-            </Card>
+            <ViewFlyInY direction={'bottom'} >
+              <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
+                <CardMedia
+                  sx={{ width:'100%', aspectRatio:'3/2' }}
+                  image={easyBookking}
+                />
+                <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
+                  <Texts textAlign={'center'} variant="h6">Easy Booking</Texts>
+                  <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
+                    Experience a hassle-free ticket booking process with our user-friendly platform. Quickly find and reserve your seat on any bus, anytime, with just a few clicks. No more waiting in lines-book your journey from the comfort of your home.
+                  </Texts>
+                </CardContent>
+                <CardActions sx={{mb:1}}>
+                  <Button size="small" variant='outlined' onClick={()=>handleButtons('booking')}>Book Now</Button>
+                </CardActions>
+              </Card>
+            </ViewFlyInY>
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} justifyContent={'center'} display={'flex'}>
-            <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
-              <CardMedia
-                sx={{ width:'100%', aspectRatio:'3/2' }}
-                image={payment}
-              />
-              <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
-                <Texts textAlign={'center'} variant="h6">Secure Payment</Texts>
-                <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
-                  Your financial security is our top priority. We offer multiple secure payment options, ensuring your transactions are protected with the latest encryption technology. Enjoy peace of mind as you book your tickets safely and securely.
-                </Texts>
-              </CardContent>
-              <CardActions sx={{mb:1}}>
-                <Button size="small" variant='outlined' onClick={()=>handleButtons('reload')}>Reload Now</Button>
-              </CardActions>
-            </Card>
+            <ViewFlyInY direction={'bottom'} delay={100}>
+              <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
+                <CardMedia
+                  sx={{ width:'100%', aspectRatio:'3/2' }}
+                  image={payment}
+                />
+                <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
+                  <Texts textAlign={'center'} variant="h6">Secure Payment</Texts>
+                  <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
+                    Your financial security is our top priority. We offer multiple secure payment options, ensuring your transactions are protected with the latest encryption technology. Enjoy peace of mind as you book your tickets safely and securely.
+                  </Texts>
+                </CardContent>
+                <CardActions sx={{mb:1}}>
+                  <Button size="small" variant='outlined' onClick={()=>handleButtons('reload')}>Reload Now</Button>
+                </CardActions>
+              </Card>
+            </ViewFlyInY>
           </Grid>
 
           <Grid item xs={12} sm={6} md={4} justifyContent={'center'} display={'flex'}>
-            <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
-              <CardMedia
-                sx={{ width:'100%', aspectRatio:'3/2' }}
-                image={location}
-              />
-              <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
-                <Texts textAlign={'center'} variant="h6">Real-time Tracking</Texts>
-                <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
-                  Stay informed with real-time bus tracking. Know the exact location of your bus and receive timely updates on its arrival. Our live tracking feature helps you plan your journey better, ensuring you’re never left waiting.
-                </Texts>
-              </CardContent>
-              <CardActions sx={{mb:1}}>
-                <Button size="small" variant='outlined' onClick={()=>handleButtons('avtickets')}>Track Now</Button>
-              </CardActions>
-            </Card>
+            <ViewFlyInY direction={'bottom'} delay={200}>
+              <Card elevation={3} sx={{ height: '100%', display:'flex', flexDirection:'column', alignItems:'center', maxWidth:'400px', justifyContent:'space-between'}}>
+                <CardMedia
+                  sx={{ width:'100%', aspectRatio:'3/2' }}
+                  image={location}
+                />
+                <CardContent sx={{display:'flex', flexDirection:'column', gap:'10px' }}>
+                  <Texts textAlign={'center'} variant="h6">Real-time Tracking</Texts>
+                  <Texts textAlign={'justify'} variant="body2" whiteSpace='normal' fontColor='textSecondary'>
+                    Stay informed with real-time bus tracking. Know the exact location of your bus and receive timely updates on its arrival. Our live tracking feature helps you plan your journey better, ensuring you’re never left waiting.
+                  </Texts>
+                </CardContent>
+                <CardActions sx={{mb:1}}>
+                  <Button size="small" variant='outlined' onClick={()=>handleButtons('avtickets')}>Track Now</Button>
+                </CardActions>
+              </Card>
+            </ViewFlyInY>
           </Grid>
         </Grid>
       </Box>
@@ -369,33 +375,37 @@ export default function Home({setLoading, language}) {
       {/* FAQ Section */}
       <Box width="100%" padding={'60px 30px'}>
         <Texts whiteSpace='normal' variant="h4" textAlign="center" mb={4}>Frequently Asked Questions</Texts>
-        {QNA.map((item, index) => 
-          <AccordionPack key={index} head={item.que} body={item.ans}/>
-        )}
+        <ViewFadeIn duration={2000} sx={{padding:2}}>
+          {QNA.map((item, index) => 
+            <AccordionPack key={index} head={item.que} body={item.ans}/>
+          )}
+        </ViewFadeIn>
       </Box>
       
       {/* Mobile App */}
       <Box width="100%" padding={'10px'}>
         <Texts variant="h4" textAlign="center" mb={4}>Do More in the App</Texts>
-        <a href={APP_URL} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display:"flex", justifyContent:'space-around'}}>
-        <Card elevation={3} sx={{width:{xs:'calc(100% - 10px)', md:'500px'}, padding:'20px', display:'flex', justifyContent:'space-around', alignItems:'center'}}>
-          <CardMedia
-            sx={{ minWidth:'100px', minHeight:'100px', mr:'20px'}}
-            image={qr}
-          />
-          <Box>
-            <Texts variant={'h6'} whiteSpace='normal'>
-              Download the <span style={{ whiteSpace: 'nowrap' }}>e-conductor</span> app
-            </Texts>
-            <Texts variant={'body2'} fontColor='textSecondary'>
-              Scan to download
-            </Texts>
-          </Box>
-          <IconButton sx={{height:'40px', width:'40px'}}>
-            <ArrowForwardIcon/>
-          </IconButton>
-        </Card>
-        </a>
+        <ViewFlyInX >
+          <a href={APP_URL} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', display:"flex", justifyContent:'space-around'}}>
+            <Card elevation={3} sx={{width:{xs:'calc(100% - 10px)', md:'500px'}, padding:'20px', display:'flex', justifyContent:'space-around', alignItems:'center'}}>
+              <CardMedia
+                sx={{ minWidth:'100px', minHeight:'100px', mr:'20px'}}
+                image={qr}
+              />
+              <Box>
+                <Texts variant={'h6'} whiteSpace='normal'>
+                  Download the <span style={{ whiteSpace: 'nowrap' }}>e-conductor</span> app
+                </Texts>
+                <Texts variant={'body2'} fontColor='textSecondary'>
+                  Scan to download
+                </Texts>
+              </Box>
+              <IconButton sx={{height:'40px', width:'40px'}}>
+                <ArrowForwardIcon/>
+              </IconButton>
+            </Card>
+          </a>
+        </ViewFlyInX>
       </Box>
     </Box>
   );

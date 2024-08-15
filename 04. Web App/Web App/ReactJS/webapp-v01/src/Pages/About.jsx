@@ -14,6 +14,7 @@ import HowToRegIcon from '@mui/icons-material/HowToReg';
 import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import { useNavigate } from 'react-router-dom';
 import { GetResponse } from '../APIs/NodeBackend';
+import { ViewFadeIn, ViewFlyInX, ViewFlyInY, ViewZoomIn } from '../Components/Animations/Entrance.View';
 
 const values = [
   {
@@ -103,21 +104,25 @@ export default function About({setLoading, language}) {
           justifyContent:'center',
         },
       }}>
-        <Texts variant="h3" fontColor={{xs:'white', md:'black'}} mb={2}>About Us</Texts>
+        <ViewZoomIn>
+          <Texts variant="h3" fontColor={{xs:'white', md:'black'}} mb={2}>About Us</Texts>
+        </ViewZoomIn>
       </Box>
 
       {/* Our Story */}
       <Box mb={7} px={'10%'}>
         <Texts variant="h4" mb={2}>Our Story</Texts>
-        <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
-          e-conductor started with a simple idea: to make public transportation more efficient and accessible for everyone. 
-          Over the years, we've grown into a leading platform for bus ticket booking and management, offering live bus tracking, 
-          easy seat reservation, and more.
-        </Texts>
-        <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
-          From our humble beginnings, we've expanded our services to meet the growing needs of passengers and bus operators alike. 
-          Today, eConductor is a trusted name in the industry, known for our commitment to innovation and customer satisfaction.
-        </Texts>
+        <ViewFlyInX>
+          <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
+            e-conductor started with a simple idea: to make public transportation more efficient and accessible for everyone. 
+            Over the years, we've grown into a leading platform for bus ticket booking and management, offering live bus tracking, 
+            easy seat reservation, and more.
+          </Texts>
+          <Texts variant="body1" whiteSpace='normal' mb={2} fontWeight='normal' textAlign={'justify'}>
+            From our humble beginnings, we've expanded our services to meet the growing needs of passengers and bus operators alike. 
+            Today, eConductor is a trusted name in the industry, known for our commitment to innovation and customer satisfaction.
+          </Texts>
+        </ViewFlyInX>
       </Box>
 
       {/* Mission & Vision */}
@@ -126,33 +131,37 @@ export default function About({setLoading, language}) {
         <Grid container spacing={3}>
           {/* Vision Card */}
           <Grid item xs={12} sm={6} justifyContent="center" display={'flex'} >
-            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <RemoveRedEyeIcon sx={{ fontSize: 50, color: '#FFA500' }} /> 
-                <Typography variant="h6" fontWeight="bold" mt={2}>
-                  VISION
-                </Typography>
-                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
-                  To be the global leader in public transportation solutions, ensuring safe, reliable, and sustainable travel for millions of people every day.
-                </Texts>
-              </CardContent>
-            </Card>
+            <ViewZoomIn>
+              <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <RemoveRedEyeIcon sx={{ fontSize: 50, color: '#FFA500' }} /> 
+                  <Typography variant="h6" fontWeight="bold" mt={2}>
+                    VISION
+                  </Typography>
+                  <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
+                    To be the global leader in public transportation solutions, ensuring safe, reliable, and sustainable travel for millions of people every day.
+                  </Texts>
+                </CardContent>
+              </Card>
+            </ViewZoomIn>
           </Grid>
 
           {/* Mission Card */}
           <Grid item xs={12} sm={6} justifyContent="center" display={'flex'} >
-            <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
-              <CardContent sx={{ textAlign: 'center' }}>
-                <RocketLaunchIcon sx={{ fontSize: 50, color: '#FF4500' }} />
-                <Typography variant="h6" fontWeight="bold" mt={2}>
-                  MISSION
-                </Typography>
-                <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
-                  To revolutionize public transportation by providing a seamless, user-friendly platform that connects passengers and bus operators, 
-                  enhancing the travel experience for everyone.
-                </Texts>
-              </CardContent>
-            </Card>
+            <ViewZoomIn delay={100}>
+              <Card elevation={3} sx={{ borderRadius: '15px', boxShadow: 3, maxWidth:'370px', width:'100%', height:'100%' }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <RocketLaunchIcon sx={{ fontSize: 50, color: '#FF4500' }} />
+                  <Typography variant="h6" fontWeight="bold" mt={2}>
+                    MISSION
+                  </Typography>
+                  <Texts whiteSpace='normal' variant="body2" color="textSecondary" mt={2}>
+                    To revolutionize public transportation by providing a seamless, user-friendly platform that connects passengers and bus operators, 
+                    enhancing the travel experience for everyone.
+                  </Texts>
+                </CardContent>
+              </Card>
+            </ViewZoomIn>
           </Grid>
         </Grid>
       </Box>
@@ -163,15 +172,17 @@ export default function About({setLoading, language}) {
         <Grid container spacing={3} justifyContent={'space-around'}>
           {values.map((value, index) => (
             <Grid item xs={12} sm={4} md={3} key={index} justifyContent="center" display={'flex'}>
-              <Card sx={{ borderRadius: '16px', borderTop: `4px solid ${value.color}`, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', height:'100%', width:'100%', maxWidth:'230px' }}>
-                <CardContent>
-                  <Box display="flex" justifyContent="center" mb={2}>
-                    {value.icon}
-                  </Box>
-                  <Typography variant="h6" textAlign="center" fontWeight={'bold'} gutterBottom>{value.title}</Typography>
-                  <Texts variant="body2" textAlign="center" fontWeight='normal' whiteSpace='normal'>{value.description}</Texts>
-                </CardContent>
-              </Card>
+              <ViewFlyInX delay={index*100}>
+                <Card sx={{ borderRadius: '16px', borderTop: `4px solid ${value.color}`, boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', height:'100%', width:'100%', maxWidth:'230px' }}>
+                  <CardContent>
+                    <Box display="flex" justifyContent="center" mb={2}>
+                      {value.icon}
+                    </Box>
+                    <Typography variant="h6" textAlign="center" fontWeight={'bold'} gutterBottom>{value.title}</Typography>
+                    <Texts variant="body2" textAlign="center" fontWeight='normal' whiteSpace='normal'>{value.description}</Texts>
+                  </CardContent>
+                </Card>
+              </ViewFlyInX>
             </Grid>
           ))}
         </Grid>
@@ -183,12 +194,14 @@ export default function About({setLoading, language}) {
         <Grid container spacing={3} justifyContent={'space-around'}>
           {teamMembers.loaded && teamMembers.members.map((member, index) => (
             <Grid item xs={12} sm={6} md={3} key={index} justifyContent="center" display={'flex'}>
-              <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", flexDirection:"column", alignItems:"center", p:2, textAlign:'center'}}>
-                <Avatar src={member.avatar} alt={member.name} sx={{ width: 100, height: 100, mb: 2 }} />
-                <Texts variant="h6" whiteSpace='normal'>{member.name}</Texts>
-                <Texts variant="subtitle1" color="textSecondary">{member.title}</Texts>
-                <Texts variant="body2" fontWeight='normal' mt={1} textAlign="center" whiteSpace='normal'>{member.bio}</Texts>
-              </Card>
+              <ViewFlyInY delay={index*100}>
+                <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'17px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", flexDirection:"column", alignItems:"center", p:2, textAlign:'center'}}>
+                  <Avatar src={member.avatar} alt={member.name} sx={{ width: 100, height: 100, mb: 2 }} />
+                  <Texts variant="h6" whiteSpace='normal'>{member.name}</Texts>
+                  <Texts variant="subtitle1" color="textSecondary">{member.title}</Texts>
+                  <Texts variant="body2" fontWeight='normal' mt={1} textAlign="center" whiteSpace='normal'>{member.bio}</Texts>
+                </Card>
+              </ViewFlyInY>
             </Grid>
           ))}
         </Grid>
@@ -200,15 +213,17 @@ export default function About({setLoading, language}) {
         <Grid container spacing={3} justifyContent={'space-around'}>
           {impact.map((item, index)=>
             <Grid item key={index} xs={12} md={6} lg={3} justifyContent={'space-around'} display={'flex'}>
-              <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'15px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", alignItems:"center", justifyContent:'space-around', p:2,}}>
-                <Box minWidth={'60px'} minHeight={'60px'} bgcolor={item.bgc} border={`2px solid ${item.bc}`} borderRadius={'15px'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
-                  {item.icon}
-                </Box>
-                <Box>
-                  <Texts variant={'h4'} fontColor={item.bc}>{item.title}</Texts>
-                  <Texts variant={'subtitle'} fontColor={item.bc}>{item.text}</Texts>
-                </Box>
-              </Card>
+              <ViewFadeIn delay={index*100} sx={{width:'100%', justifyContent:'space-around', display:'flex'}}>
+                <Card elevation={3} sx={{height:'100%', width:'100%', maxWidth:'370px', borderRadius:'15px', boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)', display:"flex", alignItems:"center", justifyContent:'space-around', p:2,}}>
+                  <Box minWidth={'60px'} minHeight={'60px'} bgcolor={item.bgc} border={`2px solid ${item.bc}`} borderRadius={'15px'} display={'flex'} justifyContent={'center'} alignItems={'center'}>
+                    {item.icon}
+                  </Box>
+                  <Box>
+                    <Texts variant={'h4'} fontColor={item.bc}>{item.title}</Texts>
+                    <Texts variant={'subtitle'} fontColor={item.bc}>{item.text}</Texts>
+                  </Box>
+                </Card>
+              </ViewFadeIn>
             </Grid>
           )}          
         </Grid>
@@ -216,8 +231,10 @@ export default function About({setLoading, language}) {
 
       {/* Call to Action */}
       <Box textAlign="center" mt={6}>
-        <Texts variant="h5" mb={3}>Ready to Join Us?</Texts>
-        <Button variant="contained" color="primary" onClick={handleButton}>Sign Up Now</Button>
+        <ViewZoomIn>
+          <Texts variant="h5" mb={3}>Ready to Join Us?</Texts>
+          <Button variant="contained" color="primary" onClick={handleButton}>Sign Up Now</Button>
+        </ViewZoomIn>
       </Box>
     </Box>
   );
