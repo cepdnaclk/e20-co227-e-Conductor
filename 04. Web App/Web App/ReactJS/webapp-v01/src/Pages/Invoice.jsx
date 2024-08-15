@@ -10,6 +10,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { useNavigate } from 'react-router-dom';
 import { Request } from '../APIs/NodeBackend';
+import { OnceFadeIn } from '../Components/Animations/Entrance.Once';
 
 export default function InvoicePage({ language, setLoading }) {
   // Sheet sizes
@@ -93,109 +94,111 @@ export default function InvoicePage({ language, setLoading }) {
   return ticketNo === null ? (
     navigate('/forbidden')
   ) : (
-    <Box sx={{ flexGrow: 1, width: '100vw', height: '100vh', overflow: 'hidden'}}>
-      <AppBar position="sticky" sx={{ bgcolor: 'rgb(0,0,0,0.8)', width: '100vw', border:'none' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Grid>
-            <Typography sx={{fontFamily:'Open Sans', fontWeight:'bold', fontSize:'16px'}}>
-              Invoice.pdf
-            </Typography>
-          </Grid>
+    <OnceFadeIn duration={500}>
+      <Box sx={{ flexGrow: 1, width: '100vw', height: '100vh', overflow: 'hidden'}}>
+        <AppBar position="sticky" sx={{ bgcolor: 'rgb(0,0,0,0.8)', width: '100vw', border:'none' }}>
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Grid>
+              <Typography sx={{fontFamily:'Open Sans', fontWeight:'bold', fontSize:'16px'}}>
+                Invoice.pdf
+              </Typography>
+            </Grid>
 
-          <Grid sx={{
-            width: 'auto',
-            display:'flex',
-            justifyContent:'space-around',
-            alignItems: 'center',
-            gap:'5px',
-          }}>
-            <IconButton
-              size="small"
-              color="inherit"
-              sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-              onClick={()=>{handleZoom('zoomIn')}}
-            >
-              <Badge>
-                <AddIcon />
-              </Badge>
-            </IconButton>
+            <Grid sx={{
+              width: 'auto',
+              display:'flex',
+              justifyContent:'space-around',
+              alignItems: 'center',
+              gap:'5px',
+            }}>
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                onClick={()=>{handleZoom('zoomIn')}}
+              >
+                <Badge>
+                  <AddIcon />
+                </Badge>
+              </IconButton>
 
-            <Typography
-              //onInput={false}
-              sx={{
-                width:'60px', 
-                height: '22px',
-                color:'white', 
-                fontFamily:'Open Sans',
-                fontSize:'14px',
-                fontWeight:'bold',
-                bgcolor:'rgb(0,0,0,0.9)',
-                textAlign:'center'
-              }}
-            >
-              {(scale * 100).toFixed(0)}%
-            </Typography>
-                      
-            <IconButton
-              size="small"
-              color="inherit"
-              sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-              onClick={()=>{handleZoom('zoomOut')}}
-            >
-              <Badge>
-                <RemoveIcon />
-              </Badge>
-            </IconButton>
-          </Grid>
-          
-          <Grid sx={{width:'80px', display:'flex',justifyContent:'space-between'}}>
-            <IconButton
-              size="small"
-              color="inherit"
-              sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-              onClick={handleDownload}
-            >
-              <Badge>
-                <DownloadIcon />
-              </Badge>
-            </IconButton>
-                      
-            <IconButton
-              size="small"
-              color="inherit"
-              sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-              onClick={handlePrint}
-            >
-              <Badge>
-                <PrintIcon />
-              </Badge>
-            </IconButton>
-          </Grid>
-        </Toolbar>
-      </AppBar>
+              <Typography
+                //onInput={false}
+                sx={{
+                  width:'60px', 
+                  height: '22px',
+                  color:'white', 
+                  fontFamily:'Open Sans',
+                  fontSize:'14px',
+                  fontWeight:'bold',
+                  bgcolor:'rgb(0,0,0,0.9)',
+                  textAlign:'center'
+                }}
+              >
+                {(scale * 100).toFixed(0)}%
+              </Typography>
+                        
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                onClick={()=>{handleZoom('zoomOut')}}
+              >
+                <Badge>
+                  <RemoveIcon />
+                </Badge>
+              </IconButton>
+            </Grid>
+            
+            <Grid sx={{width:'80px', display:'flex',justifyContent:'space-between'}}>
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                onClick={handleDownload}
+              >
+                <Badge>
+                  <DownloadIcon />
+                </Badge>
+              </IconButton>
+                        
+              <IconButton
+                size="small"
+                color="inherit"
+                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                onClick={handlePrint}
+              >
+                <Badge>
+                  <PrintIcon />
+                </Badge>
+              </IconButton>
+            </Grid>
+          </Toolbar>
+        </AppBar>
 
-      <Grid
-        container
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          width: '100%',
-          height: '100%',
-          background: '#666666',
-          overflow: 'auto',
-          pt:'5px'
-        }}
-      >
-        <div
-          ref={componentRef}
-          style={{
-            transform: `scale(${scale})`,
-            transformOrigin:'top left'
+        <Grid
+          container
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            width: '100%',
+            height: '100%',
+            background: '#666666',
+            overflow: 'auto',
+            pt:'5px'
           }}
         >
-          <Invoice data={data} />
-        </div>
-      </Grid>
-    </Box>
+          <div
+            ref={componentRef}
+            style={{
+              transform: `scale(${scale})`,
+              transformOrigin:'top left'
+            }}
+          >
+            <Invoice data={data} />
+          </div>
+        </Grid>
+      </Box>
+    </OnceFadeIn>
   );
 }

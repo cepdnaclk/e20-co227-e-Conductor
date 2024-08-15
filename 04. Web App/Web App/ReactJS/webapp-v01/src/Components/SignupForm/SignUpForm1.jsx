@@ -9,6 +9,7 @@ import { Request } from '../../APIs/NodeBackend';
 import './SignUpForm1.css'
 import { handleNotifications } from '../MyNotifications/FloatingNotifications';
 import { Link } from 'react-router-dom';
+import { OnceFadeIn } from '../Animations/Entrance.Once';
 
 
 export default function SignUp1({Data, userType, Response, userData, language, setLoading}) {
@@ -285,269 +286,271 @@ export default function SignUp1({Data, userType, Response, userData, language, s
   };
 
   return (
-    <div className='signup-wrapper'>
-      <h1>Sign Up</h1>
-      <Container className='signupForm'>
-        <Form>
-          {/* Common Requirements */}
-          <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridFName">
-              <Form.Label>First name</Form.Label>
-              <Form.Control 
-                type="text" 
-                placeholder="John" 
-                name='fName'
-                value={formData.fName}
-                onChange={handleFormData}
-                maxLength={20}
+    <OnceFadeIn duration={1500} sx={{width:'100%', height:'100%', display:'flex', justifyContent:'space-around', alignItems:'center'}}>
+      <div className='signup-wrapper'>
+        <h1>Sign Up</h1>
+        <Container className='signupForm'>
+          <Form>
+            {/* Common Requirements */}
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formGridFName">
+                <Form.Label>First name</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  placeholder="John" 
+                  name='fName'
+                  value={formData.fName}
+                  onChange={handleFormData}
+                  maxLength={20}
+                  />
+                <p>{formErrors.fName}</p>
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGridLName">
+                <Form.Label>Last name</Form.Label>
+                <Form.Control 
+                  type="text" 
+                  placeholder="Doe" 
+                  name='lName'
+                  value={formData.lName}
+                  onChange={handleFormData}
+                  maxLength={20}
                 />
-              <p>{formErrors.fName}</p>
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="formGridLName">
-              <Form.Label>Last name</Form.Label>
+                <p>{formErrors.lName}</p>
+              </Form.Group>
+            </Row>
+          
+            <Form.Group className="mb-3" controlId="formGridEmail">
+              <Form.Label>Email</Form.Label>
               <Form.Control 
-                type="text" 
-                placeholder="Doe" 
-                name='lName'
-                value={formData.lName}
-                onChange={handleFormData}
-                maxLength={20}
+                type="email" 
+                placeholder="JohnDoe@gmail.com"
+                name='email'
+                value={formData.email}
+                onChange={handleFormData} 
+                maxLength={50}
               />
-              <p>{formErrors.lName}</p>
+              <p>{formErrors.email}</p>
             </Form.Group>
-          </Row>
-        
-          <Form.Group className="mb-3" controlId="formGridEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control 
-              type="email" 
-              placeholder="JohnDoe@gmail.com"
-              name='email'
-              value={formData.email}
-              onChange={handleFormData} 
-              maxLength={50}
-            />
-            <p>{formErrors.email}</p>
-          </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formGridMobile">
-            <Form.Label>Mobile number</Form.Label>            
-            <PhoneInput
-              country={'lk'}
-              value={formData.mobile}
-              onlyCountries={['lk']}
-              countryCodeEditable={false}
-              onChange={(e)=>{setFormData({ ...formData, mobile: e})}}
-              inputProps={{
-                maxLength: 15 // Country code (3) + 9 digits + 3 spaces
-              }}
-            />  
-            <p>{formErrors.mobile}</p>          
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="formGridMobile">
+              <Form.Label>Mobile number</Form.Label>            
+              <PhoneInput
+                country={'lk'}
+                value={formData.mobile}
+                onlyCountries={['lk']}
+                countryCodeEditable={false}
+                onChange={(e)=>{setFormData({ ...formData, mobile: e})}}
+                inputProps={{
+                  maxLength: 15 // Country code (3) + 9 digits + 3 spaces
+                }}
+              />  
+              <p>{formErrors.mobile}</p>          
+            </Form.Group>
 
-          {/* Requirements for employees and bus owners. */
-            (userType === 'passenger') ? (<></>) : (
-            <>
-              <Row className="mb-3">
-                <Form.Group as={Col} controlId="formGridNIC">
-                  <Form.Label>NIC number</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    placeholder="123456789123"
-                    name='nic'
-                    value={formData.nic}
-                    onChange={handleFormData} 
-                    maxLength={12}
-                  />
-                </Form.Group>
-
-                <Form.Group as={Col} controlId="formGridBirthDay">
-                  <Form.Label>Date of Birth</Form.Label>
-                  <Form.Control 
-                    type="date" 
-                    name='birthDay'
-                    value={formData.birthDay}
-                    onChange={handleFormData}
-                    style={{cursor:'pointer'}}
-                    min="1900-01-01"
-                    max="2200-12-13"
-                  />
-                </Form.Group>
-                <p className='signUpErrorMsg'>{formErrors.nic}</p> 
-              </Row>
-              
-              {(userType !== 'owner') ? (<></>):(
-                // Bus Owner
-                <>
-                  <Form.Group className="mb-3" id="formGridCheckbox">
-                    <Form.Check 
-                      type="checkbox" 
-                      label="I hope to work as a conductor/ driver." 
-                      checked = {isEmployee}
-                      onChange={handleEmployee}
-                      style={{cursor:'pointer'}}
-                    />
-                  </Form.Group>
-                </>
-              )}
-
-              {(EmpType === 'None') ? (<></>):(
-                // Work as an employer ?
-                <>
-                  <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formGridState" >
-                      <Form.Label>Work as</Form.Label>
-                      <Form.Select 
-                        onChange={handleEmpType}
-                        style={{cursor:'pointer'}}
-                        defaultValue="Conductor">
-                          <option>Driver</option>
-                          <option>Conductor</option>
-                          <option>Both</option>
-                      </Form.Select>
-                    </Form.Group>
-                    
-                    <Form.Group as={Col} controlId="formGridNTC">
-                      <Form.Label>NTC registration no.</Form.Label>
-                      <Form.Control 
-                        type="text" 
-                        placeholder="NTC - 1234"
-                        name='ntc'
-                        value={formData.ntc}
-                        onChange={handleFormData} 
-                        maxLength={15}
-                      />
-                      <p>{formErrors.ntc}</p> 
-                    </Form.Group>            
-                  </Row>
-
-                  <Form.Group className="mb-3" controlId="formGridLicenceID">
-                    <Form.Label>Driving licence number</Form.Label>
+            {/* Requirements for employees and bus owners. */
+              (userType === 'passenger') ? (<></>) : (
+              <>
+                <Row className="mb-3">
+                  <Form.Group as={Col} controlId="formGridNIC">
+                    <Form.Label>NIC number</Form.Label>
                     <Form.Control 
                       type="text" 
                       placeholder="123456789123"
-                      name='licence'
-                      value={formData.licence}
-                      onChange={handleFormData}
-                      maxLength={15}
+                      name='nic'
+                      value={formData.nic}
+                      onChange={handleFormData} 
+                      maxLength={12}
                     />
-                    <p>{formErrors.licence}</p> 
                   </Form.Group>
 
-                  {/* <Form.Group className="mb-3" controlId="formFileMultiple">
-                    <Form.Label>Upload images of both sides of your driving license card<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
+                  <Form.Group as={Col} controlId="formGridBirthDay">
+                    <Form.Label>Date of Birth</Form.Label>
                     <Form.Control 
-                      className='customfile' 
-                      name="licenceFile"
-                      type="File"
-                      accept=".png, .jpg, .jpeg" 
-                      multiple 
-                      onChange={handleDrivingLicenceFileChange}
-                    />
-                    <p>{formErrors.licenceFile}</p> 
-                  </Form.Group> */}
-                  
-                </>
-              )}
-
-              {(userType !== 'owner') ? (<></>) : (
-                <>
-                  {/* Requirements for bus owners. */}
-                  <Form.Label className='details'>Bank Account Details</Form.Label>
-                  <hr/>
-
-                  <Form.Group className="mb-3" controlId="formGridName">
-                    <Form.Label>Beneficiary's name</Form.Label>
-                    <Form.Control 
-                      type="text" 
-                      placeholder="John Doe" 
-                      name='accName'
-                      value={formData.accName}
+                      type="date" 
+                      name='birthDay'
+                      value={formData.birthDay}
                       onChange={handleFormData}
-                      maxLength={30}
+                      style={{cursor:'pointer'}}
+                      min="1900-01-01"
+                      max="2200-12-13"
                     />
-                    <p>{formErrors.accName}</p> 
                   </Form.Group>
-
-                  <Form.Group className="mb-3" controlId="formGridAccNo">
-                    <Form.Label>Account number</Form.Label>
-                    <Form.Control
-                      type="text" 
-                      placeholder="123-456-789-123" 
-                      name='accNo'
-                      value={formData.accNo}
-                      onChange={handleFormData}
-                      maxLength={20}
-                    />
-                    <p>{formErrors.accNo}</p> 
-                  </Form.Group>
-                    
-                  <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formGridBank">
-                      <Form.Label>Bank</Form.Label>
-                      <Form.Select 
-                        //defaultValue="Peoples' Bank"
-                        name='bank'
-                        value={formData.bank}
-                        onChange={handleFormData}
+                  <p className='signUpErrorMsg'>{formErrors.nic}</p> 
+                </Row>
+                
+                {(userType !== 'owner') ? (<></>):(
+                  // Bus Owner
+                  <>
+                    <Form.Group className="mb-3" id="formGridCheckbox">
+                      <Form.Check 
+                        type="checkbox" 
+                        label="I hope to work as a conductor/ driver." 
+                        checked = {isEmployee}
+                        onChange={handleEmployee}
                         style={{cursor:'pointer'}}
-                      >
-                        <option>Peoples' Bank</option>
-                        <option>Bank of Ceylon</option>
-                        <option>Sampath Bank</option>
-                        <option>Commercial Bank PLC</option>
-                        <option>Seylan Bank PLC</option>
-                        <option>HNB - Hatton National Bank</option>
-                        <option>NTB - Nations Trust Bank</option>
-                        <option>NDB - National Development Bank</option>
-                        <option>NSB - National Saving Bank</option>
-                      </Form.Select>
+                      />
                     </Form.Group>
+                  </>
+                )}
 
-                    <Form.Group as={Col} controlId="formGridBranch">
-                      <Form.Label>Branch</Form.Label>
+                {(EmpType === 'None') ? (<></>):(
+                  // Work as an employer ?
+                  <>
+                    <Row className="mb-3">
+                      <Form.Group as={Col} controlId="formGridState" >
+                        <Form.Label>Work as</Form.Label>
+                        <Form.Select 
+                          onChange={handleEmpType}
+                          style={{cursor:'pointer'}}
+                          defaultValue="Conductor">
+                            <option>Driver</option>
+                            <option>Conductor</option>
+                            <option>Both</option>
+                        </Form.Select>
+                      </Form.Group>
+                      
+                      <Form.Group as={Col} controlId="formGridNTC">
+                        <Form.Label>NTC registration no.</Form.Label>
+                        <Form.Control 
+                          type="text" 
+                          placeholder="NTC - 1234"
+                          name='ntc'
+                          value={formData.ntc}
+                          onChange={handleFormData} 
+                          maxLength={15}
+                        />
+                        <p>{formErrors.ntc}</p> 
+                      </Form.Group>            
+                    </Row>
+
+                    <Form.Group className="mb-3" controlId="formGridLicenceID">
+                      <Form.Label>Driving licence number</Form.Label>
                       <Form.Control 
                         type="text" 
-                        placeholder="Your Brach" 
-                        name='branch'
-                        value={formData.branch}
+                        placeholder="123456789123"
+                        name='licence'
+                        value={formData.licence}
+                        onChange={handleFormData}
+                        maxLength={15}
+                      />
+                      <p>{formErrors.licence}</p> 
+                    </Form.Group>
+
+                    {/* <Form.Group className="mb-3" controlId="formFileMultiple">
+                      <Form.Label>Upload images of both sides of your driving license card<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
+                      <Form.Control 
+                        className='customfile' 
+                        name="licenceFile"
+                        type="File"
+                        accept=".png, .jpg, .jpeg" 
+                        multiple 
+                        onChange={handleDrivingLicenceFileChange}
+                      />
+                      <p>{formErrors.licenceFile}</p> 
+                    </Form.Group> */}
+                    
+                  </>
+                )}
+
+                {(userType !== 'owner') ? (<></>) : (
+                  <>
+                    {/* Requirements for bus owners. */}
+                    <Form.Label className='details'>Bank Account Details</Form.Label>
+                    <hr/>
+
+                    <Form.Group className="mb-3" controlId="formGridName">
+                      <Form.Label>Beneficiary's name</Form.Label>
+                      <Form.Control 
+                        type="text" 
+                        placeholder="John Doe" 
+                        name='accName'
+                        value={formData.accName}
+                        onChange={handleFormData}
+                        maxLength={30}
+                      />
+                      <p>{formErrors.accName}</p> 
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formGridAccNo">
+                      <Form.Label>Account number</Form.Label>
+                      <Form.Control
+                        type="text" 
+                        placeholder="123-456-789-123" 
+                        name='accNo'
+                        value={formData.accNo}
                         onChange={handleFormData}
                         maxLength={20}
                       />
-                      <p>{formErrors.branch}</p> 
+                      <p>{formErrors.accNo}</p> 
                     </Form.Group>
+                      
+                    <Row className="mb-3">
+                      <Form.Group as={Col} controlId="formGridBank">
+                        <Form.Label>Bank</Form.Label>
+                        <Form.Select 
+                          //defaultValue="Peoples' Bank"
+                          name='bank'
+                          value={formData.bank}
+                          onChange={handleFormData}
+                          style={{cursor:'pointer'}}
+                        >
+                          <option>Peoples' Bank</option>
+                          <option>Bank of Ceylon</option>
+                          <option>Sampath Bank</option>
+                          <option>Commercial Bank PLC</option>
+                          <option>Seylan Bank PLC</option>
+                          <option>HNB - Hatton National Bank</option>
+                          <option>NTB - Nations Trust Bank</option>
+                          <option>NDB - National Development Bank</option>
+                          <option>NSB - National Saving Bank</option>
+                        </Form.Select>
+                      </Form.Group>
 
-                  </Row>
+                      <Form.Group as={Col} controlId="formGridBranch">
+                        <Form.Label>Branch</Form.Label>
+                        <Form.Control 
+                          type="text" 
+                          placeholder="Your Brach" 
+                          name='branch'
+                          value={formData.branch}
+                          onChange={handleFormData}
+                          maxLength={20}
+                        />
+                        <p>{formErrors.branch}</p> 
+                      </Form.Group>
 
-                  {/* <Form.Group className="mb-3" controlId="formFileMultiple">
-                    <Form.Label>Upload an image of your bank passbook<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
-                    <Form.Control 
-                      className='customfile' 
-                      type="File"
-                      name="passbook"
-                      accept=".png, .jpg, .jpeg" 
-                      onChange={handleBankPassbookFileChange}
-                    />
-                    <p>{formErrors.passbook}</p> 
-                  </Form.Group> */}
-                </>)}
-            </>)         
-          }
-          
-          <Form.Group className="mb-3" id="formGridCheckbox">
-            <Container className='termsContainer'>
-              <Form.Check type="checkbox" style={{cursor:'pointer'}} checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><Link to='/terms'> terms and conditions.</Link>
-            </Container>
-          </Form.Group>
-        </Form>
-      </Container>
+                    </Row>
 
-      <div className='btn-container'>
-        <Button onClick={handleBack} variant='outline-light'>Back</Button>
-        <Button onClick={handleSubmit} disabled={isDisable} variant='light'>Continue</Button>
+                    {/* <Form.Group className="mb-3" controlId="formFileMultiple">
+                      <Form.Label>Upload an image of your bank passbook<p>(accepted file formats .png, .jpg, .jpeg)</p></Form.Label>
+                      <Form.Control 
+                        className='customfile' 
+                        type="File"
+                        name="passbook"
+                        accept=".png, .jpg, .jpeg" 
+                        onChange={handleBankPassbookFileChange}
+                      />
+                      <p>{formErrors.passbook}</p> 
+                    </Form.Group> */}
+                  </>)}
+              </>)         
+            }
+            
+            <Form.Group className="mb-3" id="formGridCheckbox">
+              <Container className='termsContainer'>
+                <Form.Check type="checkbox" style={{cursor:'pointer'}} checked={!isDisable} onChange={()=>{setIsDisable(!isDisable)}} label="I accept all " /><Link to='/terms'> terms and conditions.</Link>
+              </Container>
+            </Form.Group>
+          </Form>
+        </Container>
+
+        <div className='btn-container'>
+          <Button onClick={handleBack} variant='outline-light'>Back</Button>
+          <Button onClick={handleSubmit} disabled={isDisable} variant='light'>Continue</Button>
+        </div>
       </div>
-    </div>
+    </OnceFadeIn>
   )
 }
 

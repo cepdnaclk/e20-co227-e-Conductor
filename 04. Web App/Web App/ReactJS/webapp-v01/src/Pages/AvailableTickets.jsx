@@ -9,6 +9,7 @@ import HighlightOffTwoToneIcon from '@mui/icons-material/HighlightOffTwoTone';
 import {ToastAlert} from '../Components/MyNotifications/WindowAlerts'
 import { Link, useNavigate } from 'react-router-dom';
 import { OnceFadeIn } from '../Components/Animations/Entrance.Once';
+import { ViewFlyInY } from '../Components/Animations/Entrance.View';
 
 function ConfirmBox({data, open, handleClose, handleAgree}) {
   const descriptionElementRef = useRef(null);
@@ -227,9 +228,11 @@ export default function AvailableTickets({language, setLoading}) {
       }      
       <Box sx={{width:'100%', height:'fit-content', padding:'10px'}}>
         <Grid container spacing={2} display={'flex'} justifyContent={'space-around'} height={'100%'}>
-          {tickets.length > 0 ? tickets.map(ticket => 
+          {tickets.length > 0 ? tickets.map((ticket, index) => 
             <Grid item key={ticket.refNo}>
-              <TicketCard data={ticket} handleCancel={handleCancel} />
+              <ViewFlyInY direction='bottom' delay={index * 100} >
+                <TicketCard data={ticket} handleCancel={handleCancel} />
+              </ViewFlyInY>
             </Grid>
           ) : (
             <Box height={'100%'} width={'100%'} display={'flex'} margin={'50px 0'} flexDirection='column' alignItems={'center'}> 

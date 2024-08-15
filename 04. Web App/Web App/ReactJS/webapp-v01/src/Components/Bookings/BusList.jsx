@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import BusFilter from './Forms/BusFilter'
 import Buslist from './MapArea/BusList'
 import { Request } from '../../APIs/NodeBackend'
+import { OnceFlyInX } from '../Animations/Entrance.Once'
 
 export default function BusList({ activeStep, setActiveStep, bookingData, setBookingData, steps, setLoading, setSeats }) {
   // Variable to store original schedule data
@@ -93,28 +94,30 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
   }
 
   return (
-    <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
-      <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
-        <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
-          <BusFilter
-            activeStep={activeStep}
-            steps={steps}
-            handleBack={handleBack}
-            setServiceFilter={setServiceFilter}
-            setRouteFilter={setRouteFilter}
-            setOrgFilter={setOrgFilter}
-          />
-        </Grid>
-        
-        <Grid item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
+    <OnceFlyInX direction='right'>
+      <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+        <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
+          <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
+            <BusFilter
+              activeStep={activeStep}
+              steps={steps}
+              handleBack={handleBack}
+              setServiceFilter={setServiceFilter}
+              setRouteFilter={setRouteFilter}
+              setOrgFilter={setOrgFilter}
+            />
+          </Grid>
+          
+          <Grid item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
             <Buslist
               activeStep={activeStep}
               setActiveStep={setActiveStep}
               buses={filterByPreferance()}
               handleClick={handleNext}
             />
+          </Grid>
         </Grid>
-      </Grid>
-    </Paper>
+      </Paper>
+    </OnceFlyInX>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import Login from '../Components/LoginForm/login1'
 import './Signin.css'
 import OTP from '../Components/OTPForm/OTP1'
+import { OnceFadeIn } from '../Components/Animations/Entrance.Once'
 
 export default function Signin( { setIsLogged, language , setLoading } ) {
   // Empty data set
@@ -35,18 +36,20 @@ export default function Signin( { setIsLogged, language , setLoading } ) {
   }
 
   return (
-    <div className='Login-body'>
-      {
-        !isLoging ? (
-          <>
-            <Login setIsLogged={setIsLogged} data={userData} sendResponse={handleResponse} language={language} rememberMe={setRememberMe} setLoading={setLoading}/>
-          </>
-        ):(
-          <>
-            <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} rememberMe={rememberMe} setLoading={setLoading}/>
-          </>
-        )
-      }
-    </div>
+    <OnceFadeIn direction='right' duration={500}>
+      <div className='Login-body'>
+        {
+          !isLoging ? (
+            <OnceFadeIn>
+              <Login setIsLogged={setIsLogged} data={userData} sendResponse={handleResponse} language={language} rememberMe={setRememberMe} setLoading={setLoading}/>
+            </OnceFadeIn>
+          ):(
+            <OnceFadeIn delay={1000} duration={2000}>
+              <OTP setIsLogged={setIsLogged} userData={userData} sendResponse={handleResponse} language={language} rememberMe={rememberMe} setLoading={setLoading}/>
+            </OnceFadeIn>
+          )
+        }
+      </div>
+    </OnceFadeIn>
   )
 }

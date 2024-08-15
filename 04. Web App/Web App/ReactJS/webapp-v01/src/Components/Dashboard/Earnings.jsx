@@ -11,6 +11,7 @@ import { LineChart } from '@mui/x-charts';
 import { Skeleton, Tooltip } from '@mui/joy';
 import CachedIcon from '@mui/icons-material/Cached';
 import { GetRequest } from '../../APIs/NodeBackend';
+import { ViewZoomIn } from '../Animations/Entrance.View';
 
 // Today
 const TODAY = new Date();
@@ -141,39 +142,47 @@ export default function Earnings({setLoading, language}) {
           <Grid item xs={12} md={6} lg={7}>
             <Grid container spacing={2} padding={0} justifyContent={'space-around'} width={'100%'} >
               <Grid item >
-                <QuickCard
-                  title={'Earnings (LKR)'}
-                  amount={general.data.earning.amount}
-                  increment={general.data.earning.increment}
-                  icon={<PaymentsIcon sx={{color:'#1a76d2', fontSize:'25px'}}/>}
-                />
+                <ViewZoomIn>
+                  <QuickCard
+                    title={'Earnings (LKR)'}
+                    amount={general.data.earning.amount}
+                    increment={general.data.earning.increment}
+                    icon={<PaymentsIcon sx={{color:'#1a76d2', fontSize:'25px'}}/>}
+                  />
+                </ViewZoomIn>
               </Grid>
 
               <Grid item>
-                <QuickCard
-                  title={'Withdrawals (LKR)'}
-                  amount={general.data.withdraw.amount}
-                  increment={general.data.withdraw.increment}
-                  icon={<PointOfSaleIcon sx={{color:'#dd0233', fontSize:'25px'}}/>}
-                />
+                <ViewZoomIn delay={100}>
+                  <QuickCard
+                    title={'Withdrawals (LKR)'}
+                    amount={general.data.withdraw.amount}
+                    increment={general.data.withdraw.increment}
+                    icon={<PointOfSaleIcon sx={{color:'#dd0233', fontSize:'25px'}}/>}
+                  />
+                </ViewZoomIn>
               </Grid>
 
               <Grid item>
-                <QuickCard
-                  title={'Balance (LKR)'}
-                  amount={general.data.balance.amount}
-                  increment={general.data.balance.increment}
-                  icon={<AccountBalanceWalletIcon sx={{color:'#ff9900', fontSize:'25px'}}/>}
-                />
+                <ViewZoomIn delay={200}>
+                  <QuickCard
+                    title={'Balance (LKR)'}
+                    amount={general.data.balance.amount}
+                    increment={general.data.balance.increment}
+                    icon={<AccountBalanceWalletIcon sx={{color:'#ff9900', fontSize:'25px'}}/>}
+                  />
+                </ViewZoomIn>
               </Grid>
 
               <Grid item>
-                <QuickCard
-                  title={'Credits (LKR)'}
-                  amount={general.data.credits.amount}
-                  increment={general.data.credits.increment}
-                  icon={<LocalAtmOutlinedIcon sx={{color:'#04aa6d', fontSize:'25px'}}/>}
-                />
+                <ViewZoomIn delay={400}>
+                  <QuickCard
+                    title={'Credits (LKR)'}
+                    amount={general.data.credits.amount}
+                    increment={general.data.credits.increment}
+                    icon={<LocalAtmOutlinedIcon sx={{color:'#04aa6d', fontSize:'25px'}}/>}
+                  />
+                </ViewZoomIn>
               </Grid>
             </Grid>   
           </Grid>
