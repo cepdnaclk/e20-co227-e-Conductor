@@ -3,11 +3,12 @@ import React from 'react'
 import Purchasing from './Forms/Purchasing';
 import Bill from './MapArea/Bill';
 
-export default function Payment({activeStep, setActiveStep, bookingData, setBookingData, steps, setLoading}) {
+export default function Payment({activeStep, setActiveStep, setPrevStep, bookingData, setBookingData, steps, setLoading}) {
   // Handling back button
   const handleBack = () => {
-    console.log('Goto step: 3');
-    setActiveStep(activeStep - 1);
+    //console.log('Goto visual step: 3');
+    setPrevStep(3);
+    setActiveStep(2);
   }
   
   return (

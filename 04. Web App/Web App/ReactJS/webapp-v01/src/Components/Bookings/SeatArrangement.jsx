@@ -4,7 +4,7 @@ import Passengers from './Forms/Passengers'
 import BusSeats from './MapArea/BusSeats'
 import { ToastAlert } from '../MyNotifications/WindowAlerts';
 
-export default function SeatArrangement({activeStep, setActiveStep, bookingData, setBookingData, steps, seats}) {
+export default function SeatArrangement({activeStep, setActiveStep, setPrevStep, bookingData, setBookingData, steps, seats}) {
   // Calculating available seats
   const available  = parseInt(seats.seats, 10) - (seats.booked ? seats.booked.length : 0);
   
@@ -48,19 +48,22 @@ export default function SeatArrangement({activeStep, setActiveStep, bookingData,
 
   // Handle back button
   const handleBack = () => {
-    console.log('Goto step 3');
+    //console.log('Goto visual step 2');
+    setPrevStep(activeStep);
     setActiveStep(activeStep - 1);
   }
 
   // Handle continue button
   const handleNext = () => {
-    console.log('Goto step 4');
+    //console.log('Goto visual step 4');
 
     if(passengers>0 && passengers === selectedSeats.length && passengers === (adults + children)){
       // Update booking data
       setBookingData({...bookingData, seatNos:selectedSeats, full:adults, half:children});
 
       // Goto next step
+      //console.log('Goto visual step 4');
+      setPrevStep(activeStep);
       setActiveStep(activeStep + 1);
     }
     else{

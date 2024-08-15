@@ -18,6 +18,7 @@ import AlertDialog from '../DialogBox/AlertDialog';
 import FormDialog from '../DialogBox/FormDialog';
 import { GetRequest } from '../../APIs/NodeBackend';
 import {ToastAlert} from '../MyNotifications/WindowAlerts'
+import { ViewFlyInX } from '../Animations/Entrance.View';
 
 // Variable to store current date
 const today = new Date().toISOString();
@@ -506,7 +507,7 @@ export default function BusGeneral({language, setLoading}) {
           </TableHead>
 
           <TableBody >
-            {buses.loaded && (busCount > 0 ? sortedBuses.map(data => (
+            {buses.loaded && (busCount > 0 ? sortedBuses.map((data, index) => (
               <TableRow key={data.id} sx={{cursor:'pointer'}}>
                 <TableCell width={'30px'} align='center'>
                   <Checkbox
@@ -517,7 +518,9 @@ export default function BusGeneral({language, setLoading}) {
                   />
                 </TableCell>
                 <TableCell colSpan={5}>
-                  <BusCard details={data} handleDelete={handleDelete} handleEdit={handleEdit} handleDetails={handleDetails}/>
+                  <ViewFlyInX delay={index * 100}>
+                    <BusCard details={data} handleDelete={handleDelete} handleEdit={handleEdit} handleDetails={handleDetails}/>
+                  </ViewFlyInX>
                 </TableCell>
               </TableRow>              
             )) : (

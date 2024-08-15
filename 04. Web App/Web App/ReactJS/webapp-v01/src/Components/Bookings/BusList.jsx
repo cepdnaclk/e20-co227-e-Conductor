@@ -3,9 +3,8 @@ import React, { useEffect, useState } from 'react'
 import BusFilter from './Forms/BusFilter'
 import Buslist from './MapArea/BusList'
 import { Request } from '../../APIs/NodeBackend'
-import { OnceFlyInX } from '../Animations/Entrance.Once'
 
-export default function BusList({ activeStep, setActiveStep, bookingData, setBookingData, steps, setLoading, setSeats }) {
+export default function BusList({ activeStep, setActiveStep, setPrevStep, bookingData, setBookingData, steps, setLoading, setSeats }) {
   // Variable to store original schedule data
   const [buses, setBuses] = useState([]);
 
@@ -50,7 +49,9 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
 
   // Handling Back Button
   const handleBack = () => {
-    setActiveStep(activeStep - 1); // Goto previous step
+    //console.log('Goto visual step 1');
+    setPrevStep(activeStep);
+    setActiveStep(activeStep - 1);
   };
 
   // Handle Continue Button
@@ -67,6 +68,8 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
     setSeats({seats, booked});
 
     // Goto next step
+    console.log('Goto visual step 3');
+    setPrevStep(activeStep);
     setActiveStep(activeStep + 1);
   }
 
@@ -94,30 +97,28 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
   }
 
   return (
-    <OnceFlyInX direction='right'>
-      <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
-        <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
-          <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
-            <BusFilter
-              activeStep={activeStep}
-              steps={steps}
-              handleBack={handleBack}
-              setServiceFilter={setServiceFilter}
-              setRouteFilter={setRouteFilter}
-              setOrgFilter={setOrgFilter}
-            />
-          </Grid>
-          
-          <Grid item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
+    <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+      <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
+        <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
+          <BusFilter
+            activeStep={activeStep}
+            steps={steps}
+            handleBack={handleBack}
+            setServiceFilter={setServiceFilter}
+            setRouteFilter={setRouteFilter}
+            setOrgFilter={setOrgFilter}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
             <Buslist
               activeStep={activeStep}
               setActiveStep={setActiveStep}
               buses={filterByPreferance()}
               handleClick={handleNext}
             />
-          </Grid>
         </Grid>
-      </Paper>
-    </OnceFlyInX>
+      </Grid>
+    </Paper>
   );
 }

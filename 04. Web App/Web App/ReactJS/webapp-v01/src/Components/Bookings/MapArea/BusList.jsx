@@ -2,8 +2,6 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import React, { useState } from 'react'
 import BusCard from '../../Card/BusCard';
 
-
-
 const BookingTableHeader = ({ order, orderBy, onRequestSort }) => {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);

@@ -4,7 +4,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import Stepper from '../../ProgressBars/Stepper';
 import Texts, { StyledTextField } from '../../InputItems/Texts';
 import { GetResponse } from '../../../APIs/NodeBackend';
-import { OnceZoomIn } from '../../Animations/Entrance.Once';
 
 const StyledAutoComplete = ({ 
   id, 
@@ -83,55 +82,52 @@ export default function LocationForm({
   }, []);
 
   return (
-    <OnceZoomIn sx={{width:'100%'}}>
-      <Paper sx={{
-        width:'Calc(100% - 20px)', 
-        height:'70vh', 
-        minHeight:'400px',  
-        padding:'20px',  
-        display:'flex',
-        flexDirection:'column',
-        justifyContent: 'space-between',
-        margin:'10px 0'
-      }}>
-        
-        <Stepper steps={steps} activeStep={activeStep} height={'100px'}/>
+    <Paper sx={{
+      width:'Calc(100% - 20px)', 
+      height:'70vh', 
+      minHeight:'400px',  
+      padding:'20px',  
+      display:'flex',
+      flexDirection:'column',
+      justifyContent: 'space-between',
+      margin:'10px 0'
+    }}>
+      <Stepper steps={steps} activeStep={activeStep} height={'100px'}/>
 
-        <Box sx={{width:'100%', height:'calc(100% - 100px)', display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
-          <Box sx={{display:'flex', flexDirection:'column', gap:'15px'}}>
-            <StyledAutoComplete
-              id='from'
-              placeholder="Enter location" 
-              label="From: " 
-              onChange={(e, value)=>setFrom((names.filter(name => name.name === value))[0] || {})}
-              options={names}
-            />
+      <Box sx={{width:'100%', height:'calc(100% - 100px)', display:'flex', flexDirection:'column', justifyContent:'space-between'}}>
+        <Box sx={{display:'flex', flexDirection:'column', gap:'15px'}}>
+          <StyledAutoComplete
+            id='from'
+            placeholder="Enter location" 
+            label="From: " 
+            onChange={(e, value)=>setFrom((names.filter(name => name.name === value))[0] || {})}
+            options={names}
+          />
 
-            <StyledAutoComplete
-              id='to'
-              placeholder="Enter location" 
-              label="To: " 
-              onChange={(e, value)=>setTo((names.filter(name => name.name === value))[0] || {})}
-              options={names}
-            />
+          <StyledAutoComplete
+            id='to'
+            placeholder="Enter location" 
+            label="To: " 
+            onChange={(e, value)=>setTo((names.filter(name => name.name === value))[0] || {})}
+            options={names}
+          />
 
-            <StyledTextField 
-              id='date'
-              label="Date: " 
-              type="date" 
-              inputProps={{ min:'2020-01-01', max: "2200-12-31", }} 
-              value={date}
-              onChange={(e)=>{setDate(e.target.value)}}
-              error={dateError}
-              helperText={dateError && 'Reservation must be more than 24 hours.'}
-            />
-          </Box>
-
-          <Box>
-            <Button variant='contained' fullWidth onClick={handleClick}>Continue</Button>
-          </Box>
+          <StyledTextField 
+            id='date'
+            label="Date: " 
+            type="date" 
+            inputProps={{ min:'2020-01-01', max: "2200-12-31", }} 
+            value={date}
+            onChange={(e)=>{setDate(e.target.value)}}
+            error={dateError}
+            helperText={dateError && 'Reservation must be more than 24 hours.'}
+          />
         </Box>
-      </Paper>
-    </OnceZoomIn>
+
+        <Box>
+          <Button variant='contained' fullWidth onClick={handleClick}>Continue</Button>
+        </Box>
+      </Box>
+    </Paper>
   )
 }
