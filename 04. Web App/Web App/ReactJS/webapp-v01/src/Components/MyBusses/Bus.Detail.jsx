@@ -27,6 +27,7 @@ import ThreeButtonDialog from '../DialogBox/ThreeButtonDialog';
 import { ToastAlert } from '../MyNotifications/WindowAlerts';
 import AlertDialog from '../DialogBox/AlertDialog';
 import SingleInputDialog from '../DialogBox/SingleInputDialog';
+import { ViewFlyInX } from '../Animations/Entrance.View';
 
 // Months list
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -418,39 +419,47 @@ export default function BusDetail({language, setLoading}) {
         {/* Quick Cards */}
         <Grid container spacing={2} padding={0} justifyContent={'space-around'} width={'100%'}>
           <Grid item>
-            <QuickCard
-              title={'Rides'}
-              amount={details.data.rides.amount}
-              increment={details.data.rides.increment}
-              icon={<CommuteIcon sx={{color:'#1a76d2', fontSize:'25px'}}/>}
-            />
+            <ViewFlyInX>
+              <QuickCard
+                title={'Rides'}
+                amount={details.data.rides.amount}
+                increment={details.data.rides.increment}
+                icon={<CommuteIcon sx={{color:'#1a76d2', fontSize:'25px'}}/>}
+              />
+            </ViewFlyInX>
           </Grid>
 
           <Grid item>
-            <QuickCard
-              title={'Bookings'}
-              amount={details.data.bookings.amount}
-              increment={details.data.bookings.increment}
-              icon={<LocalActivityOutlinedIcon sx={{color:'#ff9900', fontSize:'25px'}}/>}
-            />
+            <ViewFlyInX delay={100}>
+              <QuickCard
+                title={'Bookings'}
+                amount={details.data.bookings.amount}
+                increment={details.data.bookings.increment}
+                icon={<LocalActivityOutlinedIcon sx={{color:'#ff9900', fontSize:'25px'}}/>}
+              />
+            </ViewFlyInX>
           </Grid>
 
           <Grid item>
-            <QuickCard
-              title={'Cancelations'}
-              amount={details.data.cancel.amount}
-              increment={details.data.cancel.increment}
-              icon={<CancelOutlinedIcon sx={{color:'#dd0233', fontSize:'25px'}}/>}
-            />
+            <ViewFlyInX delay={200}>
+              <QuickCard
+                title={'Cancelations'}
+                amount={details.data.cancel.amount}
+                increment={details.data.cancel.increment}
+                icon={<CancelOutlinedIcon sx={{color:'#dd0233', fontSize:'25px'}}/>}
+              />
+            </ViewFlyInX>
           </Grid>
 
           <Grid item>
-            <QuickCard
-              title={'Earnings (LKR)'}
-              amount={details.data.earn.amount}
-              increment={details.data.earn.increment}
-              icon={<LocalAtmOutlinedIcon sx={{color:'#04aa6d', fontSize:'25px'}}/>}
-            />
+            <ViewFlyInX delay={300}>
+              <QuickCard
+                title={'Earnings (LKR)'}
+                amount={details.data.earn.amount}
+                increment={details.data.earn.increment}
+                icon={<LocalAtmOutlinedIcon sx={{color:'#04aa6d', fontSize:'25px'}}/>}
+              />
+            </ViewFlyInX>
           </Grid>
         </Grid>        
 
@@ -517,12 +526,14 @@ export default function BusDetail({language, setLoading}) {
 
               <Box bgcolor={'ghostwhite'} height={'100%'} padding={2} pt={4} gap={2} display={'flex'} flexDirection={'column'}>
                 {scheduleList.loaded ? (
-                  scheduleList.schedules.length>0 && scheduleList.schedules.map(schedule => 
-                  <ScheduleCard 
-                    key={schedule.id} 
-                    details={schedule} 
-                    handleAction={handleAction}
-                  />
+                  scheduleList.schedules.length>0 && scheduleList.schedules.map((schedule, index) => 
+                    <ViewFlyInX>
+                      <ScheduleCard 
+                        key={schedule.id} 
+                        details={schedule} 
+                        handleAction={handleAction}
+                      />
+                    </ViewFlyInX>
                 )) : (
                   <Skeleton sx={{width:{xs:'400px', lg:'870px'}, height:'20px', borderRadius:'20px', mt:'-20px'}} />
                 )}

@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material'
+import { Grid, Box } from '@mui/material'
 import React from 'react'
 import Purchasing from './Forms/Purchasing';
 import Bill from './MapArea/Bill';
@@ -12,7 +12,7 @@ export default function Payment({activeStep, setActiveStep, setPrevStep, booking
   }
   
   return (
-    <Paper sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
+    <Box sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
       <Grid container sx={{width:'100%', display: 'flex', justifyContent:"space-between"}}>
         <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
           <Purchasing 
@@ -29,6 +29,6 @@ export default function Payment({activeStep, setActiveStep, setPrevStep, booking
           <Bill bookingData={bookingData}/>
         </Grid>
       </Grid> 
-    </Paper>
+    </Box>
   )
 }

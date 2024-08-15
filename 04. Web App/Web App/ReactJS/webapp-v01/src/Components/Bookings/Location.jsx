@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import LocationForm from './Forms/LocationForm'
 import Map from './MapArea/Map'
@@ -50,7 +50,7 @@ export default function Location({activeStep, setActiveStep, prevStep, setPrevSt
   }
 
   return (
-    <Paper sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
+    <Box sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
       <Grid container sx={{width:'100%', display: 'flex', justifyContent:"space-between"}}>
         <Grid item xs={12} md={4}>
           <ConditionalAnimation
@@ -86,6 +86,6 @@ export default function Location({activeStep, setActiveStep, prevStep, setPrevSt
           </ConditionalAnimation>
         </Grid>
       </Grid> 
-    </Paper>
+    </Box>
   )
 }

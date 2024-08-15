@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material'
+import { Grid, Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Passengers from './Forms/Passengers'
 import BusSeats from './MapArea/BusSeats'
@@ -116,7 +116,7 @@ export default function SeatArrangement({activeStep, setActiveStep, setPrevStep,
 
 
   return (
-    <Paper sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
+    <Box sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
       <Grid container sx={{width:'100%', display: 'flex', justifyContent:"space-between"}}>
         <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
           <Passengers 
@@ -144,6 +144,6 @@ export default function SeatArrangement({activeStep, setActiveStep, setPrevStep,
             />
         </Grid>
       </Grid> 
-    </Paper>
+    </Box>
   )
 }

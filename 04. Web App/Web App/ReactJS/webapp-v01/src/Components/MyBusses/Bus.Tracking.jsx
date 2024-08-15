@@ -4,6 +4,7 @@ import GoogleMaps from '../Map/GoogleMaps'
 import ChipSelect from '../InputItems/ChipSelect'
 import SearchIcon from '@mui/icons-material/Search';
 import { GetRequest } from '../../APIs/NodeBackend';
+import { OnceZoomIn } from '../Animations/Entrance.Once';
 
 // Time step for fetching locations
 const TIME_STEP = 1000;
@@ -85,25 +86,27 @@ export default function BusTracking({language, setLoading}) {
   }, [busList]);
 
   return (
-    <Box width={'100%'} height={'calc(100vh - 100px)'} bgcolor={'ghostwhite'} display={'flex'} justifyContent={'space-around'} alignItems={'center'} flexDirection={'column'}>
-      <Box width={'calc(100% - 40px)'} height={'calc(100% - 40px)'} >
-        <Card sx={{width:'fit-content', height:'fit-content', padding:'5px', zIndex:5, opacity:'90%', position:'relative', top:{xs:3, sm:10}, left:{xs:3, sm:10}, display:'flex', justifyContent:{xs:'space-around', sm:'start'}, alignItems:'center'}}>
-          <ChipSelect names={busNumbers} setValues={setTempList} values={tempList}/>
-          <Tooltip title={'Search Buses'}>
-            <IconButton onClick={handleClick}>
-              <SearchIcon/>
-            </IconButton>
-          </Tooltip>
-        </Card>
+    <OnceZoomIn>
+      <Box width={'100%'} height={'calc(100vh - 100px)'} bgcolor={'ghostwhite'} display={'flex'} justifyContent={'space-around'} alignItems={'center'} flexDirection={'column'}>
+        <Box width={'calc(100% - 40px)'} height={'calc(100% - 40px)'} >
+          <Card sx={{width:'fit-content', height:'fit-content', padding:'5px', zIndex:5, opacity:'90%', position:'relative', top:{xs:3, sm:10}, left:{xs:3, sm:10}, display:'flex', justifyContent:{xs:'space-around', sm:'start'}, alignItems:'center'}}>
+            <ChipSelect names={busNumbers} setValues={setTempList} values={tempList}/>
+            <Tooltip title={'Search Buses'}>
+              <IconButton onClick={handleClick}>
+                <SearchIcon/>
+              </IconButton>
+            </Tooltip>
+          </Card>
 
-        <Paper sx={{width:'100%', height:'100%', boxShadow:1, position:'relative', top:-82, left:0}}>
-          <GoogleMaps
-            page={'myBuses'}
-            myBusesLocation={busLocations}
-            generalData={busDetails}
-          />          
-        </Paper>
+          <Paper sx={{width:'100%', height:'100%', boxShadow:1, position:'relative', top:-82, left:0}}>
+            <GoogleMaps
+              page={'myBuses'}
+              myBusesLocation={busLocations}
+              generalData={busDetails}
+            />          
+          </Paper>
+        </Box>
       </Box>
-    </Box>
+    </OnceZoomIn>
   )
 }

@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import BusFilter from './Forms/BusFilter'
 import Buslist from './MapArea/BusList'
@@ -97,7 +97,7 @@ export default function BusList({ activeStep, setActiveStep, setPrevStep, bookin
   }
 
   return (
-    <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+    <Box sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
       <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
         <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
           <BusFilter
@@ -119,6 +119,6 @@ export default function BusList({ activeStep, setActiveStep, setPrevStep, bookin
             />
         </Grid>
       </Grid>
-    </Paper>
+    </Box>
   );
 }
