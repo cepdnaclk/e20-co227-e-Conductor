@@ -130,21 +130,21 @@ CREATE TABLE USERLOGS(
     date VARCHAR(50),
     time VARCHAR(50),
     country VARCHAR(20),
-    longitude DECIMAL(9,6),
-    latitude DECIMAL(9,6)
+    longitude DECIMAL(21,18),
+    latitude DECIMAL(21,18)
 );
 
 CREATE TABLE BUSSTOPNAMES(
     nameID INT PRIMARY KEY,
     name VARCHAR(255),
-    longitude DECIMAL(9,6),
-    latitude DECIMAL(9,6)
+    longitude DECIMAL(21,18),
+    latitude DECIMAL(21,18)
 );
 
 CREATE TABLE BUSSTOPLOCATIONS(
     locationID INT PRIMARY KEY,
     nameID VARCHAR(255),
-    lat DECIMAL(9,6),
-    lng DECIMAL(9,6),
+    lat DECIMAL(21,18),
+    lng DECIMAL(21,18),
     routeNo VARCHAR(255)
 );
