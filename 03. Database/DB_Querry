@@ -1,110 +1,150 @@
 CREATE TABLE USERS (
-    User_ID INT PRIMARY KEY,
-    Name VARCHAR(255),
-    First_Name VARCHAR(255),
-    Last_Name VARCHAR(255),
-    Email VARCHAR(255) UNIQUE,
-    Date_of_Birth DATE,
-    Phone_Number VARCHAR(20),
-    Password VARCHAR(255),
-    User_Type VARCHAR(50),
-    NIC VARCHAR(20),
-    Available_Credits FLOAT,
-    License_ID VARCHAR(20)
+    userID INT PRIMARY KEY,
+    name VARCHAR(255),
+    firstName VARCHAR(255),
+    lastName VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
+    dateOfBirth DATE,
+    phoneNumber VARCHAR(20),
+    password VARCHAR(255),
+    userType VARCHAR(50),
+    nic VARCHAR(20),
+    availableCredits DECIMAL(6,2),
+    licenseID VARCHAR(20)
 );
+
 CREATE TABLE EMPLOYEE (
-    Employee_ID INT PRIMARY KEY,
-    User_ID INT,
-    Emp_Type VARCHAR(50),
-    FOREIGN KEY (User_ID) REFERENCES USERS(User_ID)
+    employeeID INT PRIMARY KEY,
+    userID INT,
+    empType VARCHAR(50),
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
 
 CREATE TABLE ADMIN (
-    Admin_ID INT PRIMARY KEY,
-    User_ID INT,
-    Beneficiary VARCHAR(255),
-    Branch VARCHAR(255),
-    Bank_Account_Number VARCHAR(50),
-    Bank_Name VARCHAR(255),
-    FOREIGN KEY (User_ID) REFERENCES USERS(User_ID)
+    adminID INT PRIMARY KEY,
+    userID INT,
+    beneficiary VARCHAR(255),
+    branch VARCHAR(255),
+    bankAccount_Number VARCHAR(50),
+    bankName VARCHAR(255),
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
 
 CREATE TABLE BUS_OWNER (
-    Owner_ID INT PRIMARY KEY,
-    User_ID INT,
-    NIC VARCHAR(20) UNIQUE,
-    Beneficiary VARCHAR(255),
-    Branch VARCHAR(255),
-    Bank_Account_Number VARCHAR(50),
-    Bank_Name VARCHAR(255),
-    FOREIGN KEY (User_ID) REFERENCES USERS(User_ID)
+    ownerID INT PRIMARY KEY,
+    userID INT,
+    nic VARCHAR(20) UNIQUE,
+    beneficiary VARCHAR(255),
+    branch VARCHAR(255),
+    bankAccountNumber VARCHAR(50),
+    bankName VARCHAR(255),
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
 
 CREATE TABLE PASSENGER (
-    Passenger_ID INT PRIMARY KEY,
-    User_ID INT,
-    FOREIGN KEY (User_ID) REFERENCES USERS(User_ID)
+    passengerID INT PRIMARY KEY,
+    userID INT,
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
 
-
 CREATE TABLE VEHICLE (
-    Vehicle_Reg_No VARCHAR(20) PRIMARY KEY,
-    Owner_ID INT,
-    NTC_Reg_No VARCHAR(20),
-    No_of_Seats INT,
-    FOREIGN KEY (Owner_ID) REFERENCES BUS_OWNER(Owner_ID)
+    vehicleID INT PRIMARY KEY,
+    vehicleRegNo VARCHAR(20),
+    ownerID INT,
+    ntcRegNo VARCHAR(20),
+    noOfSeats INT,
+    type VARCHAR(20),
+    org VARCHAR(20),
+    FOREIGN KEY (ownerID) REFERENCES BUS_OWNER(ownerID)
 );
 
 CREATE TABLE ROUTE (
-    Route_No INT PRIMARY KEY,
-    Fare_Stage VARCHAR(255)
+    routeID INT PRIMARY KEY,
+    routeNo VARCHAR(20),
+    fareStage VARCHAR(255)
 );
 
 CREATE TABLE SCHEDULE (
-    Schedule_ID INT PRIMARY KEY,
-    Vehicle_Reg_No VARCHAR(20),
-    Route_No INT,
-    Departure_Time TIME,
-    Arrival_Time TIME,
-    Available_Seats INT,
-    FOREIGN KEY (Vehicle_Reg_No) REFERENCES VEHICLE(Vehicle_Reg_No),
-    FOREIGN KEY (Route_No) REFERENCES ROUTE(Route_No)
+    scheduleID INT PRIMARY KEY,
+    vehicleID INT,
+    routeID INT,
+    departureTime TIME,
+    arrivalTime TIME,
+    availableSeats INT,
+    FOREIGN KEY (vehicleID) REFERENCES VEHICLE(vehicleID),
+    FOREIGN KEY (routeID) REFERENCES ROUTE(routeID)
 );
 
 CREATE TABLE BOOKING (
-    Ticket_No INT PRIMARY KEY,
-    Date DATE,
-    Schedule_ID INT,
-    No_of_Passengers INT,
-    Vehicle_Reg_No VARCHAR(20),
-    Route_No INT,
-    Driver_ID INT,
-    Conductor_ID INT,
-    Passenger_ID INT,
-    From_Location VARCHAR(255),
-    To_Location VARCHAR(255),
-    Ticket_Price FLOAT,
-    FOREIGN KEY (Schedule_ID) REFERENCES SCHEDULE(Schedule_ID),
-    FOREIGN KEY (Vehicle_Reg_No) REFERENCES VEHICLE(Vehicle_Reg_No),
-    FOREIGN KEY (Route_No) REFERENCES ROUTE(Route_No),
-    FOREIGN KEY (Driver_ID) REFERENCES EMPLOYEE(Employee_ID),
-    FOREIGN KEY (Conductor_ID) REFERENCES EMPLOYEE(Employee_ID),
-    FOREIGN KEY (Passenger_ID) REFERENCES PASSENGER(Passenger_ID)
+    ticketNo INT PRIMARY KEY,
+    date DATE,
+    scheduleID INT,
+    noOfPassengers INT,
+    vehicleID INT,
+    routeID INT,
+    driverID INT,
+    conductorID INT,
+    passengerID INT,
+    fromLocation VARCHAR(255),
+    toLocation VARCHAR(255),
+    ticketPrice DECIMAL(6,2),
+    FOREIGN KEY (scheduleID) REFERENCES SCHEDULE(scheduleID),
+    FOREIGN KEY (vehicleID) REFERENCES VEHICLE(vehicleID),
+    FOREIGN KEY (routeID) REFERENCES ROUTE(routeID),
+    FOREIGN KEY (driverID) REFERENCES EMPLOYEE(employeeID),
+    FOREIGN KEY (conductorID) REFERENCES EMPLOYEE(employeeID),
+    FOREIGN KEY (passengerID) REFERENCES PASSENGER(passengerID)
 );
 
 CREATE TABLE TRANSACTION (
-    Transaction_ID INT PRIMARY KEY,
-    User_ID INT,
-    Amount FLOAT,
-    Time TIMESTAMP,
-    Ref_No VARCHAR(50),
-    Type VARCHAR(50),
-    Status VARCHAR(50),
-    Bank_Account_Number VARCHAR(50),
-    Account_Branch VARCHAR(255),
-    Beneficiary VARCHAR(255),
-    Bank VARCHAR(255),
-    FOREIGN KEY (User_ID) REFERENCES USERS(User_ID)
+    transactionID INT PRIMARY KEY,
+    userID INT,
+    amount DECIMAL(6,2),
+    time TIME,
+    refNo VARCHAR(50),
+    type VARCHAR(50),
+    status VARCHAR(50),
+    bankAccountNumber VARCHAR(50),
+    accountBranch VARCHAR(255),
+    beneficiary VARCHAR(255),
+    bank VARCHAR(255),
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
 
+CREATE TABLE OTPTABLE(
+    otpID INT PRIMARY KEY,
+    otp INT,
+    contactNo VARCHAR(20),
+    email VARCHAR(50)
+);
 
+CREATE TABLE USERLOGS(
+    logID INT PRIMARY KEY,
+    userID INT,
+    mobile VARCHAR(20),
+    device VARCHAR(10),
+    os VARCHAR(10),
+    browser VARCHAR(10),
+    MAC VARCHAR(50),
+    ip VARCHAR(50),
+    date VARCHAR(50),
+    time VARCHAR(50),
+    country VARCHAR(20),
+    longitude DECIMAL(9,6),
+    latitude DECIMAL(9,6)
+);
+
+CREATE TABLE BUSSTOPNAMES(
+    nameID INT PRIMARY KEY,
+    name VARCHAR(255),
+    longitude DECIMAL(9,6),
+    latitude DECIMAL(9,6)
+);
+
+CREATE TABLE BUSSTOPLOCATIONS(
+    locationID INT PRIMARY KEY,
+    nameID VARCHAR(255),
+    lat DECIMAL(9,6),
+    lng DECIMAL(9,6),
+    routeNo VARCHAR(255)
+);
