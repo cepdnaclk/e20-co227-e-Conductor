@@ -64,11 +64,12 @@ CREATE TABLE BUSSTOP_LOCATIONS(
 
 // ROUTES
 CREATE TABLE ROUTE (
-      routeNo int(10) NOT NULL,
+      routeID int NOT NULL AUTO_INCREMENT,
+      routeNo varchar(10) NOT NULL,
       routeType varchar(12) NOT NULL,
       start varchar(25) NOT NULL,
       end varchar(25) NOT NULL,
-      PRIMARY KEY (routeNo)
+      PRIMARY KEY (routeID)
 );
 
 // ADMIN
@@ -85,12 +86,13 @@ CREATE TABLE ADMIN(
 
 // VEHICLE
 CREATE TABLE VEHICLE (
-        vehicleID INT PRIMARY KEY,
-        vehicleRegNo VARCHAR(10),
-        ownerID INT,
-        ntcRegNo VARCHAR(10),
-        seats INT(2),
-        serviceType VARCHAR(20),
-        org VARCHAR(20),
+        vehicleID INT NOT NULL AUTO_INCREMENT,
+        vehicleRegNo VARCHAR(10) NOT NULL UNIQUE,
+        ownerID INT NOT NULL,
+        ntcRegNo VARCHAR(10) NOT NULL UNIQUE,
+        seats INT(2) NOT NULL,
+        serviceType VARCHAR(20) NOT NULL,
+        org VARCHAR(20) NOT NULL,
+        PRIMARY KEY (vehicleID),
         FOREIGN KEY (ownerID) REFERENCES USERS(userID)
-);
+);    
