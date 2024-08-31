@@ -1,0 +1,20 @@
+// USERS TABLE
+CREATE TABLE USERS (
+      UserID int(7) NOT NULL AUTO_INCREMENT,
+      UserType varchar(10) NOT NULL,
+      empType varchar(10) NOT NULL,
+      fName varchar(20) NOT NULL,
+      lName varchar(20) NOT NULL,
+      email varchar(50) NOT NULL UNIQUE,
+      mobile varchar(12) NOT NULL UNIQUE,
+      nic varchar(12),
+      birthday DATE,
+      ntc varchar(10),
+      licence varchar(15),
+      accName varchar(15),
+      accNo varchar(20),
+      bank varchar(20),
+      branch varchar(20),
+      credits DECIMAL(6,2),
+      PRIMARY KEY (UserID)
+);
