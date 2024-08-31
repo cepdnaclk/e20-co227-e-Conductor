@@ -70,3 +70,27 @@ CREATE TABLE ROUTE (
       end varchar(25) NOT NULL,
       PRIMARY KEY (routeNo)
 );
+
+// ADMIN
+CREATE TABLE ADMIN(
+      adminID INT AUTO_INCREMENT NOT NULL UNIQUE,
+      userName VARCHAR(20) NOT NULL UNIQUE,
+      password VARCHAR(20) NOT NULL,
+      fName VARCHAR(20) NOT NULL,
+      lName VARCHAR(20) NOT NULL,
+      ecoID VARCHAR(25) NOT NULL UNIQUE,
+      email VARCHAR(50) NOT NULL UNIQUE,
+      mobile VARCHAR(12) NOT NULL UNIQUE
+);
+
+// VEHICLE
+CREATE TABLE VEHICLE (
+        vehicleID INT PRIMARY KEY,
+        vehicleRegNo VARCHAR(10),
+        ownerID INT,
+        ntcRegNo VARCHAR(10),
+        seats INT(2),
+        serviceType VARCHAR(20),
+        org VARCHAR(20),
+        FOREIGN KEY (ownerID) REFERENCES USERS(userID)
+);
