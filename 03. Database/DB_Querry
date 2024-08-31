@@ -1,37 +1,3 @@
-CREATE TABLE EMPLOYEE (
-    employeeID INT PRIMARY KEY,
-    userID INT,
-    empType VARCHAR(50),
-    FOREIGN KEY (userID) REFERENCES USERS(userID)
-);
-
-CREATE TABLE ADMIN (
-    adminID INT PRIMARY KEY,
-    userID INT,
-    beneficiary VARCHAR(255),
-    branch VARCHAR(255),
-    bankAccount_Number VARCHAR(50),
-    bankName VARCHAR(255),
-    FOREIGN KEY (userID) REFERENCES USERS(userID)
-);
-
-CREATE TABLE BUS_OWNER (
-    ownerID INT PRIMARY KEY,
-    userID INT,
-    nic VARCHAR(20) UNIQUE,
-    beneficiary VARCHAR(255),
-    branch VARCHAR(255),
-    bankAccountNumber VARCHAR(50),
-    bankName VARCHAR(255),
-    FOREIGN KEY (userID) REFERENCES USERS(userID)
-);
-
-CREATE TABLE PASSENGER (
-    passengerID INT PRIMARY KEY,
-    userID INT,
-    FOREIGN KEY (userID) REFERENCES USERS(userID)
-);
-
 CREATE TABLE VEHICLE (
     vehicleID INT PRIMARY KEY,
     vehicleRegNo VARCHAR(20),
