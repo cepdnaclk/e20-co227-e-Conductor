@@ -96,3 +96,21 @@ CREATE TABLE VEHICLE (
         PRIMARY KEY (vehicleID),
         FOREIGN KEY (ownerID) REFERENCES USERS(userID)
 );    
+
+// SCHEDULE
+CREATE TABLE SCHEDULE (
+    scheduleID INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    vehicleID INT(10) NOT NULL,
+    routeID INT(10) NOT NULL,
+    date VARCHAR(12) NOT NULL,
+    departureTime VARCHAR(10) NOT NULL,
+    arrivalTime VARCHAR(10) NOT NULL,
+    closingDate VARCHAR(12) NOT NULL,
+    driverID INT(8) NOT NULL,
+    conductorID INT(8) NOT NULL,
+    bookedSeats JSON,
+    FOREIGN KEY (vehicleID) REFERENCES VEHICLE(vehicleID),
+    FOREIGN KEY (routeID) REFERENCES ROUTE(routeID),
+    FOREIGN KEY (driverID) REFERENCES USERS(userID),
+    FOREIGN KEY (conductorID) REFERENCES USERS(userID)
+);
