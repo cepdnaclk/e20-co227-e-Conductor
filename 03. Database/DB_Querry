@@ -55,11 +55,3 @@ CREATE TABLE TRANSACTION (
     bank VARCHAR(255),
     FOREIGN KEY (userID) REFERENCES USERS(userID)
 );
-
-CREATE TABLE ROUTE (
-      routeNo int(10) NOT NULL,
-      routeType varchar(12) NOT NULL,
-      start varchar(25) NOT NULL,
-      end varchar(25) NOT NULL,
-      PRIMARY KEY (routeNo)
-);
