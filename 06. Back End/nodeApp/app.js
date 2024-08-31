@@ -43,7 +43,7 @@ app.get("/test", (req, res) => {
   console.log(`Testing`);
 
   const sql = `
-    DESCRIBE ticket
+    DESCRIBE USERS
     `;
 
   /*
