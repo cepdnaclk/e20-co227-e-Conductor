@@ -58,5 +58,6 @@ CREATE TABLE BUSSTOP_LOCATIONS(
         nameID INT(5),
         lat DECIMAL(21,18),
         lng DECIMAL(21,18),
-        routes JSON        
+        routes JSON,
+        FOREIGN KEY (nameID) REFERENCES BUSSTOP_NAMES(nameID)    
 );
