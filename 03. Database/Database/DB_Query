@@ -42,4 +42,21 @@ CREATE TABLE OTP_TABLE (
       contactNo varchar(12),
       email varchar(50),
       PRIMARY KEY(otpID)
-    );
+);
+
+// BUSSTOP_NAMES
+CREATE TABLE BUSSTOP_NAMES(
+        nameID INT PRIMARY KEY,
+        name VARCHAR(150),
+        longitude DECIMAL(21,18),
+        latitude DECIMAL(21,18)
+);
+
+// BUSSTOPS_LOCATIONS
+CREATE TABLE BUSSTOP_LOCATIONS(
+        locationID INT PRIMARY KEY,
+        nameID INT(5),
+        lat DECIMAL(21,18),
+        lng DECIMAL(21,18),
+        routes JSON        
+);
