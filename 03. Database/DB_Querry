@@ -1,24 +1,3 @@
-CREATE TABLE BOOKING (
-    ticketNo INT PRIMARY KEY,
-    date DATE,
-    scheduleID INT,
-    noOfPassengers INT,
-    vehicleID INT,
-    routeID INT,
-    driverID INT,
-    conductorID INT,
-    passengerID INT,
-    fromLocation VARCHAR(255),
-    toLocation VARCHAR(255),
-    ticketPrice DECIMAL(6,2),
-    FOREIGN KEY (scheduleID) REFERENCES SCHEDULE(scheduleID),
-    FOREIGN KEY (vehicleID) REFERENCES VEHICLE(vehicleID),
-    FOREIGN KEY (routeID) REFERENCES ROUTE(routeID),
-    FOREIGN KEY (driverID) REFERENCES EMPLOYEE(employeeID),
-    FOREIGN KEY (conductorID) REFERENCES EMPLOYEE(employeeID),
-    FOREIGN KEY (passengerID) REFERENCES PASSENGER(passengerID)
-);
-
 CREATE TABLE TRANSACTION (
     transactionID INT PRIMARY KEY,
     userID INT,
