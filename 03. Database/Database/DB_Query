@@ -48,8 +48,8 @@ CREATE TABLE OTP_TABLE (
 CREATE TABLE BUSSTOP_NAMES(
         nameID INT PRIMARY KEY,
         name VARCHAR(150),
-        longitude DECIMAL(21,18),
-        latitude DECIMAL(21,18)
+        lng DECIMAL(21,18),
+        lat DECIMAL(21,18)
 );
 
 // BUSSTOPS_LOCATIONS
