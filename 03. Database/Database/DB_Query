@@ -114,3 +114,21 @@ CREATE TABLE SCHEDULE (
     FOREIGN KEY (driverID) REFERENCES USERS(userID),
     FOREIGN KEY (conductorID) REFERENCES USERS(userID)
 );
+
+
+// TRANSACTION
+CREATE TABLE TRANSACTION (
+    transactionID INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    userID INT NOT NULL,
+    amount DECIMAL(6,2) NOT NULL,
+    date VARCHAR(12) NOT NULL,
+    time VARCHAR(12) NOT NULL,
+    refNo VARCHAR(50),
+    type VARCHAR(50),
+    status VARCHAR(20),
+    bankAccountNumber VARCHAR(50),
+    accountBranch VARCHAR(50),
+    beneficiary VARCHAR(50),
+    bank VARCHAR(30),
+    FOREIGN KEY (userID) REFERENCES USERS(userID)
+);
