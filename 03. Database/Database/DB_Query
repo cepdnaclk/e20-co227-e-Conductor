@@ -34,3 +34,12 @@ CREATE TABLE USER_LOGS (
       country VARCHAR(20) NOT NULL,
       PRIMARY KEY (userID, MAC, browser)
 );
+
+// OTP_TABLE
+CREATE TABLE OTP_TABLE (
+      otpID int(11) NOT NULL AUTO_INCREMENT,
+      otp varchar(6) NOT NULL,
+      contactNo varchar(12),
+      email varchar(50),
+      PRIMARY KEY(otpID)
+    );
