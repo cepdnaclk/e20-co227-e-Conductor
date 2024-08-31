@@ -61,3 +61,12 @@ CREATE TABLE BUSSTOP_LOCATIONS(
         routes JSON,
         FOREIGN KEY (nameID) REFERENCES BUSSTOP_NAMES(nameID)    
 );
+
+// ROUTES
+CREATE TABLE ROUTE (
+      routeNo int(10) NOT NULL,
+      routeType varchar(12) NOT NULL,
+      start varchar(25) NOT NULL,
+      end varchar(25) NOT NULL,
+      PRIMARY KEY (routeNo)
+);
