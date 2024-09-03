@@ -119,6 +119,7 @@ function Settings({ language, setLoading }) {
         /*onClose: Do something */
       });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[]);
 
   // Initial Reset
@@ -126,6 +127,7 @@ function Settings({ language, setLoading }) {
     if(Object.keys(userData).length > 0){
       handleReset()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userData]);
 
   // Form Data validation
@@ -197,6 +199,7 @@ function Settings({ language, setLoading }) {
       //console.log('validating');
       validate(formData); 
     };  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[isSubmitted, formData]);
 
   useEffect(()=>{
@@ -298,6 +301,7 @@ function Settings({ language, setLoading }) {
         break;
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValid]);
 
   const refreshPage = () =>{

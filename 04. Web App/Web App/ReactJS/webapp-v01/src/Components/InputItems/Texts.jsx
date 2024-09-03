@@ -60,7 +60,9 @@ export default function Texts({
     fontStyle='normal',
     variant, 
     fontWeight='bold',
-    fontColor='black'
+    fontColor='black',
+    whiteSpace='noWrap',
+    ...props
 }) {
   return (
     <Typography 
@@ -70,6 +72,8 @@ export default function Texts({
         variant={variant}
         fontWeight={fontWeight}
         color={fontColor}
+        whiteSpace={whiteSpace}
+        {...props}
     >
         {children}
     </Typography>

@@ -2,10 +2,11 @@ import { Box, IconButton, Skeleton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import { APIProvider, InfoWindow, Map } from '@vis.gl/react-google-maps';
-import useCurrentGPSLocation from '../SessionData/useCurrentGPSLocation';
-import { BusStopMarker, FromMarker, PersonMarker, ToMarker } from './AdvancedMarkers';
+import { BusMarker, BusStopMarker, FromMarker, LocationMarker, PersonMarker, StartMarker, ToMarker } from './AdvancedMarkers';
 import { GetRequest } from '../../APIs/NodeBackend';
 import Texts from '../InputItems/Texts'
+import useLiveLocation from '../SessionData/useLiveLocation';
+import Directions from './Directions';
 
 // Default center location - Colombo Sri Lanka
 const center = { lat: 6.927218696598834, lng: 79.86022185737559 };
@@ -24,11 +25,11 @@ const border = {
   stylers: [{ visibility: "off" }],
 }]; */
 
-export default function GoogleMaps({page, setLoading, from, to}) {
+export default function GoogleMaps({page, from, to, busData, routeLocations, estmData, busLocation, myBusesLocation, generalData}) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Getting device current location
-  const location = useCurrentGPSLocation();
+  const location = useLiveLocation();
 
   // Variable to hold Target location
   const [target, setTarget] = useState({active:false, coordinates:center});
@@ -37,13 +38,14 @@ export default function GoogleMaps({page, setLoading, from, to}) {
   const [infoWindow, setInfoWindow] = useState({
     state: false, // window is closed
     label:'',
+    body:'',
     position: center,
   });
 
   // Goto my target location
   const showMyLocation = () => {
     if(location.loaded && !location.error){
-      setTarget({active:true, coordinates:location.coordinates});
+      setTarget({active:true, coordinates:location.coordinates });
     }
     else{
       alert(location.error.message);
@@ -65,8 +67,9 @@ export default function GoogleMaps({page, setLoading, from, to}) {
     bSouth:0,
     bEast:0,
     bWest:0
-  })
+  });
 
+  /* Need to implement an alternative fetching mechanism */
   // Fetching bus stops API
   useEffect(()=>{
     // Storing algorithm
@@ -104,7 +107,9 @@ export default function GoogleMaps({page, setLoading, from, to}) {
       }
     }
 
+    //console.log('Fetching');
     fetch(camera);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[bounds]);
 
   // Finding the overall captured map area
@@ -131,8 +136,23 @@ export default function GoogleMaps({page, setLoading, from, to}) {
       newBound.bWest  = (bWest  > west)  || (bWest === 0)  ? west  : bWest ;
       
       // update bounds
-      setBounds(newBound);
+      const keys = ['bNorth', 'bSouth', 'bEast', 'bWest'];
+
+      let update = false;
+
+      keys.forEach(key => {
+        //console.log(`bound: ${bounds[key]} , newBound: ${newBound[key]}`);
+        if (bounds[key] !== newBound[key]) {
+          update = true;
+          //console.log(`${bounds[key]} != ${newBound[key]} need to be updated!`);
+        }
+      });
+
+      if (update) {
+        setBounds(newBound);
+      }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[camera]);
 
   // Show targets
@@ -157,6 +177,22 @@ export default function GoogleMaps({page, setLoading, from, to}) {
     }
   },[infoWindow]);
 
+  // Function to find the bus informations
+  const busInfo = (regNo) => {
+    if (generalData.length > 0) {
+      const details = generalData.filter(bus => bus.regNo === regNo);
+      console.log('Filterd bus details: ', JSON.stringify(details[0]));
+      return `${details[0].route}\n${details[0].routeType}\nDriver: ${details[0].driver}\nConductor: ${details[0].conductor}`;
+    } 
+    return null;
+  };
+
+  // Function to split bus stop name
+  const splitedName = (routes, name) => {
+    const nameParts = name.split(',');
+    return `${routes}\n${nameParts[1].trim()}\n${nameParts[2].trim()}`;
+  }
+
   return (
     <Box width='100%' height='100%'>
       <APIProvider
@@ -168,7 +204,7 @@ export default function GoogleMaps({page, setLoading, from, to}) {
             <Map 
               mapId='DEMO-MAP-ID'
               defaultZoom={zoom}
-              defaultCenter={center}
+              defaultCenter={page === "busTracking" ? busLocation : center}
               center={target.active ? target.coordinates : null}
               zoom={target.active ? 16 : null}
               onCenterChanged={()=>{setTarget({...target, active:false})}}
@@ -184,20 +220,117 @@ export default function GoogleMaps({page, setLoading, from, to}) {
               {/* MAP COMPONENETS */}
               {/* Rendering Bus Stops */}
               {zoom > 14 && busStops.length > 0 && busStops.map(place => (
-                <BusStopMarker key={place.id} title={place.name} position={place.location} onClick={()=>{setInfoWindow({state:true, position:place.location, label:place.name})}} />
+                <BusStopMarker 
+                  key={place.id} 
+                  title={place.name.split(',')[0]} 
+                  position={place.location} 
+                  onClick={()=>{setInfoWindow({
+                    state:true, 
+                    position:place.location, 
+                    label:place.name.split(',')[0], 
+                    body:splitedName(place.routes, place.name)
+                  })}} />
               ))}
+
+              {/* Rendering user's live location */}
+              {location.loaded && !location.error && <PersonMarker 
+                title={'Me'} 
+                position={location?.coordinates} 
+                onClick={()=>{setInfoWindow({
+                  state:true, 
+                  position:location?.coordinates, 
+                  label:"My Location"
+                })}}
+              />}
 
               {(()=>{
                 switch (page) {
                   case 'booking':{
                     return (
                       <>
-                        {/* Rendering user's current location */}
-                        {location.loaded && !location.error && <PersonMarker title={'Me'} position={location?.coordinates} onClick={()=>{setInfoWindow({state:true, position:location?.coordinates, label:"My Location"})}} />}
-
                         {/* Rendering FROM - TO location */}
                         {!!(from) && <FromMarker title={from?.name} position={from?.location} onClick={()=>{setInfoWindow({state:true, position:from?.location, label:from?.name})}} />}
                         {!!(to) && <ToMarker title={to?.name} position={to?.location} onClick={()=>{setInfoWindow({state:true, position:to?.location, label:to?.name})}} />}
+                      </>
+                    );
+                  }
+
+                  case 'busTracking':{
+                    return (
+                      <>
+                        {/* Rendering bus live location */}
+                        {!!(busLocation) && <BusMarker 
+                          title={busData.regNo} 
+                          position={busLocation} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busLocation, 
+                            label:busData?.regNo,
+                            body: `${busData.route}\n${busData.org}\n${busData.service}\n${busData.routeType}`
+                          })}} 
+                        />}
+
+                        {/* Rendering FROM, TO, and START locations */}
+                        {!!(busData?.from) && <FromMarker 
+                          title={busData.from?.name} 
+                          position={busData.from?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.from?.location, 
+                            label:`Origin: ${busData.from?.name}`,
+                            body: `Arrived at: ${estmData.fromArT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
+                        {!!(busData?.to) && <ToMarker 
+                          title={busData.to?.name} 
+                          position={busData.to?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.to?.location, 
+                            label:`Destination: ${busData.to?.name}`,
+                            body: `Arrived at: ${estmData.toArT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
+                        {!!(busData?.start) && <StartMarker 
+                          title={busData.start?.name} 
+                          position={busData.start?.location} 
+                          onClick={()=>{setInfoWindow({
+                            state:true, 
+                            position:busData.start?.location, 
+                            label:`Starting point: ${busData.start?.name}`,
+                            body: `Departure at: ${busData.startT} Hrs\nRoute: ${busData.route}`
+                          })}} 
+                        />}
+
+                        {/* Rendering path */}
+                        {routeLocations.length > 1 && routeLocations.map((point, index) => {
+                          if (index < routeLocations.length - 1) {
+                            return <Directions key={index} point1={routeLocations[index]} point2={routeLocations[index+1]} polylineOptions={{strokeColor: '#FF0000', strokeOpacity: 0.7, strokeWeight: 5 }}/>
+                          } else {
+                            return null;
+                          }
+                        })}
+                      </>
+                    );
+                  }
+
+                  case 'myBuses' : {
+                    return(
+                      <>
+                        {/* Rendering the buses location */}
+                        {myBusesLocation.loaded && myBusesLocation.data.map(bus => (
+                          <LocationMarker 
+                            key={bus.regNo}
+                            title={bus.regNo}
+                            position={bus.location}
+                            onClick={()=>{setInfoWindow({
+                              state: true,
+                              position:bus.location,
+                              label:bus.regNo,
+                              body: busInfo(bus.regNo)
+                            })}}
+                          />
+                        ))}
                       </>
                     );
                   }
@@ -209,12 +342,13 @@ export default function GoogleMaps({page, setLoading, from, to}) {
 
               {/* Rendering popup window */}
               {infoWindow?.state && <InfoWindow 
-                headerContent={(<Texts fontSize='14px' fontWeight='normal'>{infoWindow.label}</Texts>)} 
+                headerContent={(<Texts fontSize='14px' >{infoWindow.label}</Texts>)} 
                 style={{minWidth:'120px', display:'flex', justifyContent:'center'}} 
                 position={infoWindow?.position} 
+                pixelOffset={[0,-30]}
                 onClose={()=>{setInfoWindow({...infoWindow, state:false})}} 
               >
-                {infoWindow?.routes}
+                <Texts whiteSpace='pre-wrap' fontWeight='normal'>{infoWindow?.body}</Texts>
               </InfoWindow>} 
             </Map>
 
@@ -223,7 +357,7 @@ export default function GoogleMaps({page, setLoading, from, to}) {
                 position: 'relative',
                 top: '-70px',
                 left: '15px',
-                zIndex: 9999,
+                zIndex: 10,
                 color:'#404040',
                 padding: '10px',
                 bgcolor:'#f2f2f2',

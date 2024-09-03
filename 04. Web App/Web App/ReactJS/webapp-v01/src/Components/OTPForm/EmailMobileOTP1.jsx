@@ -121,11 +121,11 @@ export default function OTP({formData, sendResponse, setLoading}) {
         //console.log(`Registered Successfully`);
         setLoading(false);  // Disabling spinner
         if (serverRespose.data === 'success') {
-          navigate('/verify');
+          navigate('/');
           handleNotifications({
             type:'success', 
             title:'Registration Successful!', 
-            body:'Welcome to e-Conductor Family.\nUse the sent link to your email for initial login.'
+            body:'Welcome to e-Conductor Family.Use the sent link to your email for initial login.'
           });
         }
         else{
@@ -145,6 +145,7 @@ export default function OTP({formData, sendResponse, setLoading}) {
     //console.log(`New user OTP SEND:: mobile: ${formData.mobile}`);
     //requestOTP(formData.mobile);
     requestOTP({mobile:formData.mobile, email:formData.email});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);  
 
   // Use effect for the authentication
@@ -169,6 +170,7 @@ export default function OTP({formData, sendResponse, setLoading}) {
       setOtp ('');
     }
     setAuth(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
 
   // Use effect for the countdown

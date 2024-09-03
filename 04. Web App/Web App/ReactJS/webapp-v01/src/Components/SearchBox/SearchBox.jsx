@@ -48,6 +48,7 @@ export default function SearchAppBar({searching}) {
   React.useEffect(()=>{
     //console.log(`searching: ${search}`);
     searching(search);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[search])
 
   return (

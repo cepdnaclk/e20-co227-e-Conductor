@@ -44,6 +44,7 @@ export default function BusFilter({ steps, activeStep, handleBack,  setServiceFi
     const checkedKeys = Object.keys(serviceItems).filter(key => serviceItems[key]);
     //console.log('Service Checked items:', checkedKeys);
     setServiceFilter(checkedKeys);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serviceItems]);
 
   // Send route filter list
@@ -51,6 +52,7 @@ export default function BusFilter({ steps, activeStep, handleBack,  setServiceFi
     const checkedKeys = Object.keys(routeItems).filter(key => routeItems[key]);
     //console.log('Route Checked items:', checkedKeys);
     setRouteFilter(checkedKeys);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routeItems]);
 
   // Send org filter list
@@ -58,6 +60,7 @@ export default function BusFilter({ steps, activeStep, handleBack,  setServiceFi
     const checkedKeys = Object.keys(orgItems).filter(key => orgItems[key]);
     //console.log('Org Checked items:', checkedKeys);
     setOrgFilter(checkedKeys);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgItems]);
 
   return (

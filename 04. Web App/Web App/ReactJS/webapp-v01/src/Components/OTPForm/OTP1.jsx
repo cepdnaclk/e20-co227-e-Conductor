@@ -164,6 +164,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
   useEffect(()=>{
     //console.log(`OTP SEND:: userID: ${userData.userID}    mobile: ${userData.mobile}   email: ${userData.email}`);
     requestOTP({mobile: userData.mobile, email: userData.email});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Use effect for the authentication
@@ -205,6 +206,7 @@ export default function OTP({setIsLogged, userData, sendResponse, language, reme
       setOtp ('');
     }
     setAuth(null);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth]);
 
   // Use effect for the countdown

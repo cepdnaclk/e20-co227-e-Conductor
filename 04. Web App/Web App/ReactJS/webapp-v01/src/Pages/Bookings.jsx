@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Location from '../Components/Bookings/Location'
-import './Home.css'
 import BusList from '../Components/Bookings/BusList'
 import SeatArrangement from '../Components/Bookings/SeatArrangement'
 import Payment from '../Components/Bookings/Payment'
+import ConditionalAnimation from '../Components/Animations/Entrance.Conditional'
+import { OnceFlyInX } from '../Components/Animations/Entrance.Once'
 
 // Initial booking form
 const bookingFrom = {
@@ -38,6 +39,7 @@ const steps = [
 export default function Bookings({ language, setLoading }) {
   // Variable to store active step
   const [activeStep, setActiveStep] = useState(0);
+  const [prevStep, setPrevStep] = useState(0);
 
   // Variable to store booking information
   const [bookingData, setBookingData] = useState(bookingFrom);
@@ -53,16 +55,42 @@ export default function Bookings({ language, setLoading }) {
     (()=>{
       switch (activeStep) {
         case 1:
-          return <BusList setActiveStep={setActiveStep} activeStep={activeStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps} setSeats={setSeats} /> ;        
+          return (
+            <ConditionalAnimation
+              key={1}
+              condition1={activeStep > prevStep}
+              Animation1={OnceFlyInX}
+              condition2={activeStep < prevStep}
+              Animation2={OnceFlyInX}
+              props1={{direction:'right'}}
+            >
+              <BusList setActiveStep={setActiveStep} activeStep={activeStep} setPrevStep={setPrevStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps} setSeats={setSeats} /> 
+            </ConditionalAnimation>
+          );        
       
         case 2:
-          return <SeatArrangement setActiveStep={setActiveStep} activeStep={activeStep} bookingData={bookingData} setBookingData={setBookingData} steps={steps} seats={seats} /> ;    
+          return (
+            <ConditionalAnimation
+              key={2}
+              condition1={activeStep > prevStep}
+              Animation1={OnceFlyInX}
+              props1={{direction:'right'}}
+              condition2={activeStep < prevStep}
+              Animation2={OnceFlyInX}
+            >
+              <SeatArrangement setActiveStep={setActiveStep} activeStep={activeStep} setPrevStep={setPrevStep} bookingData={bookingData} setBookingData={setBookingData} steps={steps} seats={seats} />   
+            </ConditionalAnimation>
+          ); 
 
         case 3:
-          return <Payment setActiveStep={setActiveStep} activeStep={activeStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps}/> ;    
+          return (
+            <OnceFlyInX direction='right'>
+              <Payment setActiveStep={setActiveStep} activeStep={activeStep} setPrevStep={setPrevStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps}/> 
+            </OnceFlyInX>
+          );    
 
         default:
-          return <Location setActiveStep={setActiveStep} activeStep={activeStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps}/> ;
+          return <Location setActiveStep={setActiveStep} activeStep={activeStep} prevStep={prevStep} setPrevStep={setPrevStep} bookingData={bookingData} setBookingData={setBookingData} setLoading={setLoading} steps={steps}/> ;
       }
     })()
   )

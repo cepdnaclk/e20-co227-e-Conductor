@@ -1,10 +1,10 @@
-import { Grid, Paper } from '@mui/material'
+import { Grid, Box } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Passengers from './Forms/Passengers'
 import BusSeats from './MapArea/BusSeats'
 import { ToastAlert } from '../MyNotifications/WindowAlerts';
 
-export default function SeatArrangement({activeStep, setActiveStep, bookingData, setBookingData, steps, seats}) {
+export default function SeatArrangement({activeStep, setActiveStep, setPrevStep, bookingData, setBookingData, steps, seats}) {
   // Calculating available seats
   const available  = parseInt(seats.seats, 10) - (seats.booked ? seats.booked.length : 0);
   
@@ -43,23 +43,27 @@ export default function SeatArrangement({activeStep, setActiveStep, bookingData,
     }
 
     validating();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[adults, children]);
 
   // Handle back button
   const handleBack = () => {
-    console.log('Goto step 3');
+    //console.log('Goto visual step 2');
+    setPrevStep(activeStep);
     setActiveStep(activeStep - 1);
   }
 
   // Handle continue button
   const handleNext = () => {
-    console.log('Goto step 4');
+    //console.log('Goto visual step 4');
 
     if(passengers>0 && passengers === selectedSeats.length && passengers === (adults + children)){
       // Update booking data
       setBookingData({...bookingData, seatNos:selectedSeats, full:adults, half:children});
 
       // Goto next step
+      //console.log('Goto visual step 4');
+      setPrevStep(activeStep);
       setActiveStep(activeStep + 1);
     }
     else{
@@ -112,7 +116,7 @@ export default function SeatArrangement({activeStep, setActiveStep, bookingData,
 
 
   return (
-    <Paper sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
+    <Box sx={{bgcolor:'ghostwhite', width: "100%", height:"fit-content",  display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'10px'}}>
       <Grid container sx={{width:'100%', display: 'flex', justifyContent:"space-between"}}>
         <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
           <Passengers 
@@ -140,6 +144,6 @@ export default function SeatArrangement({activeStep, setActiveStep, bookingData,
             />
         </Grid>
       </Grid> 
-    </Paper>
+    </Box>
   )
 }

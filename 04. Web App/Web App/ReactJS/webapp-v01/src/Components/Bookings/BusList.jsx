@@ -1,10 +1,10 @@
-import { Grid, Paper } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import BusFilter from './Forms/BusFilter'
 import Buslist from './MapArea/BusList'
 import { Request } from '../../APIs/NodeBackend'
 
-export default function BusList({ activeStep, setActiveStep, bookingData, setBookingData, steps, setLoading, setSeats }) {
+export default function BusList({ activeStep, setActiveStep, setPrevStep, bookingData, setBookingData, steps, setLoading, setSeats }) {
   // Variable to store original schedule data
   const [buses, setBuses] = useState([]);
 
@@ -44,11 +44,14 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
       to: bookingData.to.id,
       date: bookingData.date
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bookingData]);
 
   // Handling Back Button
   const handleBack = () => {
-    setActiveStep(activeStep - 1); // Goto previous step
+    //console.log('Goto visual step 1');
+    setPrevStep(activeStep);
+    setActiveStep(activeStep - 1);
   };
 
   // Handle Continue Button
@@ -65,6 +68,8 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
     setSeats({seats, booked});
 
     // Goto next step
+    console.log('Goto visual step 3');
+    setPrevStep(activeStep);
     setActiveStep(activeStep + 1);
   }
 
@@ -92,7 +97,7 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
   }
 
   return (
-    <Paper sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
+    <Box sx={{ bgcolor: 'ghostwhite', width: "100%", height: "fit-content", display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '10px' }}>
       <Grid container sx={{ width: '100%', display: 'flex', justifyContent: "space-between" }}>
         <Grid item xs={12} md={4} display='flex' justifyContent='center' alignItems='center'>
           <BusFilter
@@ -114,6 +119,6 @@ export default function BusList({ activeStep, setActiveStep, bookingData, setBoo
             />
         </Grid>
       </Grid>
-    </Paper>
+    </Box>
   );
 }

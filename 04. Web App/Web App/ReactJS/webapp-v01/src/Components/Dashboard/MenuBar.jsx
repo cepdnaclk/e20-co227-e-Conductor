@@ -8,6 +8,7 @@ import ExitToAppTwoToneIcon from '@mui/icons-material/ExitToAppTwoTone';
 import BookOnlineTwoToneIcon from '@mui/icons-material/BookOnlineTwoTone';
 import HomeTwoToneIcon from '@mui/icons-material/HomeTwoTone';
 import NavigateNextTwoToneIcon from '@mui/icons-material/NavigateNextTwoTone';
+import AccountBalanceWalletTwoToneIcon from '@mui/icons-material/AccountBalanceWalletTwoTone';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './Menu.css';
 
@@ -15,6 +16,9 @@ import './Menu.css';
 export default function MenuBar({ setIsLogged, language }) {
   // variable for navigations  
   const navigate = useNavigate();
+
+  // Variable to hold user Type
+  const userType = JSON.parse(localStorage.getItem('userType')) || JSON.parse(sessionStorage.getItem('userType'));
 
   // variable to store the menu mode (collapsed or not)
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -64,6 +68,15 @@ export default function MenuBar({ setIsLogged, language }) {
                 <span> General</span>
             </Container>
             
+            {userType === 'owner' && <Container 
+                data-id='earnings' 
+                onClick={handleState}
+                className={`clickable-container ${state === 'earnings' ? 'active' : ''}`}
+            >
+                <AccountBalanceWalletTwoToneIcon className='icon'/> 
+                <span> Earnings</span>
+            </Container>}
+
             <Container 
                 data-id='transactions' 
                 onClick={handleState}
@@ -127,6 +140,14 @@ export default function MenuBar({ setIsLogged, language }) {
             >
                 <HomeTwoToneIcon className='icon'/> 
             </Container>
+
+            {userType === 'owner' && <Container 
+                data-id='earnings' 
+                onClick={handleState}
+                className={`clickable-container ${state === 'earnings' ? 'active' : ''}`}
+            >
+                <AccountBalanceWalletTwoToneIcon className='icon'/> 
+            </Container>}
             
             <Container 
                 data-id='transactions' 
