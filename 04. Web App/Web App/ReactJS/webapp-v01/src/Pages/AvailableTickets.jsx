@@ -51,7 +51,7 @@ function ConfirmBox({data, open, handleClose, handleAgree}) {
               <Texts>Refund Amount: LKR {data.refund}</Texts>
             </Grid>
             <Grid item>
-              <Texts fontColor='secondarytext' fontWeight='normal' fontStyle='italic'>
+              <Texts fontColor='secondarytext' fontWeight='normal' fontStyle='italic' whiteSpace='normal'>
                 Note: The refund amount is calculated based on our <Link to={'/terms'} sx={{cursor:'pointer'}}>refund policy</Link> , which may include cancellation fees or deductions.
               </Texts>
             </Grid>

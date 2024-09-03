@@ -17,13 +17,13 @@ const BusCard = ({bus , onClick}) => {
               <Grid item xs={12} sm={6}>            
                 <Typography variant="body2" fontFamily='Open Sans' fontWeight='bold' >Departure</Typography>    
                 <Typography variant="h5" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.departure}</Typography>
-                <Typography variant="h6" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.from}</Typography>
+                <Typography variant="h6" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.from?.split(",")[0]}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={6}>
                 <Typography variant="body2" fontFamily='Open Sans' fontWeight='bold'>Arrival</Typography>    
                 <Typography variant="h5" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.arrival}</Typography>
-                <Typography variant="h6" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.to}</Typography>
+                <Typography variant="h6" fontFamily='Open Sans' fontWeight='bold' whiteSpace='nowrap'>{bus.to?.split(",")[0]}</Typography>
               </Grid>
             </Grid>          
             <Typography variant="caption" color="textSecondary">{bus.regNo} | {bus.org} | {bus.service} | {bus.routeType} | Route: {bus.routeNo}</Typography>
