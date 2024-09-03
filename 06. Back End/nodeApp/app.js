@@ -4,8 +4,11 @@ import macaddress from "macaddress";
 //import otp functions
 import { generateOTP, sendOTP } from "./otp.js";
 
+//Arrival and Departure times and distances
+import { journeyDetails } from "./journey_details.js";
+
 // Express connection
-import express, { response } from "express";
+import express, { json, response } from "express";
 export const app = express();
 
 // DB connection
@@ -43,11 +46,11 @@ app.get("/test", (req, res) => {
   console.log(`Testing`);
 
   const sql = `
-    DESCRIBE USERS
+    DESCRIBE TICKET
     `;
 
   /*
-    DESCRIBE userlogs
+    DESCRIBE USER_LOGS
     
     ALTER TABLE userlogs
     MODIFY COLUMN date VARCHAR(20)
@@ -70,13 +73,14 @@ app.get("/test", (req, res) => {
     PRIMARY KEY (userID, MAC, browser) 
   */
 
-  db.query(sql, (err, result) => {
+  /* db.query(sql3, [values], (err, result) => {
     if (err) {
       console.log(err.message);
+      res.json("error");
     } else {
       res.json(result);
     }
-  });
+  }); */
 });
 
 // Queries
@@ -105,13 +109,13 @@ app.post("/logs/users", (req, res) => {
     );
 
     const checkSessionSql = `
-          SELECT COUNT(*) AS count FROM userlogs 
+          SELECT COUNT(*) AS count FROM USER_LOGS 
           WHERE userID = ? AND MAC = ? AND browser = ?;
       `;
 
     const updateSessionSql = `
-          UPDATE userlogs 
-          SET IP = ?, date = ?, time = ?, country = ?, longitude = ?, latitude = ?
+          UPDATE USER_LOGS 
+          SET IP = ?, date = ?, time = ?, country = ?
           WHERE userID = ? AND MAC = ? AND browser = ?;
       `;
 
@@ -121,8 +125,6 @@ app.post("/logs/users", (req, res) => {
       data.session.date,
       data.session.time,
       data.session.country,
-      data.session.longitude,
-      data.session.latitude,
       data.userID,
       data.session.MAC,
       data.session.browser,
@@ -165,7 +167,7 @@ app.post("/logs/users", (req, res) => {
       `New Request::  type: ${type}    Terminate user ${data.userID} on ${data.MAC}/${data.browser}`
     );
 
-    const sql = `DELETE FROM userlogs 
+    const sql = `DELETE FROM USER_LOGS 
            WHERE userID = ? AND MAC = ? AND browser = ?`;
 
     const values = [data.userID, data.MAC, data.browser];
@@ -190,23 +192,19 @@ app.post("/logs/users", (req, res) => {
       )}`
     );
     const sql = `
-          INSERT INTO userlogs (
-              userID, mobile, email, device, OS, browser, MAC, IP, date, time, country, longitude, latitude
+          INSERT INTO USER_LOGS (
+              userID, device, OS, browser, MAC, IP, date, time, country
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           ON DUPLICATE KEY UPDATE
               IP = VALUES(IP),
               date = VALUES(date),
               time = VALUES(time),
-              country = VALUES(country),
-              longitude = VALUES(longitude),
-              latitude = VALUES(latitude);
+              country = VALUES(country)
       `;
 
     const values = [
       data.userID,
-      data.mobile,
-      data.email,
       data.sessionData.device,
       data.sessionData.OS,
       data.sessionData.browser,
@@ -215,8 +213,6 @@ app.post("/logs/users", (req, res) => {
       data.sessionData.date,
       data.sessionData.time,
       data.sessionData.country,
-      data.sessionData.longitude,
-      data.sessionData.latitude,
     ];
 
     db.query(sql, values, (err, result) => {
@@ -234,7 +230,7 @@ app.post("/logs/users", (req, res) => {
     console.log(`Type: ${type}   userID: ${data}`);
 
     const sql = `SELECT logID, device, MAC, OS, browser, country, date, time
-           FROM userlogs
+           FROM USER_LOGS
            WHERE userID = ?`;
 
     db.query(sql, data, (err, result) => {
@@ -256,6 +252,7 @@ app.post("/OTP", (req, res) => {
   const { type, data } = req.body;
 
   // Here you might want to generate an OTP and save it
+  // ===> (Edit this:: If any error occurs in the process reply as 'error' otherwise reply as 'success')
   if (type === "loginOTP" || type === "signupOTP" || type === "request") {
     let loginOTP = generateOTP();
     sendOTP(data.email, loginOTP);
@@ -263,18 +260,18 @@ app.post("/OTP", (req, res) => {
       `New Request::  type: ${type}    Mobile Number: ${data.mobile}   Email: ${data.email}\n   OTP:: ${loginOTP}\n\n`
     );
 
-    const check_sql = `SELECT otpID FROM otp_table WHERE contactNo = ?`;
+    const check_sql = `SELECT otpID FROM OTP_TABLE WHERE contactNo = ?`;
 
     db.query(check_sql, data.mobile, (err, result) => {
       if (result.length > 0) {
-        const update_otp_sql = `UPDATE otp_table SET otp = ? WHERE contactNo = ?`;
+        const update_otp_sql = `UPDATE OTP_TABLE SET otp = ? WHERE contactNo = ?`;
         const values = [loginOTP, data.mobile];
 
         db.query(update_otp_sql, values, (err) => {
           err ? console.log(err) : res.send(`success`);
         });
       } else {
-        const new_entry_sql = `INSERT INTO otp_table (otp, contactNo, email) VALUES (?)`;
+        const new_entry_sql = `INSERT INTO OTP_TABLE (otp, contactNo, email) VALUES (?)`;
         const values = [loginOTP, data.mobile, data.email];
 
         db.query(new_entry_sql, [values], (err) => {
@@ -285,14 +282,17 @@ app.post("/OTP", (req, res) => {
     // Send reply to frontend saying request is success
   } else if (type === "verify") {
     const email = data.email;
-    const sql = `SELECT otp FROM otp_table WHERE email = ? limit 1`;
+    const sql = `SELECT otp FROM OTP_TABLE WHERE email = ? limit 1`;
+
+    // ==> Problem in the query cannot handle setting page requests
+    // ==> Suggestion:: delete the DB entry if the otp is valid. (Handle settings page requests according to the origin)
 
     db.query(sql, email, (err, response) => {
       if (err) {
         console.log(err);
       } else {
         //console.log(`ServerOTP:${response[0].otp} | UserOTP:${data.value}`);
-        const reply = (data.value === response[0].otp) ? "true" : "false";
+        const reply = data.value === response[0].otp ? "true" : "false";
         res.send(reply);
       }
     });
@@ -300,7 +300,7 @@ app.post("/OTP", (req, res) => {
       `Authentication::  type: ${type}  Data: ${JSON.stringify(
         data
       )}  User OTP: ${data.value}\n\n`
-    );    
+    );
   }
 });
 
@@ -315,7 +315,7 @@ app.post("/users", (req, res) => {
     var userData = {};
 
     const sql = `SELECT userID, userType, empType, email 
-             FROM users
+             FROM USERS
              WHERE mobile = ?`;
 
     db.query(sql, data, (err, result) => {
@@ -353,7 +353,7 @@ app.post("/users", (req, res) => {
     );
     var userAvailability = "none";
 
-    const sql = `SELECT userID FROM users WHERE email = ? OR mobile = ?`;
+    const sql = `SELECT userID FROM USERS WHERE email = ? OR mobile = ?`;
     const values = [data.email, data.mobile];
 
     db.query(sql, values, (err, result) => {
@@ -384,7 +384,7 @@ app.post("/users", (req, res) => {
     switch (data.userType) {
       case "passenger": {
         // Query for passenger
-        sql = `INSERT INTO users (userType, empType, fName, lName, email, mobile, credits)
+        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, credits)
            VALUES (?)`;
         values = [
           data.userType,
@@ -399,7 +399,7 @@ app.post("/users", (req, res) => {
       }
       case "employee": {
         // Query for employee
-        sql = `INSERT INTO users (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, credits)
+        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, credits)
            VALUES (?)`;
         values = [
           data.userType,
@@ -419,7 +419,7 @@ app.post("/users", (req, res) => {
       case "owner": {
         if (data.empType !== "None") {
           // Query for owner does not work as an employee
-          sql = `INSERT INTO users (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, accName, accNo, bank, branch, credits)
+          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, accName, accNo, bank, branch, credits)
              VALUES (?)`;
           values = [
             data.userType,
@@ -440,7 +440,7 @@ app.post("/users", (req, res) => {
           ];
         } else {
           // Query for owner work as an employee
-          sql = `INSERT INTO users (userType, empType, fName, lName, email, mobile, nic, birthDay, accName, accNo, bank, branch, credits)
+          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, accName, accNo, bank, branch, credits)
              VALUES (?)`;
           values = [
             data.userType,
@@ -489,7 +489,7 @@ app.post("/users", (req, res) => {
               u.credits,
               COUNT(CASE WHEN t.Status = 'Available' THEN t.ticketNo END) AS tickets,
               COUNT(CASE WHEN t.Status = 'Used' THEN t.ticketNo END) AS rides
-            FROM users u
+            FROM USERS u
             LEFT JOIN ticket t ON t.userID = u.userID
             WHERE u.userID = ?
             GROUP BY u.fName, u.lName, u.userType, u.mobile, u.email, u.credits
@@ -520,7 +520,7 @@ app.post("/users", (req, res) => {
 
     const sql = `
             SELECT userID, userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, accName, accNo, bank, branch
-            FROM users
+            FROM USERS
             WHERE userID = ?;
             `;
 
@@ -549,7 +549,7 @@ app.post("/users", (req, res) => {
       )}`
     );
 
-    const sql = `SELECT userID FROM users WHERE userID != ? AND (email = ? OR mobile = ? OR nic = ?)`;
+    const sql = `SELECT userID FROM USERS WHERE userID != ? AND (email = ? OR mobile = ? OR nic = ?)`;
     db.query(
       sql,
       [data.userID, data.email, data.mobile, data.nic],
@@ -565,7 +565,7 @@ app.post("/users", (req, res) => {
             console.log("ServerResponse: invalid");
             return res.json("invalid");
           } else {
-            const sql2 = `SELECT email, mobile, nic FROM users WHERE userID = ?`;
+            const sql2 = `SELECT email, mobile, nic FROM USERS WHERE userID = ?`;
             db.query(sql2, [data.userID], (err2, result2) => {
               if (err2) {
                 console.log(err2.message + "\n\n");
@@ -573,16 +573,19 @@ app.post("/users", (req, res) => {
               } else {
                 const user = result2[0]; // userID is unique
                 if (data.email !== user.email && data.mobile !== user.mobile) {
+                  // ===> Send otp to the email and mobile (need to verify both of them)
                   console.log("ServerResponse: emailMobile");
                   return res.json("emailmobile");
                 } else if (data.email !== user.email) {
+                  // ===> Send OTP to the email (email address has changed. New address need to be verified)
                   console.log("ServerResponse: email");
                   return res.json("email");
                 } else if (data.mobile !== user.mobile) {
+                  // ===> Send OTP to the mobile (mobile has changed. New mobile need to be verified)
                   console.log("ServerResponse: mobile");
                   return res.json("mobile");
                 } else {
-                  const sql3 = `UPDATE users SET userType=?, empType=?, fName=?, lName=?,
+                  const sql3 = `UPDATE USERS SET userType=?, empType=?, fName=?, lName=?,
                   email=?, mobile=?, nic=?, birthDay=?, ntc=?, licence=?, accName=?, accNo=?, 
                   bank=?, branch=? WHERE userID=?`;
                   const updateData = [
@@ -623,7 +626,7 @@ app.post("/users", (req, res) => {
 
   // Update db with userData, after verification in settings page
   else if (type === "Req7") {
-    const sql = `UPDATE users SET userType=?, empType=?, fName=?, lName=?, email=?, mobile=?, nic=?, birthDay=?, ntc=?, licence=?, accName=?, accNo=?, 
+    const sql = `UPDATE USERS SET userType=?, empType=?, fName=?, lName=?, email=?, mobile=?, nic=?, birthDay=?, ntc=?, licence=?, accName=?, accNo=?, 
                     bank=?, branch=? WHERE userID=?`;
 
     const updateData = [
@@ -653,6 +656,32 @@ app.post("/users", (req, res) => {
         return res.json("success");
       }
     });
+  }
+
+  // Request personal infomation from booking page (==> Need to update)
+  else if (type === "Req8") {
+    // Frontend send the userID. Then backend need to reply with following fromat. (user is already logged in. No need to check user availability)
+    // Reply with 'error' in case of an error
+    // Dummy data
+    console.log(`New Request::  type: ${type}    data: ${data}`);
+    /* res.json({
+      name: "John Doe",
+      mobile: "94704109990",
+      email: "johndoe@gmail.com",
+    }); */
+    const sql = `SELECT CONCAT(fName, ' ', lName) AS name, mobile, email 
+                  FROM USERS 
+                  WHERE userID = ?;
+                `;
+
+    db.query(sql, data, (err, result) => {
+      if (err) {
+        console.log(err.message);
+        return res.json("error");
+      } else {
+        res.json(result[0]);
+      }
+    });
   } else {
     console.log(`Invalid request type: ${type}`);
     return res.status(400).send("Invalid request type");
@@ -668,28 +697,28 @@ app.post("/transactions", (req, res) => {
     console.log(`Transaction Request:: type: ${type}  userID: ${data}`);
     // Edit here with suitable query
     const query = `
-        SELECT 
-          JSON_OBJECT(
-              'credits', u.credits,
-              'transaction', JSON_ARRAYAGG(
-                  JSON_OBJECT(
-                      'id', LPAD(t.transID, 7, '0'),
-                      'date', t.date,
-                      'time', t.time,
-                      'description', t.description,
-                      'amount', t.amount
-                  )
-              )
-          ) AS result
-        FROM 
-            users u
-        LEFT JOIN 
-            transaction t ON u.userID = t.userID
-        WHERE 
-            u.userID = ?
-        GROUP BY 
-            u.userID, u.credits;
-        `;
+      SELECT 
+        JSON_OBJECT(
+            'credits', u.credits,
+            'transaction', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'id', LPAD(t.transID, 7, '0'),
+                    'date', t.date,
+                    'time', t.time,
+                    'description', t.description,
+                    'amount', t.amount
+                )
+            )
+        ) AS result
+      FROM 
+          users u
+      LEFT JOIN 
+          transaction t ON u.userID = t.userID
+      WHERE 
+          u.userID = ?
+      GROUP BY 
+          u.userID, u.credits;
+      `;
 
     db.query(query, data, (err, results) => {
       if (err) {
@@ -707,6 +736,17 @@ app.post("/transactions", (req, res) => {
         return res.status(404).send("Transaction not found");
       }
     });
+  } else if (type === "Trans2") {
+    console.log(`Confirm refund`);
+    // Add query here update the credits according to te refund
+    // if update is success then reply as success, otherwise reply as 'error'
+    res.json("success");
+  } else if (type === "Trans3") {
+    console.log(`new request: ${JSON.stringify(data)}`);
+    res.json("0000025");
+  } else if (type === "Trans4") {
+    console.log(`new request: ${JSON.stringify(data)}`);
+    res.json("success");
   }
 });
 
@@ -769,7 +809,7 @@ app.post("/tickets", (req, res) => {
     });
   }
 
-  // Requesting specific ticket
+  // Requesting specific ticket (===>Check userID also)
   else if (type === "Tkt2") {
     console.log(`Invoice Request:: type: ${type}  Ref.No.: ${data}`);
     const query = `
@@ -803,7 +843,7 @@ app.post("/tickets", (req, res) => {
         t.ticketNo = ?
     `;
 
-    db.query(query, data, (err, results) => {
+    db.query(query, data.refNo, (err, results) => {
       if (err) {
         console.error("Error executing query:", err);
         return res.status(500).send("Database query error");
@@ -821,9 +861,302 @@ app.post("/tickets", (req, res) => {
       }
     });
   }
+
+  // Requesting ticket confirmation (Ticked is purchased by the user)
+  // ===> Send reply to the frontend as 'success' if purchasing is successfull. Otherwise reply as 'error'.
+  // ===> Also need to write a suitable query to store the new ticket infomation to the 'ticket' table
+  else if (type === "Tkt3") {
+    console.log(
+      `\nInvoice Request:: type: ${type}  Ticket info.: ${JSON.stringify(
+        data
+      )}\n`
+    );
+
+    let totalPrice = data.price * data.full + (data.price / 2) * data.half;
+    let discount = totalPrice * (data.discount / 100);
+
+    const sql = `SELECT credits FROM USERS WHERE userID = ?`;
+    db.query(sql, data.userID, (err, result) => {
+      if (err) {
+        console.log(err.message);
+        return res.json("error");
+      } else {
+        if (result[0].credits >= totalPrice) {
+          const sql1 = `UPDATE USERS SET credits = credits - ? WHERE userID = ?`;
+          const values1 = [totalPrice, data.userID];
+
+          db.query(sql1, values1, (err1, result1) => {
+            if (err1) {
+              console.log(err1.message);
+              return res.json("error");
+            } else {
+              console.log("Credits updated successfully!");
+              const sql2 = `INSERT INTO TRANSACTION (userID, amount, date, time, type) VALUES (?)`;
+              const values2 = [
+                data.userID,
+                totalPrice,
+                data.issuedDate.split(" ").slice(1).join(" "),
+                data.issuedTime,
+                "Payment",
+              ];
+
+              db.query(sql2, [values2], (err2, result2) => {
+                if (err2) {
+                  console.log(err2.message);
+                  return res.json("error");
+                } else {
+                  const sql3 = `INSERT INTO TICKET (passengerID,issuedDate,issuedTime,jrnDate,jrnStartTime,jrnEndTime,fromLocation,toLocation,distance,half,full,ticketPrice,seatNos,status,scheduleID,transID,discount) VALUES (?)`;
+
+                  const values3 = [
+                    data.userID,
+                    data.issuedDate.split(" ").slice(1).join(" "),
+                    data.issuedTime,
+                    data.date,
+                    data.aproxDepT,
+                    data.aproxAriT,
+                    data.from.id,
+                    data.to.id,
+                    parseFloat(data.journey),
+                    data.half,
+                    data.full,
+                    totalPrice,
+                    JSON.stringify(data.seatNos),
+                    "Available",
+                    data.shceduleId,
+                    result2.insertId,
+                    discount,
+                  ];
+
+                  db.query(sql3, [values3], (err3, result3) => {
+                    if (err3) {
+                      console.log(err3.message);
+                      return res.json("error");
+                    } else {
+                      console.log("Ticket added successfully!");
+                      return res.json("success");
+                    }
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          res.json("Insufficient");
+        }
+      }
+    });
+
+    //console.log(values);
+    //res.json("success");
+  } else if (type === "Tkt4") {
+    console.log(`Available ticket Request:: type: ${type}  userId:${data}`);
+
+    const user_ticket_data = [];
+    const sql1 = `SELECT * FROM ticket WHERE userID = ?`;
+
+    db.query(sql1, data, (err, response) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        for (let i = 0; i < response.length; i++) {
+          const ticket = response[i];
+          user_ticket_data.push({
+            refNo: ticket.ticketNo.toString().padStart(6, "0"),
+            date: ticket.date,
+            departure: "TBD",
+            fromT: "TBD",
+            toT: "TBD",
+            from: ticket.fromLocatoin,
+            to: ticket.toLocatoin,
+            seats: ticket.Seat_Nos,
+            full: ticket.full,
+            half: ticket.half,
+            price: ticket.Price,
+            regNo: ticket.Vehicle_No,
+            org: "TBD",
+            service: ticket.Type,
+            route: `${ticket.Route_No} ${ticket.Route}`,
+            tracking: false,
+            cancel: false,
+          });
+        }
+      }
+      //console.log(user_ticket_data);
+      //res.json(user_ticket_data);
+    });
+
+    // Dummy tickets
+    const data2 = [
+      {
+        refNo: "000001",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: false,
+        cancel: false,
+      },
+      {
+        refNo: "000002",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: true,
+        cancel: false,
+      },
+      {
+        refNo: "000003",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: false,
+        cancel: true,
+      },
+      {
+        refNo: "000004",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: false,
+        cancel: true,
+      },
+      {
+        refNo: "000005",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: true,
+        cancel: false,
+      },
+      {
+        refNo: "0000012",
+        date: "2024-08-01",
+        departure: "12:00",
+        fromT: "12:00",
+        toT: "13.50",
+        from: "Kurunegala",
+        to: "Kandy",
+        seats: "5, 6, 7",
+        full: 2,
+        half: 1,
+        price: "500.00",
+        regNo: "NA-1234",
+        org: "SLTB",
+        service: "Super Luxury",
+        route: "602 Kurunegala-Kandy",
+        tracking: true,
+        cancel: false,
+      },
+    ];
+    // Create a suitable query to fetch ticket data and sed it in above format.
+    res.json(data2);
+  } else if (type === "Tkt5") {
+    console.log(`Refund request type: ${type} data:${JSON.stringify(data)}`);
+    // Dummy Data
+    const data3 = {
+      refNo: "000004",
+      billingDate: "2024-06-25",
+      billingTime: "14:50",
+      cancelDate: "2024-07-29",
+      cancelTime: "15:50",
+      duration: "2 days 5 hrs",
+      amount: "500.00",
+      refund: "400.00",
+    };
+    res.json(data3);
+  } else if (type === "Tkt6") {
+    console.log(`Tracking request type: ${type} data:${JSON.stringify(data)}`);
+    // Dummy data about bus general info
+    const busInfo = {
+      refNo: "0000112",
+      regNo: "NA-1234",
+      route: "602 | Kandy - Kurunegala",
+      org: "SLTB",
+      service: "Semi-Luxury",
+      routeType: "expressway",
+      startT: "06:10",
+      from: {
+        name: "Kurunduwatte",
+        location: { lat: 7.243630047731192, lng: 80.59471319873906 },
+      },
+      to: {
+        name: "Akbar",
+        location: { lat: 7.25235057321553, lng: 80.59333382765641 },
+      },
+      start: {
+        name: "Kandy Market",
+        location: { lat: 7.2933810742053575, lng: 80.63447065398826 },
+      },
+    };
+
+    // Dummy route location data
+    const routeLocations = [
+      { lat: 7.243630047731192, lng: 80.59471319873906 },
+      { lat: 7.2656183598161075, lng: 80.59577370836975 },
+      { lat: 7.288209595790418, lng: 80.63166044283383 },
+      { lat: 7.2933810742053575, lng: 80.63447065398826 },
+    ];
+
+    console.log("Reply was sent");
+    res.json({ availability: "true", busInfo, routePoints: routeLocations });
+  }
 });
 
-// Other Authentication services
+// Other Authentication services (NEED TO DISCUSS)
 app.post("/other", (req, res) => {
   const { type, data } = req.body;
   console.log(
@@ -867,4 +1200,715 @@ app.post("/other", (req, res) => {
     res.json(userData);
     //return res.status(404).json('Request Not Found!');
   }
+});
+
+// ========================================================= Here onward => Booking Related Requests =====================================================================
+
+// Shcedule data
+// Frontend send the {from:fromID, to:toID, date:date}. Then need to fetch the corresponding shedule details according to it and send to the frontend
+app.post("/schedule", (req, res) => {
+  const { type, data } = req.body;
+  console.log(`New Request::  type: ${type}    Data: ${JSON.stringify(data)}`);
+
+  // If there is no busses. reply as a [] empty array.
+  if (type === "Sdl1") {
+    const sql1 = `SELECT 
+                      bsl.lat, 
+                      bsl.lng, 
+                      bsl.routes, 
+                      bsn.name 
+                  FROM 
+                      BUSSTOP_LOCATIONS bsl
+                  JOIN 
+                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
+                  WHERE 
+                      bsl.nameID = ? 
+                  UNION 
+                  SELECT 
+                      bsl.lat, 
+                      bsl.lng, 
+                      bsl.routes, 
+                      bsn.name 
+                  FROM 
+                      BUSSTOP_LOCATIONS bsl
+                  JOIN 
+                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
+                  WHERE 
+                      bsl.nameID = ?;
+                `;
+    const values1 = [data.from, data.to];
+    db.query(sql1, values1, async (err1, result1) => {
+      if (err1) {
+        console.log(err1.message);
+      } else {
+        const busStops = [
+          ...new Map(
+            result1.map((busStop) => [busStop.name, busStop])
+          ).values(),
+        ];
+
+        const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
+        const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
+        const commonRoutes = busStops[0].routes.filter((route) =>
+          busStops[1].routes.includes(route)
+        );
+        const details = await journeyDetails(origin, destination);
+
+        const sql2 = `SELECT 
+                      s.scheduleID AS id,
+                      v.vehicleRegNo AS regNo,
+                      v.serviceType AS service,
+                      r.routeType,
+                      r.routeNo,  
+                      v.org,
+                      s.bookedSeats AS booked,
+                      v.seats,
+                      s.closingDate AS closing
+                    FROM 
+                      ROUTE r
+                    JOIN 
+                      SCHEDULE s ON r.routeID = s.routeID
+                    JOIN 
+                      VEHICLE v ON s.vehicleID = v.vehicleID
+                    WHERE 
+                      r.routeNo IN (?);
+                    `;
+
+        db.query(sql2, [commonRoutes], (err2, result2) => {
+          if (err2) {
+            console.log(err2.message);
+          } else {
+            let scheduleDetails = result2.map((result) => {
+              return {
+                ...result,
+                ...details,
+                from: busStops[0].name,
+                to: busStops[1].name,
+                price: 30.0,
+              };
+            });
+
+            for (let i = 0; i < scheduleDetails.length; i++) {
+              scheduleDetails[i].id = i + 1;
+            }
+
+            res.json(scheduleDetails);
+          }
+        });
+      }
+    });
+  }
+});
+
+// Getting bus stop locations (Get them from busstopLocation (add suitable name to the table) table)
+app.get("/busstops/locations", (req, res) => {
+  // Front end send the margin of the requested area {north, south, east, west} then find the corresponding busstops in that area
+  // and send to the frontend in above fromat. If there are no busstpos send and empty array []
+  console.log(`requesting bus holt locations`);
+
+  const sql = `SELECT BUSSTOP_LOCATIONS.locationID AS id, BUSSTOP_NAMES.name, BUSSTOP_LOCATIONS.routes, JSON_OBJECT('lat', BUSSTOP_LOCATIONS.lat, 'lng', BUSSTOP_LOCATIONS.lng) AS location
+                    FROM BUSSTOP_LOCATIONS
+                    JOIN BUSSTOP_NAMES ON BUSSTOP_LOCATIONS.nameID = BUSSTOP_NAMES.nameID;
+                  `;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err.message);
+    } else {
+      //console.log(result);
+      res.json(result);
+    }
+  });
+});
+
+// Getting bus stop names
+app.get("/busstops/names", async (req, res) => {
+  // Frnotend requst all busstops names (another table) send them to frontend
+  console.log(`requesting busHalt names`);
+
+  const sql =
+    "SELECT nameID AS id, name, JSON_OBJECT('lat', lat, 'lng', lng) AS location FROM BUSSTOP_NAMES";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err.message);
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+// Getting route infomation
+app.get("/routes/availability", (req, res) => {
+  const { origin, destination } = req.body;
+  console.log(
+    `Trip from ${JSON.stringify(origin)} to ${JSON.stringify(destination)}`
+  );
+  res.json("true");
+});
+
+// Getting tracking infomations
+app.get("/tracking/bus", (req, res) => {
+  //console.log(`Tracking bus!`, req.query);
+  // Dummy live data
+
+  const sql = `
+  SELECT 
+      JSON_OBJECT(
+          'lat', lat,
+          'lng', lng
+      ) AS location
+  FROM 
+      busLocation
+  ORDER BY 
+      id DESC
+  LIMIT 1;
+`;
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error(err.message);
+      res.status(500).json({ error: err.message }); // Handle error and send response
+    } else if (result.length === 0) {
+      res.status(404).json({ message: "No location data found" }); // Handle no data found
+    } else {
+      console.log("Bus location data fetched successfully", result);
+      res.status(200).json(result[0].location); // Send the JSON location data
+    }
+  });
+
+  //res.json(liveData);
+  console.log("Location was sent.");
+});
+
+// Getting tracking estimations
+app.get("/tracking/estm", (req, res) => {
+  console.log(`Requesting Estimations! ${JSON.stringify(req.body)}`);
+
+  // Dummy estimation data
+  const estmData = {
+    speed: "40.00",
+    fromArT: "10:23",
+    toArT: "10:50",
+  };
+
+  res.json(estmData);
+  console.log("Estimation was sent.");
+});
+
+app.post("/tracking/livebus", (req, res) => {
+  console.log(`Saving bus locations:: ${JSON.stringify(req.body)}`);
+
+  const { regNo, lat, lng, speed } = req.body;
+
+  const sql = `INSERT INTO busLocation (regNo, lat, lng, speed) VALUES (?, ?, ?, ?);`;
+
+  const values = [regNo, lat, lng, speed];
+
+  // Execute the query
+  db.query(sql, values, (err, result) => {
+    if (err) {
+      console.error(err.message);
+      // Handle error
+    } else {
+      console.log("Bus location data added successfully", result.insertId);
+      // Handle success
+    }
+  });
+});
+
+app.get("/tracking/mybuses", (req, res) => {
+  console.log("My bus locations are requesting.");
+
+  // Dummy data for bus locations
+  const trackdata = [
+    {
+      regNo: "NA-1234",
+      location: { lat: 7.2536300477311, lng: 80.59571319873906 },
+    },
+    {
+      regNo: "NA-1235",
+      location: { lat: 7.25335057321553, lng: 80.59433382765641 },
+    },
+    {
+      regNo: "NB-1236",
+      location: { lat: 7.26416663555505, lng: 80.59396904470439 },
+    },
+  ];
+
+  res.json(trackdata);
+});
+
+app.get("/bus/mybuses", (req, res) => {
+  console.log("Bus names arte requesting.");
+  // Dummy Data
+  const names = [
+    "NA-1234",
+    "NB-4567",
+    "NC-5462",
+    "NA-1235",
+    "NA-4456",
+    "NA-6566",
+    "NB-1236",
+    "NC-8796",
+    "ND-4546",
+    "ND-4656",
+  ];
+
+  const details = [
+    {
+      regNo: "NA-1234",
+      route: "507 | Kegalle - Kurunegala",
+      routeType: "expressway",
+      driver: "Ranil Rajapaksha",
+      conductor: "Mahinda Wikramasinghe",
+    },
+    {
+      regNo: "NA-1235",
+      route: "508 | Rambukkana - Kurunegala",
+      routeType: "expressway",
+      driver: "Ranil Rajapaksha",
+      conductor: "Mahinda Wikramasinghe",
+    },
+    {
+      regNo: "NB-1236",
+      route: "602 | Kandy - Kurunegala",
+      routeType: "expressway",
+      driver: "Ranil Rajapaksha",
+      conductor: "Mahinda Wikramasinghe",
+    },
+    {
+      regNo: "ND-4656",
+      route: "507 | Kegalle - Kurunegala",
+      routeType: "normalway",
+      driver: "Ranil Rajapaksha",
+      conductor: "Mahinda Wikramasinghe",
+    },
+  ];
+
+  res.json({ regNos: names, general: details });
+});
+
+app.get("/bus/info", (req, res) => {
+  // Dummy data
+  const Busses = [
+    {
+      id: "1",
+      regNo: "NA-1316",
+      service: "Normal",
+      seats: 42,
+      rides: 7442,
+      ridesIncrement: -2.7,
+      earning: 97922.41,
+      earningIncrement: 11.7,
+      rating: 0.1,
+      insuranceExp: "2024-10-10",
+      VRL_Exp: "2024-09-06",
+    },
+    {
+      id: "2",
+      regNo: "NB-3020",
+      service: "Semi-Luxury",
+      seats: 33,
+      rides: 3378,
+      ridesIncrement: 73.0,
+      earning: 53132.19,
+      earningIncrement: 48.4,
+      rating: 2.8,
+      insuranceExp: "2024-09-23",
+      VRL_Exp: "2024-11-25",
+    },
+    {
+      id: "3",
+      regNo: "NC-5485",
+      service: "Super-Luxury",
+      seats: 42,
+      rides: 3524,
+      ridesIncrement: 2.3,
+      earning: 91355.3,
+      earningIncrement: -85.8,
+      rating: 0.4,
+      insuranceExp: "2024-07-19",
+      VRL_Exp: "2023-11-01",
+    },
+    {
+      id: "4",
+      regNo: "NA-7030",
+      service: "Luxury",
+      seats: 33,
+      rides: 1120,
+      ridesIncrement: -16.6,
+      earning: 84842.86,
+      earningIncrement: 0,
+      rating: 4.9,
+      insuranceExp: "2024-02-24",
+      VRL_Exp: "2024-02-09",
+    },
+    {
+      id: "5",
+      regNo: "NC-1766",
+      service: "Normal",
+      seats: 33,
+      rides: 5581,
+      ridesIncrement: 0,
+      earning: 4833.15,
+      earningIncrement: 87.8,
+      rating: 0.8,
+      insuranceExp: "2024-01-24",
+      VRL_Exp: "2024-04-16",
+    },
+  ];
+
+  console.log("Requesting bus details");
+  res.json(Busses);
+});
+
+app.get("/bus/delete", (req, res) => {
+  console.log("Entry deleted successfully");
+  res.json("success");
+});
+
+app.get("/bus/add", (req, res) => {
+  console.log("Entry added successfully   Data: ", req.body);
+  res.json("success");
+});
+
+app.get("/bus/update", (req, res) => {
+  console.log("Entry updated successfully.   Data: ", req.body);
+  res.json("success");
+});
+
+app.get("/bus/income", (req, res) => {
+  console.log("Requesting bus income");
+
+  // Type 1 : weekly data
+  const receivedData = [4000, 3000, 2000, 2780, 1890, 2390, 3490];
+  const refundData = [2400, 1398, 9800, 3908, 4800, 3800, 4300];
+  const earningData = receivedData.map((element, idx) => {
+    return receivedData[idx] - refundData[idx];
+  });
+  const xLabels = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  // Type 2 : Monthly data
+
+  // Type 3 : Annual data
+
+  res.json({ receivedData, refundData, earningData, xLabels });
+});
+
+app.get("/bus/schedule", (req, res) => {
+  console.log("Requesting bus schedule data");
+
+  // Dummy schedules
+  const ScheduleList = [
+    {
+      id: "1",
+      status: "active",
+      passengers: "52",
+      departure: { time: "10:50", place: "Udupussallawa" },
+      arrival: { time: "10:40", place: "Udupussallawa" },
+      route: "602 | Kandy - Kurunegala",
+      distance: "47",
+      duration: "1hrs 50min",
+      routeType: "Expressway",
+    },
+    {
+      id: "2",
+      status: "replace",
+      passengers: "52",
+      departure: { time: "10:50", place: "Udupussallawa" },
+      arrival: { time: "10:40", place: "Udupussallawa" },
+      route: "602 | Kandy - Kurunegala",
+      distance: "47",
+      duration: "1hrs 50min",
+      routeType: "Expressway",
+      other: { repVehiNum: "NA-1234" },
+    },
+    {
+      id: "3",
+      status: "cancel",
+      passengers: "52",
+      departure: { time: "10:50", place: "Udupussallawa" },
+      arrival: { time: "10:40", place: "Udupussallawa" },
+      route: "602 | Kandy - Kurunegala",
+      distance: "47",
+      duration: "1hrs 50min",
+      routeType: "Expressway",
+    },
+    {
+      id: "4",
+      status: "awaiting",
+      passengers: "52",
+      departure: { time: "10:50", place: "Udupussallawa" },
+      arrival: { time: "10:40", place: "Udupussallawa" },
+      route: "602 | Kandy - Kurunegala",
+      distance: "47",
+      duration: "1hrs 50min",
+      routeType: "Expressway",
+      other: { name: "Mr. John Doe", vehiNum: "NA-1234" },
+    },
+    {
+      id: "5",
+      status: "pending",
+      passengers: "52",
+      repVehiNum: "NA-1234",
+      departure: { time: "10:50", place: "Udupussallawa" },
+      arrival: { time: "10:40", place: "Udupussallawa" },
+      route: "602 | Kandy - Kurunegala",
+      distance: "47",
+      duration: "1hrs 50min",
+      routeType: "Expressway",
+    },
+  ];
+
+  res.json(ScheduleList);
+});
+
+app.get("/bus/general", (req, res) => {
+  console.log("Requesting bus income");
+
+  // Dummy bus data
+  const busData = {
+    regNo: "NA-1234",
+    org: "SLTB",
+    service: "Super-Luxury",
+    rides: { amount: "300", increment: "25" },
+    bookings: { amount: "5000", increment: "-20" },
+    cancel: { amount: "2", increment: "10" },
+    earn: { amount: "10520", increment: "18" },
+  };
+
+  res.json(busData);
+});
+
+app.get("/bus/schedule/update", (req, res) => {
+  console.log("Updating bus schedule data");
+  res.json("success");
+});
+
+app.get("/income/general", (req, res) => {
+  console.log("Requesting income/general data");
+  const incomeData = {
+    earning: { amount: 50000, increment: 25 },
+    withdraw: { amount: 20000, increment: -10 },
+    balance: { amount: 30000, increment: 10 },
+    credits: { amount: 40000, increment: 10 },
+  };
+  res.json(incomeData);
+});
+
+app.get("/income/summary", (req, res) => {
+  console.log("Requesting Summary");
+  const SUM = [
+    { data: [1, 2, 5, 38, 5], label: "NA-1234" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1354" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5645" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5685" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5646" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1534" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1654" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5845" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5885" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5686" },
+  ];
+  res.json(SUM);
+});
+
+app.get("/income/income", (req, res) => {
+  const graphData = [
+    { id: 0, value: 10, label: "NA-1234" },
+    { id: 1, value: 15, label: "NA-1354" },
+    { id: 2, value: 20, label: "NC-5645" },
+    { id: 4, value: 10, label: "NA-1284" },
+    { id: 5, value: 15, label: "NA-1364" },
+    { id: 6, value: 20, label: "NC-5945" },
+    { id: 7, value: 10, label: "NA-1634" },
+    { id: 8, value: 15, label: "NA-1854" },
+    { id: 9, value: 20, label: "NC-5845" },
+  ];
+  res.json({ graphData, earning: 500000 });
+});
+
+app.get("/feedback/get", (req, res) => {
+  // Dummy data
+  const TESTIMONIALS = [
+    {
+      id: 1,
+      name: "Edlin Noar",
+      userType: "Bus Owner",
+      rating: 4.9,
+      note: "Fusce consequat. Nulla nisl. Nunc nisl.",
+    },
+    {
+      id: 2,
+      name: "Clyde McGeachey",
+      userType: "Employee",
+      rating: 3.8,
+      note: "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\nSuspendisse potenti. Cras in purus eu magna vulputate luctus.\n\nCum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    },
+    {
+      id: 3,
+      name: "Bengt Wozencroft",
+      userType: "Bus Owner",
+      rating: 2.6,
+      note: "In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.\n\nMaecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
+    },
+    {
+      id: 4,
+      name: "Marsha Kuhnhardt",
+      userType: "Employee",
+      rating: 3.5,
+      note: "In congue. Etiam justo. Etiam pretium iaculis justo.\n\nIn hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.\n\nNulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",
+    },
+    {
+      id: 5,
+      name: "Martica Folder",
+      userType: "Passenger",
+      rating: 0.7,
+      note: "Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.\n\nMorbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",
+    },
+    {
+      id: 6,
+      name: "Giff Pepperd",
+      userType: "Passenger",
+      rating: 4.9,
+      note: "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\n\nPellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.\n\nCum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    },
+    {
+      id: 7,
+      name: "Nady Bothie",
+      userType: "Passenger",
+      rating: 2.3,
+      note: "Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+    },
+    {
+      id: 8,
+      name: "Kristy McCleary",
+      userType: "Passenger",
+      rating: 0.7,
+      note: "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
+    },
+    {
+      id: 9,
+      name: "Sloane Matyushonok",
+      userType: "Passenger",
+      rating: 4.4,
+      note: "Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.\n\nIn quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.\n\nMaecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
+    },
+    {
+      id: 10,
+      name: "Demetris Preist",
+      userType: "Employee",
+      rating: 1.0,
+      note: "Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.\n\nNullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.\n\nMorbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",
+    },
+  ];
+
+  console.log("Requesting feedbacks");
+  res.json(TESTIMONIALS);
+});
+
+app.get("/feedback/new", (req, res) => {
+  console.log("New feedback recieved");
+  res.json("success");
+});
+
+app.get("/feedback/message", (req, res) => {
+  console.log("New message recieved");
+  res.json("success");
+});
+
+app.get("/news/all", (req, res) => {
+  console.log("Requesting News");
+  const newsItems = [
+    {
+      title: "Summer Sale: 50% Off on All Tickets!",
+      description:
+        "Enjoy a massive discount on all our bus tickets this summer. Book your tickets now and save 50% on your journey!",
+      date: "August 10, 2024",
+      image: "https://picsum.photos/100/100", // Replace with actual image URL
+      link: "/offers/summer-sale",
+    },
+    {
+      title: "New Routes Added!",
+      description:
+        "We are excited to announce new routes in the western region. Explore new destinations with our expanded network.",
+      date: "August 8, 2024",
+      image: "https://picsum.photos/120/140",
+      link: "/news/new-routes",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/160/150",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/150/170",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/10/150",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/150/10",
+      link: "/offers/member-discount",
+    },
+    // Add more news items here...
+  ];
+  res.json(newsItems);
+});
+
+app.get("/team", (req, res) => {
+  console.log("Requesting Team infomation");
+  const teamMembers = [
+    {
+      name: "John Doe",
+      title: "CEO",
+      bio: "John is the visionary behind eConductor.",
+      avatar: "https://picsum.photos/150/100",
+    },
+    {
+      name: "Jane Smith",
+      title: "CTO",
+      bio: "Jane leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/170/100",
+    },
+    {
+      name: "Bat Man",
+      title: "Director",
+      bio: "Johnathen leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/100/190",
+    },
+    {
+      name: "Anne Eater",
+      title: "Director",
+      bio: "Anne leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/100/10",
+    },
+  ];
+  res.json(teamMembers);
 });
