@@ -46,7 +46,7 @@ export default function Bill({bookingData}) {
                 <Grid>
                     <Texts variant={'h6'}>Ticket Details</Texts>
                     <Grid container spacing={2} mb={2}>
-                        <Grid item xs={6} lg={3}>
+                        <Grid item xs={6}>
                             <StyledTextField 
                                 label={'From'}
                                 value={`${bookingData.from.name} (${bookingData.aproxAriT})`}
@@ -54,7 +54,7 @@ export default function Bill({bookingData}) {
                             />
                         </Grid>
 
-                        <Grid item xs={6} lg={3}>
+                        <Grid item xs={6}>
                             <StyledTextField 
                                 label={'To'}
                                 value={`${bookingData.to.name} (${bookingData.aproxDepT})`}
@@ -62,7 +62,7 @@ export default function Bill({bookingData}) {
                             />
                         </Grid>
 
-                        <Grid item xs={6} lg={3}>
+                        <Grid item xs={6} lg={4}>
                             <StyledTextField 
                                 label={'Date'}
                                 value={bookingData.date}
@@ -70,7 +70,7 @@ export default function Bill({bookingData}) {
                             />
                         </Grid>
 
-                        <Grid item xs={6} lg={3} >
+                        <Grid item xs={6} lg={8}>
                             <StyledTextField 
                                 label={'Seats'}
                                 value={bookingData.seatNos}

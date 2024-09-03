@@ -45,7 +45,7 @@ const BookingTableHeader = ({ order, orderBy, onRequestSort }) => {
   );
 };
 
-export default function BusList({ activeStep, setActiveStep, buses, handleClick }) {
+export default function BusList({ buses, handleClick }) {
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('departure');
 
