@@ -1213,48 +1213,39 @@ app.post("/schedule", (req, res) => {
   // If there is no busses. reply as a [] empty array.
   if (type === "Sdl1") {
     const sql1 = `SELECT 
-                      bsl.lat, 
-                      bsl.lng, 
-                      bsl.routes, 
-                      bsn.name 
+                      BUSSTOP_LOCATIONS.lat, 
+                      BUSSTOP_LOCATIONS.lng, 
+                      BUSSTOP_LOCATIONS.routes, 
+                      BUSSTOP_NAMES.name
                   FROM 
-                      BUSSTOP_LOCATIONS bsl
+                      BUSSTOP_LOCATIONS
                   JOIN 
-                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
+                      BUSSTOP_NAMES ON BUSSTOP_LOCATIONS.nameID = BUSSTOP_NAMES.nameID
                   WHERE 
-                      bsl.nameID = ? 
-                  UNION 
-                  SELECT 
-                      bsl.lat, 
-                      bsl.lng, 
-                      bsl.routes, 
-                      bsn.name 
-                  FROM 
-                      BUSSTOP_LOCATIONS bsl
-                  JOIN 
-                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
-                  WHERE 
-                      bsl.nameID = ?;
-                `;
+                      BUSSTOP_LOCATIONS.nameID IN (?, ?);
+                  `;
     const values1 = [data.from, data.to];
     db.query(sql1, values1, async (err1, result1) => {
       if (err1) {
         console.log(err1.message);
       } else {
-        const busStops = [
-          ...new Map(
-            result1.map((busStop) => [busStop.name, busStop])
-          ).values(),
-        ];
+        if (result1.length > 1) {
+          const busStops = [
+            ...new Map(
+              result1.map((busStop) => [busStop.name, busStop])
+            ).values(),
+          ];
 
-        const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
-        const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
-        const commonRoutes = busStops[0].routes.filter((route) =>
-          busStops[1].routes.includes(route)
-        );
-        const details = await journeyDetails(origin, destination);
+          const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
+          const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
+          const commonRoutes = busStops[0].routes.filter((route) =>
+            busStops[1].routes.includes(route)
+          );
 
-        const sql2 = `SELECT 
+          if (commonRoutes.length > 0) {
+            const details = await journeyDetails(origin, destination);
+
+            const sql2 = `SELECT 
                       s.scheduleID AS id,
                       v.vehicleRegNo AS regNo,
                       v.serviceType AS service,
@@ -1274,27 +1265,33 @@ app.post("/schedule", (req, res) => {
                       r.routeNo IN (?);
                     `;
 
-        db.query(sql2, [commonRoutes], (err2, result2) => {
-          if (err2) {
-            console.log(err2.message);
-          } else {
-            let scheduleDetails = result2.map((result) => {
-              return {
-                ...result,
-                ...details,
-                from: busStops[0].name,
-                to: busStops[1].name,
-                price: 30.0,
-              };
+            db.query(sql2, [commonRoutes], (err2, result2) => {
+              if (err2) {
+                console.log(err2.message);
+              } else {
+                let scheduleDetails = result2.map((result) => {
+                  return {
+                    ...result,
+                    ...details,
+                    from: busStops[0].name,
+                    to: busStops[1].name,
+                    price: 30.0,
+                  };
+                });
+
+                for (let i = 0; i < scheduleDetails.length; i++) {
+                  scheduleDetails[i].id = i + 1;
+                }
+
+                res.json(scheduleDetails);
+              }
             });
-
-            for (let i = 0; i < scheduleDetails.length; i++) {
-              scheduleDetails[i].id = i + 1;
-            }
-
-            res.json(scheduleDetails);
+          } else {
+            res.json([]);
           }
-        });
+        } else {
+          res.json("error");
+        }
       }
     });
   }
