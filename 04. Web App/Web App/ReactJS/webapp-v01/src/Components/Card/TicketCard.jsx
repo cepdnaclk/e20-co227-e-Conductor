@@ -42,14 +42,14 @@ export default function TicketCard({data, handleCancel}) {
                 <Box display={'flex'} flexDirection={'column'}>
                     <Texts variant='body2' fontSize='12px'>Origin</Texts>
                     <Texts variant='h5'>{data.fromT}</Texts>
-                    <Texts variant='h6'>{data.from}</Texts>
+                    <Texts variant='h6'>{data.from?.split(",")[0]}</Texts>
                 </Box>
             </Grid>
             <Grid item width={'165px'} >
                 <Box display={'flex'} flexDirection={'column'}>
                     <Texts variant='body2' fontSize='12px'>Destination</Texts>
                     <Texts variant='h5'>{data.toT}</Texts>
-                    <Texts variant='h6'>{data.to}</Texts>
+                    <Texts variant='h6'>{data.to?.split(",")[0]}</Texts>
                 </Box>
             </Grid>
             <Grid item width={'48spx'} >
