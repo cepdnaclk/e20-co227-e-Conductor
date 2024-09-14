@@ -737,10 +737,59 @@ app.post("/transactions", (req, res) => {
       }
     });
   } else if (type === "Trans2") {
-    console.log(`Confirm refund`);
-    // Add query here update the credits according to te refund
-    // if update is success then reply as success, otherwise reply as 'error'
-    res.json("success");
+    console.log(`Confirm refund: Trans2`);
+
+    const sql1 = `SELECT passengerID FROM TICKET WHERE ticketNo = ?`;
+
+    db.query(sql1, parseInt(data.refNo), (err1, result1) => {
+      if (err1) {
+        console.log(err1.message);
+        return res.json("error");
+      } else {
+        const sql2 = `UPDATE USERS SET credits = credits + ? WHERE userID = ?`;
+        const data2 = [data.refund, result1[0].passengerID];
+
+        db.query(sql2, data2, (err2, result2) => {
+          if (err2) {
+            console.log(err2.message);
+            return res.json("error");
+          } else {
+            if (result2.changedRows < 1) {
+              return res.json("error");
+            } else {
+              const sql3 = `UPDATE TICKET SET status = 'Refunded' WHERE ticketNo = ?`;
+
+              db.query(sql3, parseInt(data.refNo), (err3, result3) => {
+                if (err3) {
+                  console.log(err3.message);
+                  return res.json("error");
+                } else {
+                  const sql4 = `INSERT INTO TRANSACTION (userID, amount, date, time, refNo, type) VALUES (?)`;
+
+                  const data4 = [
+                    result1[0].passengerID,
+                    data.refund,
+                    data.cancelDate,
+                    data.cancelTime,
+                    data.refNo,
+                    "Refund",
+                  ];
+                  
+                  db.query(sql4, [data4], (err4, result4) => {
+                    if (err4) {
+                      console.log(err4.message);
+                      return res.json("error");
+                    } else {
+                      return res.json("success");
+                    }
+                  });
+                }
+              });
+            }
+          }
+        });
+      }
+    });
   } else if (type === "Trans3") {
     console.log(`new request: ${JSON.stringify(data)}`);
     res.json("0000025");
@@ -811,7 +860,9 @@ app.post("/tickets", (req, res) => {
 
   // Requesting specific ticket (===>Check userID also)
   else if (type === "Tkt2") {
-    console.log(`Invoice Request:: type: ${type}  Ref.No.: ${data}`);
+    console.log(
+      `Invoice Request:: type: ${type}  Ref.No.: ${JSON.stringify(data)}`
+    );
     const query = `
       SELECT 
         JSON_OBJECT(
@@ -821,24 +872,34 @@ app.post("/tickets", (req, res) => {
           'customerMobile', u.mobile,
           'issuedDate', t.issuedDate,
           'issuedTime', t.issuedTime,
-          'vehicalNo', t.Vehicle_No,
-          'type', t.Type,
-          'routeNo', t.Route_No,
-          'route', t.Route,
-          'date', t.date,
-          'time', t.time,
-          'from', t.fromLocatoin,
-          'to', t.toLocatoin,
-          'journey', t.Journey,
-          'price', t.Price,
+          'vehicalNo', v.vehicleRegNo,
+          'type', v.serviceType,
+          'routeNo', r.routeNo,
+          'route', CONCAT(r.start, ' - ', r.end),
+          'date', t.jrnDate,
+          'time', s.departureTime,
+          'from', fromStop.name,
+          'to', toStop.name,
+          'journey', t.distance,
+          'price', t.ticketPrice,
           'full', t.full,
           'half', t.half,
-          'seatNos', t.Seat_Nos
+          'seatNos', t.seatNos
         ) AS result
       FROM 
-        ticket t
+        TICKET t
       JOIN 
-        users u ON t.userID = u.userID
+        USERS u ON t.passengerID = u.userID
+      JOIN
+        SCHEDULE s ON s.scheduleID = t.scheduleID
+      JOIN
+        VEHICLE v ON v.vehicleID = s.vehicleID
+      JOIN
+        ROUTE r ON r.routeID = s.routeID
+      JOIN
+        BUSSTOP_NAMES fromStop ON fromStop.nameID = t.fromLocation
+      JOIN
+        BUSSTOP_NAMES toStop ON toStop.nameID = t.toLocation
       WHERE 
         t.ticketNo = ?
     `;
@@ -916,7 +977,7 @@ app.post("/tickets", (req, res) => {
                     data.aproxAriT,
                     data.from.id,
                     data.to.id,
-                    parseFloat(data.journey),
+                    JSON.stringify(parseFloat(data.journey)),
                     data.half,
                     data.full,
                     totalPrice,
@@ -945,183 +1006,197 @@ app.post("/tickets", (req, res) => {
         }
       }
     });
-
-    //console.log(values);
-    //res.json("success");
   } else if (type === "Tkt4") {
     console.log(`Available ticket Request:: type: ${type}  userId:${data}`);
 
-    const user_ticket_data = [];
-    const sql1 = `SELECT * FROM ticket WHERE userID = ?`;
+    const sql1 = `SELECT * FROM TICKET WHERE passengerID = ?`;
 
-    db.query(sql1, data, (err, response) => {
+    db.query(sql1, data, (err, result) => {
       if (err) {
         console.log(err.message);
       } else {
-        for (let i = 0; i < response.length; i++) {
-          const ticket = response[i];
-          user_ticket_data.push({
-            refNo: ticket.ticketNo.toString().padStart(6, "0"),
-            date: ticket.date,
-            departure: "TBD",
-            fromT: "TBD",
-            toT: "TBD",
-            from: ticket.fromLocatoin,
-            to: ticket.toLocatoin,
-            seats: ticket.Seat_Nos,
-            full: ticket.full,
-            half: ticket.half,
-            price: ticket.Price,
-            regNo: ticket.Vehicle_No,
-            org: "TBD",
-            service: ticket.Type,
-            route: `${ticket.Route_No} ${ticket.Route}`,
-            tracking: false,
-            cancel: false,
-          });
-        }
-      }
-      //console.log(user_ticket_data);
-      //res.json(user_ticket_data);
-    });
+        const user_ticket_data = [];
+        const tickets = result.map((ticket) => {
+          return new Promise((resolve, reject) => {
+            const sql2 = `SELECT 
+                    SCHEDULE.departureTime,
+                    VEHICLE.vehicleRegNo, 
+                    VEHICLE.org, 
+                    VEHICLE.serviceType, 
+                    ROUTE.routeNo, 
+                    ROUTE.start, 
+                    ROUTE.end, 
+                    fromStop.name AS fromLocation, 
+                    toStop.name AS toLocation
+                FROM 
+                    SCHEDULE 
+                JOIN 
+                    VEHICLE ON SCHEDULE.vehicleID = VEHICLE.vehicleID 
+                JOIN 
+                    ROUTE ON SCHEDULE.routeID = ROUTE.routeID 
+                JOIN 
+                    BUSSTOP_NAMES fromStop ON fromStop.nameID = ? 
+                JOIN 
+                    BUSSTOP_NAMES toStop ON toStop.nameID = ?
+                WHERE 
+                    SCHEDULE.scheduleID = ?;`;
 
-    // Dummy tickets
-    const data2 = [
-      {
-        refNo: "000001",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: false,
-        cancel: false,
-      },
-      {
-        refNo: "000002",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: true,
-        cancel: false,
-      },
-      {
-        refNo: "000003",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: false,
-        cancel: true,
-      },
-      {
-        refNo: "000004",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: false,
-        cancel: true,
-      },
-      {
-        refNo: "000005",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: true,
-        cancel: false,
-      },
-      {
-        refNo: "0000012",
-        date: "2024-08-01",
-        departure: "12:00",
-        fromT: "12:00",
-        toT: "13.50",
-        from: "Kurunegala",
-        to: "Kandy",
-        seats: "5, 6, 7",
-        full: 2,
-        half: 1,
-        price: "500.00",
-        regNo: "NA-1234",
-        org: "SLTB",
-        service: "Super Luxury",
-        route: "602 Kurunegala-Kandy",
-        tracking: true,
-        cancel: false,
-      },
-    ];
-    // Create a suitable query to fetch ticket data and sed it in above format.
-    res.json(data2);
+            const values2 = [
+              ticket.fromLocation,
+              ticket.toLocation,
+              ticket.scheduleID,
+            ];
+
+            db.query(sql2, values2, (err2, result2) => {
+              if (err2) {
+                console.log(err2.message);
+                reject(err2);
+              } else {
+                user_ticket_data.push({
+                  refNo: ticket.ticketNo.toString().padStart(6, "0"),
+                  date: ticket.jrnDate,
+                  departure: result2[0].departureTime,
+                  fromT: ticket.jrnStartTime,
+                  toT: ticket.jrnEndTime,
+                  from: result2[0].fromLocation,
+                  to: result2[0].toLocation,
+                  seats: ticket.seatNos.join(", "),
+                  full: ticket.full,
+                  half: ticket.half,
+                  price: ticket.ticketPrice,
+                  regNo: result2[0].vehicleRegNo,
+                  org: result2[0].org,
+                  service: result2[0].serviceType,
+                  route: `${result2[0].routeNo} ${result2[0].start}-${result2[0].end}`,
+                  tracking: true,
+                  cancel: true,
+                });
+                resolve();
+              }
+            });
+          });
+        });
+
+        Promise.all(tickets)
+          .then(() => {
+            // Send the response after all queries are complete
+            res.json(user_ticket_data);
+          })
+          .catch((err) => {
+            console.log(err);
+            res.json("error");
+          });
+      }
+    });
   } else if (type === "Tkt5") {
     console.log(`Refund request type: ${type} data:${JSON.stringify(data)}`);
-    // Dummy Data
-    const data3 = {
-      refNo: "000004",
-      billingDate: "2024-06-25",
-      billingTime: "14:50",
-      cancelDate: "2024-07-29",
-      cancelTime: "15:50",
-      duration: "2 days 5 hrs",
-      amount: "500.00",
-      refund: "400.00",
-    };
-    res.json(data3);
+
+    const sql1 = `SELECT issuedDate, issuedTime, ticketPrice FROM TICKET WHERE ticketNo = ?`;
+
+    db.query(sql1, parseInt(data.refNo), (err1, result1) => {
+      if (err1) {
+        res.json("error");
+      } else {
+        const timeZoneOffset = 5 * 60 * 60 * 1000 + 30 * 60 * 1000;
+
+        function createAdjustedDate(dateString, timeString) {
+          const date = new Date(`${dateString} ${timeString}`);
+          return new Date(date.getTime() + timeZoneOffset);
+        }
+
+        const issuedDateIST = createAdjustedDate(
+          result1[0].issuedDate,
+          result1[0].issuedTime
+        );
+        const cancelDateIST = createAdjustedDate(
+          data.cancelDate,
+          data.cancelTime
+        );
+
+        function calculateDuration(startDate, endDate) {
+          const diff = endDate.getTime() - startDate.getTime();
+
+          const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          const hours = Math.floor(
+            (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+          );
+
+          return { days, hours };
+        }
+
+        const duration = calculateDuration(issuedDateIST, cancelDateIST);
+
+        const refundAmount = result1[0].ticketPrice * 0.75;
+
+        const cancelData = {
+          refNo: data.refNo,
+          billingDate: issuedDateIST.toISOString().split("T")[0],
+          billingTime: issuedDateIST.toISOString().substring(11, 16),
+          cancelDate: cancelDateIST.toISOString().split("T")[0],
+          cancelTime: cancelDateIST.toISOString().substring(11, 16),
+          duration: `${duration.days} days ${duration.hours} hrs`,
+          amount: result1[0].ticketPrice,
+          refund: refundAmount.toString(),
+        };
+        res.json(cancelData);
+      }
+    });
   } else if (type === "Tkt6") {
     console.log(`Tracking request type: ${type} data:${JSON.stringify(data)}`);
+
+    const sql1 = `SELECT 
+                      SCHEDULE.departureTime,
+                      VEHICLE.vehicleRegNo, 
+                      VEHICLE.org, 
+                      VEHICLE.serviceType, 
+                      ROUTE.routeNo, 
+                      ROUTE.routeType,
+                      ROUTE.start, 
+                      ROUTE.end, 
+                      JSON_OBJECT('name', fromStop.name, 'location', JSON_OBJECT('lat', fromStop.lat, 'lng', fromStop.lng)) AS 'from', 
+                      JSON_OBJECT('name', toStop.name, 'location', JSON_OBJECT('lat', toStop.lat, 'lng', toStop.lng)) AS 'to'
+                  FROM 
+                      TICKET 
+                  JOIN
+                      SCHEDULE ON TICKET.scheduleID = SCHEDULE.scheduleID
+                  JOIN 
+                      VEHICLE ON SCHEDULE.vehicleID = VEHICLE.vehicleID 
+                  JOIN 
+                      ROUTE ON SCHEDULE.routeID = ROUTE.routeID 
+                  JOIN 
+                      BUSSTOP_NAMES fromStop ON TICKET.fromLocation = fromStop.nameID 
+                  JOIN 
+                      BUSSTOP_NAMES toStop ON TICKET.toLocation = toStop.nameID
+                  WHERE 
+                      TICKET.ticketNo = ?;
+                  `;
+
+    db.query(sql1, parseInt(data.ticketNo), (err1, result1) => {
+      if (err1) {
+        console.log(err1.message);
+        return res.json("error");
+      } else {
+        const busInfo = {
+          refNo: data.ticketNo,
+          regNo: result1[0].vehicleRegNo,
+          route: `${result1[0].routeNo} ${result1[0].start}-${result1[0].end}`,
+          org: result1[0].org,
+          service: result1[0].serviceType,
+          routeType: result1[0].routeType,
+          startT: result1[0].departureTime,
+          from: result1[0].from,
+          to: result1[0].to,
+          start: {
+            name: "Kandy Market",
+            location: { lat: 7.2933810742053575, lng: 80.63447065398826 },
+          },
+        };
+        return res.json(busInfo);
+      }
+    });
+
     // Dummy data about bus general info
-    const busInfo = {
+    /* const busInfo = {
       refNo: "0000112",
       regNo: "NA-1234",
       route: "602 | Kandy - Kurunegala",
@@ -1141,7 +1216,7 @@ app.post("/tickets", (req, res) => {
         name: "Kandy Market",
         location: { lat: 7.2933810742053575, lng: 80.63447065398826 },
       },
-    };
+    }; */
 
     // Dummy route location data
     const routeLocations = [
@@ -1150,9 +1225,7 @@ app.post("/tickets", (req, res) => {
       { lat: 7.288209595790418, lng: 80.63166044283383 },
       { lat: 7.2933810742053575, lng: 80.63447065398826 },
     ];
-
-    console.log("Reply was sent");
-    res.json({ availability: "true", busInfo, routePoints: routeLocations });
+    //res.json({ availability: "true", busInfo, routePoints: routeLocations });
   }
 });
 
@@ -1213,88 +1286,91 @@ app.post("/schedule", (req, res) => {
   // If there is no busses. reply as a [] empty array.
   if (type === "Sdl1") {
     const sql1 = `SELECT 
-                      bsl.lat, 
-                      bsl.lng, 
-                      bsl.routes, 
-                      bsn.name 
+                      BUSSTOP_LOCATIONS.lat, 
+                      BUSSTOP_LOCATIONS.lng, 
+                      BUSSTOP_LOCATIONS.routes, 
+                      BUSSTOP_NAMES.name
                   FROM 
-                      BUSSTOP_LOCATIONS bsl
+                      BUSSTOP_LOCATIONS
                   JOIN 
-                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
+                      BUSSTOP_NAMES ON BUSSTOP_LOCATIONS.nameID = BUSSTOP_NAMES.nameID
                   WHERE 
-                      bsl.nameID = ? 
-                  UNION 
-                  SELECT 
-                      bsl.lat, 
-                      bsl.lng, 
-                      bsl.routes, 
-                      bsn.name 
-                  FROM 
-                      BUSSTOP_LOCATIONS bsl
-                  JOIN 
-                      BUSSTOP_NAMES bsn ON bsl.nameID = bsn.nameID 
-                  WHERE 
-                      bsl.nameID = ?;
-                `;
+                      BUSSTOP_LOCATIONS.nameID IN (?, ?);
+                  `;
     const values1 = [data.from, data.to];
     db.query(sql1, values1, async (err1, result1) => {
-      if (err1) {
-        console.log(err1.message);
-      } else {
-        const busStops = [
-          ...new Map(
-            result1.map((busStop) => [busStop.name, busStop])
-          ).values(),
-        ];
+      try {
+        if (err1) {
+          console.log(err1.message);
+        } else {
+          if (result1.length > 1) {
+            const busStops = [
+              ...new Map(
+                result1.map((busStop) => [busStop.name, busStop])
+              ).values(),
+            ];
 
-        const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
-        const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
-        const commonRoutes = busStops[0].routes.filter((route) =>
-          busStops[1].routes.includes(route)
-        );
-        const details = await journeyDetails(origin, destination);
+            const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
+            const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
+            const commonRoutes = busStops[0].routes.filter((route) =>
+              busStops[1].routes.includes(route)
+            );
 
-        const sql2 = `SELECT 
-                      s.scheduleID AS id,
-                      v.vehicleRegNo AS regNo,
-                      v.serviceType AS service,
-                      r.routeType,
-                      r.routeNo,  
-                      v.org,
-                      s.bookedSeats AS booked,
-                      v.seats,
-                      s.closingDate AS closing
-                    FROM 
-                      ROUTE r
-                    JOIN 
-                      SCHEDULE s ON r.routeID = s.routeID
-                    JOIN 
-                      VEHICLE v ON s.vehicleID = v.vehicleID
-                    WHERE 
-                      r.routeNo IN (?);
-                    `;
+            if (commonRoutes.length > 0) {
+              const details = await journeyDetails(origin, destination);
 
-        db.query(sql2, [commonRoutes], (err2, result2) => {
-          if (err2) {
-            console.log(err2.message);
-          } else {
-            let scheduleDetails = result2.map((result) => {
-              return {
-                ...result,
-                ...details,
-                from: busStops[0].name,
-                to: busStops[1].name,
-                price: 30.0,
-              };
-            });
+              const sql2 = `SELECT 
+                        s.scheduleID AS id,
+                        v.vehicleRegNo AS regNo,
+                        v.serviceType AS service,
+                        r.routeType,
+                        r.routeNo,  
+                        v.org,
+                        s.bookedSeats AS booked,
+                        v.seats,
+                        s.closingDate AS closing
+                      FROM 
+                        ROUTE r
+                      JOIN 
+                        SCHEDULE s ON r.routeID = s.routeID
+                      JOIN 
+                        VEHICLE v ON s.vehicleID = v.vehicleID
+                      WHERE 
+                        r.routeNo IN (?);
+                      `;
 
-            for (let i = 0; i < scheduleDetails.length; i++) {
-              scheduleDetails[i].id = i + 1;
+              db.query(sql2, [commonRoutes], (err2, result2) => {
+                if (err2) {
+                  console.log(err2.message);
+                } else {
+                  let scheduleDetails = result2.map((result) => {
+                    return {
+                      ...result,
+                      ...details,
+                      from: busStops[0].name,
+                      to: busStops[1].name,
+                      price: 30.0,
+                    };
+                  });
+
+                  for (let i = 0; i < scheduleDetails.length; i++) {
+                    scheduleDetails[i].id = (i + 1).toString();
+                  }
+
+                  //console.log(scheduleDetails);
+                  res.json(scheduleDetails);
+                }
+              });
+            } else {
+              res.json([]);
             }
-
-            res.json(scheduleDetails);
+          } else {
+            res.json("error");
           }
-        });
+        }
+      } catch (error) {
+        console.log(error);
+        res.json("error");
       }
     });
   }
@@ -1353,19 +1429,19 @@ app.get("/tracking/bus", (req, res) => {
   // Dummy live data
 
   const sql = `
-  SELECT 
-      JSON_OBJECT(
-          'lat', lat,
-          'lng', lng
-      ) AS location
-  FROM 
-      busLocation
-  ORDER BY 
-      id DESC
-  LIMIT 1;
-`;
+                SELECT 
+                    JSON_OBJECT(
+                        'lat', lat,
+                        'lng', lng
+                    ) AS location
+                FROM 
+                    BUS_LOCATIONS
+                ORDER BY 
+                    id DESC
+                LIMIT 1;
+              `;
 
-  db.query(sql, (err, result) => {
+  /* db.query(sql, (err, result) => {
     if (err) {
       console.error(err.message);
       res.status(500).json({ error: err.message }); // Handle error and send response
@@ -1375,7 +1451,7 @@ app.get("/tracking/bus", (req, res) => {
       console.log("Bus location data fetched successfully", result);
       res.status(200).json(result[0].location); // Send the JSON location data
     }
-  });
+  }); */
 
   //res.json(liveData);
   console.log("Location was sent.");

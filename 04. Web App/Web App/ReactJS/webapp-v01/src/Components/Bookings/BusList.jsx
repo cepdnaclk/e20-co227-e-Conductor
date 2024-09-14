@@ -56,7 +56,8 @@ export default function BusList({ activeStep, setActiveStep, setPrevStep, bookin
 
   // Handle Continue Button
   const handleNext = (e) => {
-    const bus = buses.filter(item => item.id === e.target.id)[0];
+    //console.log("TypeOf(item): "+ typeof(buses[0].id) + "TYpeOf(e)"+ typeof(e.target.id));
+    const bus = buses.filter(item => item.id === parseInt(e.target.id))[0];
     const {id, departure, arrival, price, journey, seats, booked} = bus;
     sessionStorage.setItem('bus', JSON.stringify(bus));
     //console.log('bus: '+JSON.stringify(bus));
@@ -68,7 +69,7 @@ export default function BusList({ activeStep, setActiveStep, setPrevStep, bookin
     setSeats({seats, booked});
 
     // Goto next step
-    console.log('Goto visual step 3');
+    //console.log('Goto visual step 3');
     setPrevStep(activeStep);
     setActiveStep(activeStep + 1);
   }
@@ -112,8 +113,6 @@ export default function BusList({ activeStep, setActiveStep, setPrevStep, bookin
         
         <Grid item xs={12} md={8} display='flex' justifyContent='center' alignItems='center'>
             <Buslist
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
               buses={filterByPreferance()}
               handleClick={handleNext}
             />
