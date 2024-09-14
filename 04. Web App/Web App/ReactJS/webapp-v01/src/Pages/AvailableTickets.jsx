@@ -272,7 +272,7 @@ export default function AvailableTickets({ language, setLoading }) {
           padding="0 10px"
         >
           <OnceFadeIn>
-            <Texts fontColor="#ff9900" whiteSpace="normal">
+            <Texts fontColor="#ff9900" whiteSpace="normal" textAlign={"center"}>
               <InfoOutlinedIcon
                 fontSize="16px"
                 sx={{ mr: "5px", color: "#ff9900" }}
