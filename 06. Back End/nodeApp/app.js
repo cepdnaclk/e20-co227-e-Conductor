@@ -706,7 +706,7 @@ app.post("/transactions", (req, res) => {
                     'date', t.date,
                     'time', t.time,
                     'description', t.type,
-                    'amount', t.amount
+                    'amount', FORMAT(t.amount, 2)
                 )
             )
         ) AS result
