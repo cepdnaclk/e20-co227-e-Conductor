@@ -483,16 +483,16 @@ app.post("/users", (req, res) => {
     // Query the database for user data
     const query = ` SELECT 
               CONCAT(u.fName, ' ', u.lName) AS name,
-              u.userType,
+              u.UserType,
               u.mobile,
               u.email,
               u.credits,
-              COUNT(CASE WHEN t.Status = 'Available' THEN t.ticketNo END) AS tickets,
-              COUNT(CASE WHEN t.Status = 'Used' THEN t.ticketNo END) AS rides
+              COUNT(CASE WHEN t.status = 'Available' THEN t.ticketNo END) AS tickets,
+              COUNT(CASE WHEN t.status = 'Used' THEN t.ticketNo END) AS rides
             FROM USERS u
-            LEFT JOIN ticket t ON t.userID = u.userID
-            WHERE u.userID = ?
-            GROUP BY u.fName, u.lName, u.userType, u.mobile, u.email, u.credits
+            LEFT JOIN TICKET t ON t.passengerID = u.userID
+            WHERE u.UserID = ?
+            GROUP BY u.fName, u.lName, u.UserType, u.mobile, u.email, u.credits
           `;
 
     db.query(query, [data], (err, results) => {
@@ -702,18 +702,18 @@ app.post("/transactions", (req, res) => {
             'credits', u.credits,
             'transaction', JSON_ARRAYAGG(
                 JSON_OBJECT(
-                    'id', LPAD(t.transID, 7, '0'),
+                    'id', LPAD(t.transactionID, 7, '0'),
                     'date', t.date,
                     'time', t.time,
-                    'description', t.description,
+                    'description', t.type,
                     'amount', t.amount
                 )
             )
         ) AS result
       FROM 
-          users u
+          USERS u
       LEFT JOIN 
-          transaction t ON u.userID = t.userID
+          TRANSACTION t ON u.UserID = t.userID
       WHERE 
           u.userID = ?
       GROUP BY 
@@ -727,9 +727,9 @@ app.post("/transactions", (req, res) => {
       }
 
       if (results.length > 0) {
-        console.log(
+        /* console.log(
           `Server Replies to ${data} as ${JSON.stringify(results[0].result)}`
-        );
+        ); */
         return res.json(results[0].result);
       } else {
         console.log(`Transaction not found with ID: ${data}`);
@@ -774,7 +774,7 @@ app.post("/transactions", (req, res) => {
                     data.refNo,
                     "Refund",
                   ];
-                  
+
                   db.query(sql4, [data4], (err4, result4) => {
                     if (err4) {
                       console.log(err4.message);
@@ -813,23 +813,27 @@ app.post("/tickets", (req, res) => {
           JSON_OBJECT(
               'available', (
                   SELECT COUNT(*)
-                  FROM ticket t2
-                  WHERE t2.userID = t1.userID AND t2.Status = 'Available'
+                  FROM TICKET t2
+                  WHERE t2.passengerID = t1.passengerID AND t2.status = 'Available'
               ),
               'tickets', JSON_ARRAYAGG(
                   JSON_OBJECT(
                       'id', LPAD(ticketNo, 7, '0'),
-                      'date', date,
-                      'from', fromLocatoin,
-                      'to', toLocatoin,
-                      'status', Status,
-                      'amount', Price
+                      'date', issuedDate,
+                      'from', fromStop.name,
+                      'to', toStop.name,
+                      'status', status,
+                      'amount', ticketPrice
                   )
               )
           ) AS result
-        FROM ticket t1
-        WHERE userID = ?
-        GROUP BY userID;
+        FROM TICKET t1
+        JOIN 
+          BUSSTOP_NAMES fromStop ON t1.fromLocation = fromStop.nameID 
+        JOIN 
+          BUSSTOP_NAMES toStop ON t1.toLocation = toStop.nameID
+        WHERE passengerID = ?
+        GROUP BY passengerID;
       `;
 
     db.query(query, data, (err, results) => {
@@ -837,19 +841,18 @@ app.post("/tickets", (req, res) => {
         console.error("Error executing query:", err);
         return res.status(500).send("Database query error");
       }
-      const count = results.length;
-      console.log(`Tickect count: ${count}`);
-      if (count > 0) {
-        console.log(`Server Replies to ${data} as ${JSON.stringify(results)}`);
+      //console.log(`Tickect count: ${count}`);
+      if (results.length > 0) {
+        //console.log(`Server Replies to ${data} as ${JSON.stringify(results)}`);
         return res.json(results[0].result);
-      } else if (count === 0) {
+      } else if (results.length === 0) {
         const serverResponse = {
           available: "0",
           tickets: results,
         };
-        console.log(
+        /* console.log(
           `Server Replies to ${data} as ${JSON.stringify(serverResponse)}`
-        );
+        ); */
         return res.json(serverResponse);
       } else {
         console.log(`Tickets not found belongs to userID: ${data}`);
@@ -1052,6 +1055,30 @@ app.post("/tickets", (req, res) => {
                 console.log(err2.message);
                 reject(err2);
               } else {
+                const fiveMins = 300000;
+                const day = 86400000;
+                const now = new Date(Date.now());
+                const startDateTime = new Date(
+                  `${ticket.jrnDate} ${ticket.jrnStartTime}`
+                );
+                const endDateTime = new Date(
+                  `${ticket.jrnDate} ${ticket.jrnEndTime}`
+                );
+                let tracking = false;
+                let cancel = false;
+
+                if (now.getTime() + day < startDateTime.getTime()) {
+                  cancel = true;
+                }
+
+                if (
+                  now.getTime() + fiveMins > startDateTime.getTime() &&
+                  now.getTime() - fiveMins < endDateTime.getTime() &&
+                  !cancel
+                ) {
+                  tracking = true;
+                }
+
                 user_ticket_data.push({
                   refNo: ticket.ticketNo.toString().padStart(6, "0"),
                   date: ticket.jrnDate,
@@ -1068,8 +1095,8 @@ app.post("/tickets", (req, res) => {
                   org: result2[0].org,
                   service: result2[0].serviceType,
                   route: `${result2[0].routeNo} ${result2[0].start}-${result2[0].end}`,
-                  tracking: true,
-                  cancel: true,
+                  tracking: tracking,
+                  cancel: cancel,
                 });
                 resolve();
               }
@@ -1145,6 +1172,9 @@ app.post("/tickets", (req, res) => {
     console.log(`Tracking request type: ${type} data:${JSON.stringify(data)}`);
 
     const sql1 = `SELECT 
+                      TICKET.jrnDate,
+                      TICKET.jrnStartTime,
+                      TICKET.jrnEndTime,
                       SCHEDULE.departureTime,
                       VEHICLE.vehicleRegNo, 
                       VEHICLE.org, 
@@ -1154,7 +1184,8 @@ app.post("/tickets", (req, res) => {
                       ROUTE.start, 
                       ROUTE.end, 
                       JSON_OBJECT('name', fromStop.name, 'location', JSON_OBJECT('lat', fromStop.lat, 'lng', fromStop.lng)) AS 'from', 
-                      JSON_OBJECT('name', toStop.name, 'location', JSON_OBJECT('lat', toStop.lat, 'lng', toStop.lng)) AS 'to'
+                      JSON_OBJECT('name', toStop.name, 'location', JSON_OBJECT('lat', toStop.lat, 'lng', toStop.lng)) AS 'to',
+                      JSON_OBJECT('name', startStop.name, 'location', JSON_OBJECT('lat', startStop.lat, 'lng', startStop.lng)) AS 'start'
                   FROM 
                       TICKET 
                   JOIN
@@ -1167,6 +1198,8 @@ app.post("/tickets", (req, res) => {
                       BUSSTOP_NAMES fromStop ON TICKET.fromLocation = fromStop.nameID 
                   JOIN 
                       BUSSTOP_NAMES toStop ON TICKET.toLocation = toStop.nameID
+                  JOIN
+                      BUSSTOP_NAMES startStop ON ROUTE.startLocation = startStop.nameID
                   WHERE 
                       TICKET.ticketNo = ?;
                   `;
@@ -1176,6 +1209,23 @@ app.post("/tickets", (req, res) => {
         console.log(err1.message);
         return res.json("error");
       } else {
+        const fiveMins = 300000;
+        const now = new Date(Date.now());
+        const startDateTime = new Date(
+          `${result1[0].jrnDate} ${result1[0].jrnStartTime}`
+        );
+        const endDateTime = new Date(
+          `${result1[0].jrnDate} ${result1[0].jrnEndTime}`
+        );
+        let tracking = false;
+
+        if (
+          now.getTime() + fiveMins > startDateTime.getTime() &&
+          now.getTime() - fiveMins < endDateTime.getTime()
+        ) {
+          tracking = true;
+        }
+
         const busInfo = {
           refNo: data.ticketNo,
           regNo: result1[0].vehicleRegNo,
@@ -1186,12 +1236,19 @@ app.post("/tickets", (req, res) => {
           startT: result1[0].departureTime,
           from: result1[0].from,
           to: result1[0].to,
-          start: {
-            name: "Kandy Market",
-            location: { lat: 7.2933810742053575, lng: 80.63447065398826 },
-          },
+          start: result1[0].start,
         };
-        return res.json(busInfo);
+
+        const routeLocations = [
+          result1[0].from.location,
+          result1[0].to.location,
+        ];
+
+        res.json({
+          availability: `${tracking}`,
+          busInfo,
+          routePoints: routeLocations,
+        });
       }
     });
 
@@ -1219,13 +1276,12 @@ app.post("/tickets", (req, res) => {
     }; */
 
     // Dummy route location data
-    const routeLocations = [
+    /* const routeLocations = [
       { lat: 7.243630047731192, lng: 80.59471319873906 },
       { lat: 7.2656183598161075, lng: 80.59577370836975 },
       { lat: 7.288209595790418, lng: 80.63166044283383 },
       { lat: 7.2933810742053575, lng: 80.63447065398826 },
-    ];
-    //res.json({ availability: "true", busInfo, routePoints: routeLocations });
+    ]; */
   }
 });
 
@@ -1320,15 +1376,15 @@ app.post("/schedule", (req, res) => {
               const details = await journeyDetails(origin, destination);
 
               const sql2 = `SELECT 
-                        s.scheduleID AS id,
-                        v.vehicleRegNo AS regNo,
-                        v.serviceType AS service,
+                        s.scheduleID AS 'id',
+                        v.vehicleRegNo AS 'regNo',
+                        v.serviceType AS 'service',
                         r.routeType,
                         r.routeNo,  
                         v.org,
-                        s.bookedSeats AS booked,
+                        s.bookedSeats AS 'booked',
                         v.seats,
-                        s.closingDate AS closing
+                        s.closingDate AS 'closing'
                       FROM 
                         ROUTE r
                       JOIN 
