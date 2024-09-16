@@ -823,7 +823,7 @@ app.post("/tickets", (req, res) => {
                       'from', fromStop.name,
                       'to', toStop.name,
                       'status', status,
-                      'amount', ticketPrice
+                      'amount', FORMAT(ticketPrice, 2)
                   )
               )
           ) AS result
