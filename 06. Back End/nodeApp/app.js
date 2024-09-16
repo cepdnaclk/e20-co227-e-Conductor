@@ -1012,7 +1012,8 @@ app.post("/tickets", (req, res) => {
   } else if (type === "Tkt4") {
     console.log(`Available ticket Request:: type: ${type}  userId:${data}`);
 
-    const sql1 = `SELECT * FROM TICKET WHERE passengerID = ?`;
+    //const sql1 = `SELECT * FROM TICKET WHERE passengerID = ? `;
+    const sql1 = `SELECT * FROM TICKET WHERE passengerID = ? AND status = 'Available'`;
 
     db.query(sql1, data, (err, result) => {
       if (err) {
