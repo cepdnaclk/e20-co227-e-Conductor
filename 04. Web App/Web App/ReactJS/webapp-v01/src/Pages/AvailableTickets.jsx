@@ -170,7 +170,7 @@ export default function AvailableTickets({ language, setLoading }) {
     try {
       setLoading(true); // Enabling spinner
       const serverResponse = await Request(data, "tickets");
-      //console.log(`Server Response: ${JSON.stringify(serverResponse.data)}`);
+      console.log(`Server Response: ${JSON.stringify(serverResponse.data)}`);
       setFormData(serverResponse.data);
     } catch (error) {
       console.log(`error in fetching refund infomation`, error);
@@ -282,6 +282,7 @@ export default function AvailableTickets({ language, setLoading }) {
           </OnceFadeIn>
         </Box>
       )}
+
       <Box sx={{ width: "100%", height: "fit-content", padding: "10px" }}>
         <Grid
           container
