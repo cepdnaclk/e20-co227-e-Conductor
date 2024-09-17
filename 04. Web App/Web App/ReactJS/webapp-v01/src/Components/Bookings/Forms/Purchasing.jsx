@@ -23,13 +23,13 @@ export default function Purchasing({
   useEffect(() => {
     // Requesting personal infomation
     const fetch = async () => {
-      const value = await (JSON.parse(localStorage.getItem("userId")) ||
+      const userId = await (JSON.parse(localStorage.getItem("userId")) ||
         JSON.parse(sessionStorage.getItem("userId")));
 
       // Creating data object
       const data = {
         type: "Req8",
-        data: value,
+        data: userId,
       };
       //console.log(`request message::   type: ${data.type}  userID: ${data.data}`);
 
@@ -51,6 +51,7 @@ export default function Purchasing({
 
         setBookingData({
           ...bookingData,
+          userID: userId,
           issuedDate: date,
           issuedTime: time,
           name,
