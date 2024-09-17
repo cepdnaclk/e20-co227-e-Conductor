@@ -22,13 +22,16 @@ export default function Purchasing({
   // Update final infomations
   useEffect(() => {
     // Requesting personal infomation
-    const fetch = async (value) => {
+    const fetch = async () => {
+      const value = await (JSON.parse(localStorage.getItem("userId")) ||
+        JSON.parse(sessionStorage.getItem("userId")));
+
       // Creating data object
       const data = {
         type: "Req8",
         data: value,
       };
-      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+      //console.log(`request message::   type: ${data.type}  userID: ${data.data}`);
 
       try {
         setLoading(true); // Enabling spinner
@@ -39,11 +42,12 @@ export default function Purchasing({
         // NEED TO DO ERROR HANDLING
 
         // Calculating date and time
-        const session = new Date();
-        const date = session.toDateString();
-        const time = session.toLocaleTimeString();
-        /* console.log("Date: ", date);
-        console.log("Time: ", time); */
+        const session = new Date().toISOString();
+        console.log(session);
+        const date = session.substring(0, 10);
+        const time = session.substring(11, 19);
+        //console.log("Date: ", date);
+        //console.log("Time: ", time);
 
         setBookingData({
           ...bookingData,
@@ -60,7 +64,7 @@ export default function Purchasing({
       }
     };
 
-    fetch(bookingData.userID);
+    fetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -131,7 +135,7 @@ export default function Purchasing({
     try {
       setLoading(true); // Enabling spinner
       const serverResponse = await Request(data, "tickets");
-      //console.log(`ServerResponse:: ${JSON.stringify(serverResponse.data)}`);
+      console.log(`ServerResponse:: ${JSON.stringify(serverResponse.data)}`);
       setConfirm(serverResponse.data === "success" ? true : false);
     } catch (error) {
       console.error("Error adding user:", error);
