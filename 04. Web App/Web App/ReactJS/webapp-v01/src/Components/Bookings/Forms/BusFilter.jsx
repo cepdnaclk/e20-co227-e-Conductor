@@ -257,11 +257,11 @@ export default function BusFilter({
                 </Grid>
                 <Grid item xs={6}>
                   <FormControlLabel
-                    value="privart"
+                    value="private"
                     control={
                       <Checkbox checked={orgItems.pvt} onChange={handleOrg} />
                     }
-                    label="Privart"
+                    label="Private"
                     labelPlacement="end"
                   />
                 </Grid>
