@@ -680,7 +680,7 @@ app.post("/transactions", (req, res) => {
                     'date', t.date,
                     'time', t.time,
                     'description', t.type,
-                    'amount', t.amount
+                    'amount', FORMAT(t.amount, 2)
                 )
             )
         ) AS result
@@ -797,7 +797,7 @@ app.post("/tickets", (req, res) => {
                       'from', fromStop.name,
                       'to', toStop.name,
                       'status', status,
-                      'amount', ticketPrice
+                      'amount', FORMAT(ticketPrice, 2)
                   )
               )
           ) AS result
@@ -858,7 +858,7 @@ app.post("/tickets", (req, res) => {
           'from', fromStop.name,
           'to', toStop.name,
           'journey', t.distance,
-          'price', t.ticketPrice,
+          'price', FORMAT(t.ticketPrice, 2),
           'full', t.full,
           'half', t.half,
           'seatNos', t.seatNos
@@ -909,12 +909,12 @@ app.post("/tickets", (req, res) => {
         data
       )}\n`
     );
-
-    let totalPrice = data.price * data.full + (data.price / 2) * data.half;
-    let discount = totalPrice * (data.discount / 100);
+    
+    let totalPrice = parseFloat(data.price) * data.full + (parseFloat(data.price) / 2) * data.half;
+    let discount = totalPrice * (data.discount / 100);  
 
     const sql = `SELECT credits FROM USERS WHERE userID = ?`;
-    db.query(sql, data.userID, (err, result) => {
+    db.query(sql, data.userID, (err, result) => {    
       if (err) {
         console.log(err.message);
         return res.json("error");
@@ -933,7 +933,7 @@ app.post("/tickets", (req, res) => {
               const values2 = [
                 data.userID,
                 totalPrice,
-                data.issuedDate.split(" ").slice(1).join(" "),
+                data.issuedDate,
                 data.issuedTime,
                 "Payment",
               ];
@@ -1137,7 +1137,7 @@ app.post("/tickets", (req, res) => {
           cancelTime: cancelDateIST.toISOString().substring(11, 16),
           duration: `${duration.days} days ${duration.hours} hrs`,
           amount: result1[0].ticketPrice,
-          refund: refundAmount.toString(),
+          refund: refundAmount.toFixed(2),
         };
         res.json(cancelData);
       }
@@ -1366,7 +1366,9 @@ app.post("/schedule", (req, res) => {
                       JOIN 
                         VEHICLE v ON s.vehicleID = v.vehicleID
                       WHERE 
-                        r.routeNo IN (?);
+                        r.routeNo IN (?)
+                        AND s.closingDate > DATE_ADD(NOW(), INTERVAL 1 DAY)
+                        AND s.closingDate <= DATE_ADD(NOW(), INTERVAL 8 DAY);
                       `;
 
               db.query(sql2, [commonRoutes], (err2, result2) => {
@@ -1379,7 +1381,7 @@ app.post("/schedule", (req, res) => {
                       ...details,
                       from: busStops[0].name,
                       to: busStops[1].name,
-                      price: 30.0,
+                      price: "30.00",
                     };
                   });
 
