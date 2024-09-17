@@ -8,7 +8,7 @@ import { generateOTP, sendOTP } from "./otp.js";
 import { journeyDetails } from "./journey_details.js";
 
 // Express connection
-import express, { json, response } from "express";
+import express from "express";
 export const app = express();
 
 // DB connection
@@ -35,28 +35,26 @@ app.use(
 app.use(express.json());
 
 // Test backend connection
-app.get("/", (req, res) => {
+app.get("/hello", (req, res) => {
   const msg = "Hello I'm Node App!";
   console.log(msg);
   res.json(msg);
 });
 
-// DB Controls  
-app.post('/test', (req, res)=>{
+// DB Controls
+app.post("/test", (req, res) => {
   console.log(`Testing`);
-  const {query} = req.body;
-  console.log(query)
+  const { query } = req.body;
+  console.log(query);
 
-  db.query(query, (err, result)=>{
-    if(err) {
+  db.query(query, (err, result) => {
+    if (err) {
       console.log(err.message);
       res.status(500).json(err);
+    } else {
+      res.status(200).json({ reply: "Done", message: result });
     }
-    else{
-      res.status(200).json({reply: "Done", message: result});
-    }
-  })
-
+  });
 });
 
 // Queries
@@ -647,7 +645,7 @@ app.post("/users", (req, res) => {
     }); */
     const sql = `SELECT CONCAT(fName, ' ', lName) AS name, mobile, email 
                   FROM USERS 
-                  WHERE userID = ?;
+                  WHERE UserID = ?;
                 `;
 
     db.query(sql, data, (err, result) => {
@@ -682,7 +680,7 @@ app.post("/transactions", (req, res) => {
                     'date', t.date,
                     'time', t.time,
                     'description', t.type,
-                    'amount', FORMAT(t.amount, 2)
+                    'amount', t.amount
                 )
             )
         ) AS result
@@ -799,7 +797,7 @@ app.post("/tickets", (req, res) => {
                       'from', fromStop.name,
                       'to', toStop.name,
                       'status', status,
-                      'amount', FORMAT(ticketPrice, 2)
+                      'amount', ticketPrice
                   )
               )
           ) AS result
@@ -988,7 +986,6 @@ app.post("/tickets", (req, res) => {
   } else if (type === "Tkt4") {
     console.log(`Available ticket Request:: type: ${type}  userId:${data}`);
 
-    //const sql1 = `SELECT * FROM TICKET WHERE passengerID = ? `;
     const sql1 = `SELECT * FROM TICKET WHERE passengerID = ? AND status = 'Available'`;
 
     db.query(sql1, data, (err, result) => {
@@ -1343,8 +1340,8 @@ app.post("/schedule", (req, res) => {
               ).values(),
             ];
 
-            const origin = [`${busStops[0].lat}, ${busStops[0].lng}`];
-            const destination = [`${busStops[1].lat}, ${busStops[1].lng}`];
+            const origin = `${busStops[0].lat}, ${busStops[0].lng}`;
+            const destination = `${busStops[1].lat}, ${busStops[1].lng}`;
             const commonRoutes = busStops[0].routes.filter((route) =>
               busStops[1].routes.includes(route)
             );

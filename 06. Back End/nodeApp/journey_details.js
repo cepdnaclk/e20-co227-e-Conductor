@@ -1,58 +1,42 @@
-import distance from "google-distance-matrix";
+import { Client } from "@googlemaps/google-maps-services-js";
 import env from "dotenv";
 
 env.config();
 
+// Initialize Google Maps client
+const client = new Client({});
 let sendingTime = Math.round(Date.now() / 1000);
 
-distance.key(process.env.GOOGLE_MAPS_API_KEY);
-distance.transit_mode("bus");
-distance.departure_time(sendingTime);
-
 export const journeyDetails = async (origin, destination) => {
-  return new Promise((resolve, reject) => {
-    distance.matrix(origin, destination, (err, distances) => {
-      if (err) {
-        return reject(err.message);
-      }
-      if (!distances) {
-        return reject("no distances");
-      }
-      if (distances.status === "OK") {
-        let currentTimestamp = Date.now();
-        let departureTime = new Date(currentTimestamp);
-        let arrivalTime = new Date(
-          currentTimestamp + distances.rows[0].elements[0].duration.value * 1000
-        );
-
-        resolve({
-          journey: distances.rows[0].elements[0].distance.text,
-          departure: `${departureTime
-            .getHours()
-            .toString()
-            .padStart(2, "0")}:${departureTime
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`,
-          arrival: `${arrivalTime
-            .getHours()
-            .toString()
-            .padStart(2, "0")}:${arrivalTime
-            .getMinutes()
-            .toString()
-            .padStart(2, "0")}`,
-        });
-      }
+  try {
+    // Make a request to the Directions API
+    const response = await client.directions({
+      params: {
+        origin: origin,
+        destination: destination,
+        mode: "transit",
+        transit_mode: "bus",
+        departure_time: sendingTime, // Specify the departure time as the current time
+        key: process.env.GOOGLE_MAPS_API_KEY,
+      },
     });
-  });
+
+    // Return journey details
+    return {
+      journey: response.data.routes[0].legs[0].distance.text,
+      departure: response.data.routes[0].legs[0].departure_time.text,
+      arrival: response.data.routes[0].legs[0].arrival_time.text,
+    };
+  } catch (err) {
+    // Handle errors
+    console.error(err);
+    throw new Error(err.message);
+  }
 };
 
-// Usage with async/await
-/* (async () => {
-    try {
-      const details = await journeyDetails(origin, destination);
-      console.log(details);
-    } catch (error) {
-      console.log(error);
-    }
-  })(); */
+/* const origin = "7.243630047731192, 80.59471319873906";
+const destination = "7.25235057321553, 80.59333382765641";
+
+
+const details = await journeyDetails(origin, destination);
+console.log(details); */
