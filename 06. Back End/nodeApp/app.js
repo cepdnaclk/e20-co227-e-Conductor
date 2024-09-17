@@ -35,52 +35,28 @@ app.use(
 app.use(express.json());
 
 // Test backend connection
-app.get("/hello", (req, res) => {
+app.get("/", (req, res) => {
   const msg = "Hello I'm Node App!";
   console.log(msg);
   res.json(msg);
 });
 
-// DB Controls
-app.get("/test", (req, res) => {
+// DB Controls  
+app.post('/test', (req, res)=>{
   console.log(`Testing`);
+  const {query} = req.body;
+  console.log(query)
 
-  const sql = `
-    DESCRIBE TICKET
-    `;
-
-  /*
-    DESCRIBE USER_LOGS
-    
-    ALTER TABLE userlogs
-    MODIFY COLUMN date VARCHAR(20)
-
-    CREATE TABLE userlogs (
-    logID INT AUTO_INCREMENT NOT NULL UNIQUE,
-    userID INT NOT NULL,
-    mobile VARCHAR(11) NOT NULL,
-    email VARCHAR(50) NOT NULL,
-    device VARCHAR(10) NOT NULL,
-    OS VARCHAR(15) NOT NULL,
-    browser VARCHAR(15) NOT NULL,
-    MAC VARCHAR(18) NOT NULL,
-    IP VARCHAR(40) NOT NULL,
-    date VARCHAR(20) NOT NULL,
-    time VARCHAR(15) NOT NULL,
-    country VARCHAR(20) NOT NULL,
-    longitude FLOAT NOT NULL,
-    latitude FLOAT NOT NULL,
-    PRIMARY KEY (userID, MAC, browser) 
-  */
-
-  /* db.query(sql3, [values], (err, result) => {
-    if (err) {
+  db.query(query, (err, result)=>{
+    if(err) {
       console.log(err.message);
-      res.json("error");
-    } else {
-      res.json(result);
+      res.status(500).json(err);
     }
-  }); */
+    else{
+      res.status(200).json({reply: "Done", message: result});
+    }
+  })
+
 });
 
 // Queries
