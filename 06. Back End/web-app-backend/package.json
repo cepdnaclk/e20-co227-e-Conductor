@@ -1,0 +1,11 @@
+{
+  "name": "web-app-backend",
+  "version": "2.0.0",
+  "description": "Backend for Web App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "eConductor Web Admin",
+  "license": "ISC"
+}
