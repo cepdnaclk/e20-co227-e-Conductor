@@ -947,7 +947,7 @@ app.post("/tickets", (req, res) => {
 
                   const values3 = [
                     data.userID,
-                    data.issuedDate.split(" ").slice(1).join(" "),
+                    data.issuedDate,
                     data.issuedTime,
                     data.date,
                     data.aproxDepT,
