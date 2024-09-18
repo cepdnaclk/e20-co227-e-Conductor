@@ -34,12 +34,16 @@ export default function BusList({
         type: "Sdl1",
         data: values, // from, to, date
       };
-      //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+      console.log(
+        `request message::   type: ${data.type}      data: ${JSON.stringify(
+          data.data
+        )}`
+      );
 
       try {
         setLoading(true); // Enabling spinner
         const serverResponse = await Request(data, "schedule");
-        //console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
+        console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
         setBuses(serverResponse.data);
       } catch (error) {
         console.error("Error fetching schedule:", error);

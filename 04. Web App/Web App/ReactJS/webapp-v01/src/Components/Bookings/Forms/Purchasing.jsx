@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Stepper from "../../ProgressBars/Stepper";
 import { Request } from "../../../APIs/NodeBackend";
 import { ToastAlert } from "../../MyNotifications/WindowAlerts";
+import useDateAndTime from "../../../Utils/useDateAndTime";
 
 export default function Purchasing({
   bookingData,
@@ -15,6 +16,7 @@ export default function Purchasing({
   setLoading,
 }) {
   const navigate = useNavigate();
+  const { date, time } = useDateAndTime();
 
   // Variable to store confirmation state
   const [confirm, setConfirm] = useState(null);
@@ -40,15 +42,6 @@ export default function Purchasing({
         const { name, mobile, email } = serverResponse.data;
 
         // NEED TO DO ERROR HANDLING
-
-        // Calculating date and time
-        const session = new Date().toISOString();
-        console.log(session);
-        const date = session.substring(0, 10);
-        const time = session.substring(11, 19);
-        //console.log("Date: ", date);
-        //console.log("Time: ", time);
-
         setBookingData({
           ...bookingData,
           userID: userId,
