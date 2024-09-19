@@ -9,6 +9,8 @@ import createHttpError, { isHttpError } from "http-errors";
 
 // Routes
 import testRouter from "./routes/test.js";
+import macRouter from "./routes/mac.js";
+import userLogsRouter from "./routes/userLogs.js";
 
 // express middlewares
 const app = express();
@@ -43,7 +45,11 @@ app.get("/", (req, res) => {
 // DB Testing endpoint
 app.use("/test", testRouter);
 
-// Others
+// Get MAC
+app.use("/mac", macRouter);
+
+// UserLogs
+app.use("/logs/users", userLogsRouter);
 
 /* --------------------------------------------------------------- */
 
