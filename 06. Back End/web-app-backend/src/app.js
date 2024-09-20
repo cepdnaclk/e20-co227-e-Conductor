@@ -11,6 +11,8 @@ import createHttpError, { isHttpError } from "http-errors";
 import testRouter from "./routes/test.js";
 import macRouter from "./routes/mac.js";
 import userLogsRouter from "./routes/userLogs.js";
+import otpRouter from "./routes/otp.js";
+import usersRouter from "./routes/users.js";
 
 // express middlewares
 const app = express();
@@ -50,6 +52,12 @@ app.use("/mac", macRouter);
 
 // UserLogs
 app.use("/logs/users", userLogsRouter);
+
+// OTP handling
+app.use("/OTP", otpRouter);
+
+// Users
+app.use("/users", usersRouter);
 
 /* --------------------------------------------------------------- */
 

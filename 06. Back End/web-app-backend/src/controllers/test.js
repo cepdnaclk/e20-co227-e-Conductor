@@ -1,7 +1,7 @@
 import { db } from "../db.js";
 
 export const dbTest = async (req, res, next) => {
-  console.log(`Testing`);
+  console.log(`\n\nTesting`);
   try {
     const { query } = req.body;
     console.log("query: ", query);
