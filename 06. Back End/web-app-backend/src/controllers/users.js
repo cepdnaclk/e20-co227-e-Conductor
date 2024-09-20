@@ -11,7 +11,7 @@ export const callUsers = (req, res, next) => {
 
     const sql = `SELECT userID, userType, empType, email 
                FROM USERS
-               WHERE mobile = ?`;
+               WHERE mobile = ? AND userState != 'banned' `;
 
     db.query(sql, data, (err, result) => {
       if (err) {
@@ -74,7 +74,7 @@ export const callUsers = (req, res, next) => {
     switch (data.userType) {
       case "passenger": {
         // Query for passenger
-        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, credits)
+        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, credits, userState)
            VALUES (?)`;
         values = [
           data.userType,
@@ -84,12 +84,13 @@ export const callUsers = (req, res, next) => {
           data.email,
           data.mobile,
           0,
+          "active",
         ];
         break;
       }
       case "employee": {
         // Query for employee
-        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, credits)
+        sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, credits, userState)
            VALUES (?)`;
         values = [
           data.userType,
@@ -103,13 +104,14 @@ export const callUsers = (req, res, next) => {
           data.ntc,
           data.licence,
           0,
+          "active",
         ];
         break;
       }
       case "owner": {
         if (data.empType !== "None") {
           // Query for owner does not work as an employee
-          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, accName, accNo, bank, branch, credits)
+          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, ntc, licence, accName, accNo, bank, branch, credits, userState)
              VALUES (?)`;
           values = [
             data.userType,
@@ -127,10 +129,11 @@ export const callUsers = (req, res, next) => {
             data.bank,
             data.branch,
             0,
+            "active",
           ];
         } else {
           // Query for owner work as an employee
-          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, accName, accNo, bank, branch, credits)
+          sql = `INSERT INTO USERS (userType, empType, fName, lName, email, mobile, nic, birthDay, accName, accNo, bank, branch, credits, userState)
              VALUES (?)`;
           values = [
             data.userType,
@@ -146,6 +149,7 @@ export const callUsers = (req, res, next) => {
             data.bank,
             data.branch,
             0,
+            "active",
           ];
         }
         break;
@@ -301,7 +305,7 @@ export const callUsers = (req, res, next) => {
 
   // Update db with userData, after verification in settings page
   else if (type === "Req7") {
-    console.log("Updating excisting user:", data.userID);
+    console.log("Updating excisting user:", data);
     const sql = `UPDATE USERS SET userType=?, empType=?, fName=?, lName=?, email=?, mobile=?, nic=?, birthDay=?, ntc=?, licence=?, accName=?, accNo=?, 
                     bank=?, branch=? WHERE userID=?`;
 
@@ -334,13 +338,13 @@ export const callUsers = (req, res, next) => {
     });
   }
 
-  // Request personal infomation from booking page (==> Need to update)
+  // Request personal infomation from booking page
   else if (type === "Req8") {
     console.log(`Booking page user data request:: userID: ${data}`);
 
     const sql = `SELECT CONCAT(fName, ' ', lName) AS name, mobile, email 
                   FROM USERS 
-                  WHERE UserID = ?;
+                  WHERE UserID = ? AND userState != 'banned' ;
                 `;
 
     db.query(sql, data, (err, result) => {
