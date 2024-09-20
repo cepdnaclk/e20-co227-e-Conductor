@@ -10,6 +10,7 @@ import LocalActivityOutlinedIcon from "@mui/icons-material/LocalActivityOutlined
 import { useNavigate } from "react-router-dom";
 import { Request } from "../../APIs/NodeBackend";
 import { ViewZoomIn } from "../Animations/Entrance.View";
+import { ToastAlert } from "../MyNotifications/WindowAlerts";
 
 function General({ language, setLoading }) {
   const navigate = useNavigate();
@@ -42,6 +43,10 @@ function General({ language, setLoading }) {
         setData(serverResponse.data);
       } catch (error) {
         console.error("Error fetching devices:", error);
+        ToastAlert({
+          type: "warning",
+          title: "Somthing went wrong! Please reload page again.",
+        });
       } finally {
         setLoading(false); // Disabling spinner
       }

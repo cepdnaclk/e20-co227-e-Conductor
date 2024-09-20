@@ -80,25 +80,3 @@ export const GetResponse = async (page) => {
     throw error;
   }
 };
-
-/* 
-    How to use in a file - Example
-
-    // Use effect for get the OTP from server
-    const requestOTP = async (value) => {
-        // Creating data object
-        const data = {
-        type: 'Req1',
-        data: value
-        }
-        console.log(`request message::   type: ${data.type}      data: ${data.data}`);
-
-        try {
-            const newOTP = await Request(data, 'OTP');
-            console.log(`New OTP:: ${newOTP.OTP}`);
-            setServerOTP(newOTP.OTP);
-        } catch (error) {
-            console.error('Error adding user:', error);
-        }
-    };
-*/
