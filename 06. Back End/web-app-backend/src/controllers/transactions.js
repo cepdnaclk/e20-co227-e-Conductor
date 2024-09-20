@@ -50,7 +50,7 @@ export const transactions = (req, res, next) => {
       // Data not available
       else {
         console.log(`Transaction not found with ID: ${data}`);
-        res.status(204).send("Transaction not found");
+        next(createHttpError(404, "Transaction not found!"));
       }
     });
   }
