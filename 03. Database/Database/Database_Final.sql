@@ -16,6 +16,7 @@ CREATE TABLE USERS (
       bank varchar(20),
       branch varchar(20),
       credits DECIMAL(6,2),
+      userState varchar(10) NOT NULL,
       PRIMARY KEY (UserID)
 );
 
