@@ -13,6 +13,7 @@ import macRouter from "./routes/mac.js";
 import userLogsRouter from "./routes/userLogs.js";
 import otpRouter from "./routes/otp.js";
 import usersRouter from "./routes/users.js";
+import transactionRouter from "./routes/transactions.js";
 
 // express middlewares
 const app = express();
@@ -58,6 +59,9 @@ app.use("/OTP", otpRouter);
 
 // Users
 app.use("/users", usersRouter);
+
+// Transactions
+app.use("/transactions", transactionRouter);
 
 /* --------------------------------------------------------------- */
 
