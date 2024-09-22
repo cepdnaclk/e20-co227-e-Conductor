@@ -2,7 +2,8 @@ import { Box, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import BusFilter from "./Forms/BusFilter";
 import Buslist from "./MapArea/BusList";
-import { Request } from "../../APIs/NodeBackend";
+import { postData } from "../../APIs/NodeBackend2";
+import { ToastAlert } from "../MyNotifications/WindowAlerts";
 
 export default function BusList({
   activeStep,
@@ -28,25 +29,20 @@ export default function BusList({
 
   // Fetch schedule information from node backend
   useEffect(() => {
-    const fetch = async (values) => {
-      // Creating data object
-      const data = {
-        type: "Sdl1",
-        data: values, // from, to, date
-      };
-      console.log(
-        `request message::   type: ${data.type}      data: ${JSON.stringify(
-          data.data
-        )}`
-      );
+    const fetch = async (data) => {
+      console.log("Requesting bus schedules: ", data);
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "schedule");
-        console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
+        const serverResponse = await postData("schedule/sdl1", data);
+        console.log("serverResponse:: ", serverResponse.data);
         setBuses(serverResponse.data);
       } catch (error) {
         console.error("Error fetching schedule:", error);
+        ToastAlert({
+          type: "warning",
+          title: "Your connection is unstable.\nPlease reload page again.",
+        });
       } finally {
         setLoading(false); // Disabling spinner
       }

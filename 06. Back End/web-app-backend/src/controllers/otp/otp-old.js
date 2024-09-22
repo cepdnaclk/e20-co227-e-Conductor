@@ -1,4 +1,4 @@
-import { db } from "../db.js";
+import { db } from "../../db.js";
 
 import otpGenerator from "otp-generator";
 import nodemailer from "nodemailer";

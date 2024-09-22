@@ -3,8 +3,8 @@ import OTPInput from "react-otp-input";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { handleNotifications } from "../MyNotifications/FloatingNotifications";
-import { Request } from "../../APIs/NodeBackend";
 import "./OTP1.css";
+import { postData } from "../../APIs/NodeBackend2";
 
 export default function OTP({
   setIsLogged,
@@ -82,21 +82,16 @@ export default function OTP({
   };
 
   // Function to get the OTP from server
-  const requestOTP = async (values) => {
-    // Creating data object
-    const data = {
-      type: "loginOTP",
-      data: values,
-    };
-    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+  const requestOTP = async (data) => {
+    //console.log("Requesting login OTP: ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const ServerResponse = await Request(data, "OTP");
+      const ServerResponse = await postData("OTP/login", data);
       if (ServerResponse.data === "success") {
         setresendDissable(true);
       } else {
-        console.log("Something went wrong! Please try again in few second.");
+        //console.log("Something went wrong! Please try again in few second.");
       }
     } catch (error) {
       console.error("Error adding user:", error);
@@ -111,17 +106,12 @@ export default function OTP({
   };
 
   // Function to get logging access
-  const requestLoginAccess = async (values) => {
-    // Creating data object
-    const data = {
-      type: "verify",
-      data: values,
-    };
-    //console.log(`request message::   type: ${data.type}      userOTP: ${JSON.stringify(data.data)}`);
+  const requestLoginAccess = async (data) => {
+    //console.log("Verfying OTP: ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverRespose = await Request(data, "OTP");
+      const serverRespose = await postData("OTP/verify", data);
       //console.log(`Authentication: ${serverRespose.data}`);
       setAuth(JSON.stringify(serverRespose.data));
     } catch (error) {
@@ -138,17 +128,12 @@ export default function OTP({
   };
 
   // Function to get the OTP from server
-  const sendLog = async (value) => {
-    // Creating data object
-    const data = {
-      type: "Log3", // Posting user login informations
-      data: value,
-    };
-    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+  const sendLog = async (data) => {
+    //console.log("Add new userLog: ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverRespose = await Request(data, "logs/users");
+      const serverRespose = await postData("logs", data);
       if (serverRespose.data === "success") {
         setIsLogged("true");
         navigate("/");

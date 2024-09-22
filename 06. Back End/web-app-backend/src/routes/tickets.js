@@ -1,8 +1,8 @@
 import express from "express";
-import { getMac } from "../controllers/mac/mac.js";
+import Tkt1 from "../controllers/tickets/tkt1.js";
 
 const router = express.Router();
 
-router.get("/", getMac);
+router.post("/tkt1", Tkt1);
 
 export default router;

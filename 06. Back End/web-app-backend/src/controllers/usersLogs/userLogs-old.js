@@ -1,7 +1,7 @@
 /* User Logs endpoint */
 
 import createHttpError from "http-errors";
-import { db } from "../db.js";
+import { db } from "../../db.js";
 
 export const userLogs = async (req, res, next) => {
   const { type, data } = req.body;
@@ -200,7 +200,7 @@ export const addLogs = async (req, res, next) => {
 };
 
 export const deleteLog = async (req, res, next) => {
-  const data = req.body.data;
+  const data = req.body;
   console.log(
     `Session Terminating:: Terminate user ${data.userID} on ${data.MAC}/${data.browser}`
   );

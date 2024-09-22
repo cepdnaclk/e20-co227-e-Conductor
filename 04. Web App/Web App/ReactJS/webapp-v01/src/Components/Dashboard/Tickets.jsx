@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../Tables/Table";
 import { useNavigate } from "react-router-dom";
-import { Request } from "../../APIs/NodeBackend";
+import { postData } from "../../APIs/NodeBackend2";
+import { ToastAlert } from "../MyNotifications/WindowAlerts";
 
 // Data for table header
 const headCells = [
@@ -51,21 +52,16 @@ export default function Tickets({ language, setLoading }) {
   const [availableTickets, setAvailableTickets] = useState(0);
 
   // Data for table body
-  const [tickets, setTickets] = useState({});
+  const [tickets, setTickets] = useState([]);
 
   // Requesting ticket data from node backend
   useEffect(() => {
-    const getData = async (value) => {
-      // Creating data object
-      const data = {
-        type: "Tkt1", // Get ticket infomation from backend
-        data: value,
-      };
-      //console.log(`request message::   type: ${data.type}    data: ${data.data}`);
+    const getData = async (data) => {
+      //console.log("Requesting Ticket History: ", data);
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "tickets");
+        const serverResponse = await postData("tickets/tkt1", data);
         /* console.log(
           `Tickets:: ${JSON.stringify(
             serverResponse.data
@@ -75,6 +71,10 @@ export default function Tickets({ language, setLoading }) {
         setTickets(serverResponse.data.tickets);
       } catch (error) {
         console.error("Error fetching tickets:", error);
+        ToastAlert({
+          type: "warning",
+          title: "Your connection is unstable.\nPlease reload page again.",
+        });
       } finally {
         setLoading(false); // Disabling spinner
       }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CustomTable from "../Tables/Table";
-import { Request } from "../../APIs/NodeBackend";
 import { ToastAlert } from "../MyNotifications/WindowAlerts";
+import { getData } from "../../APIs/NodeBackend2";
 
 // Data for table header
 const headCells = [
@@ -55,18 +55,12 @@ function Transactions({ language, setLoading }) {
 
   // Requesting transaction data from node backend
   useEffect(() => {
-    //console.log(`userType:: ${userType}  userId: ${userID}`);
-    const getData = async (value) => {
-      // Creating data object
-      const data = {
-        type: "Trans1", // Get transaction infomation from backend
-        data: value,
-      };
-      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+    const fetchData = async (data) => {
+      //console.log("Requesting transaction history of ", data);
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "transactions");
+        const serverResponse = await getData("transactions", data);
         //console.log(`Transactions:: ${JSON.stringify(serverResponse.data)}`);
         setCredits(serverResponse.data.credits);
         setTransaction(serverResponse.data.transaction);
@@ -81,7 +75,7 @@ function Transactions({ language, setLoading }) {
       }
     };
 
-    getData(userID);
+    fetchData(userID);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -5,11 +5,11 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { Container } from "react-bootstrap";
 import PhoneInput from "react-phone-input-2";
-import { Request } from "../../APIs/NodeBackend";
 import "./SignUpForm1.css";
 import { handleNotifications } from "../MyNotifications/FloatingNotifications";
 import { Link } from "react-router-dom";
 import { OnceFadeIn } from "../Animations/Entrance.Once";
+import { postData } from "../../APIs/NodeBackend2";
 
 export default function SignUp1({
   Data,
@@ -85,16 +85,11 @@ export default function SignUp1({
   };
 
   // Check user availability
-  const userAvailability = async (value) => {
-    // Creating data object
-    const SendData = {
-      type: "Req2", // user availability
-      data: value,
-    };
-    //console.log(`New rquest:: type: ${data.type}   mobile: ${data.data.mobile}   email: ${data.data.email}`);
+  const userAvailability = async (sendData) => {
+    //console.log("Check user availability:: data: ", sendData);
     try {
       setLoading(true); // Enabling spinner
-      const { status, data } = await Request(SendData, "users");
+      const { status, data } = await postData("users/req2", sendData);
       if (status === 200 && data === true) {
         //console.log(`User is availabe to use.`);
         userData(formData); // Send form data to the parent

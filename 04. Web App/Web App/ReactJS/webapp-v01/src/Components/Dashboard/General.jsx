@@ -8,9 +8,9 @@ import CommuteTwoToneIcon from "@mui/icons-material/CommuteTwoTone";
 import PaidOutlinedIcon from "@mui/icons-material/PaidOutlined";
 import LocalActivityOutlinedIcon from "@mui/icons-material/LocalActivityOutlined";
 import { useNavigate } from "react-router-dom";
-import { Request } from "../../APIs/NodeBackend";
 import { ViewZoomIn } from "../Animations/Entrance.View";
 import { ToastAlert } from "../MyNotifications/WindowAlerts";
+import { postData } from "../../APIs/NodeBackend2";
 
 function General({ language, setLoading }) {
   const navigate = useNavigate();
@@ -26,17 +26,12 @@ function General({ language, setLoading }) {
 
   // Requesting device data from node backend
   useEffect(() => {
-    const getData = async (value) => {
-      // Creating data object
-      const data = {
-        type: "Req4", // Get user infomation from backend
-        data: value,
-      };
-      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+    const getData = async (data) => {
+      //console.log("request general data. data: ", data);
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "users");
+        const serverResponse = await postData("users/req4", data);
         /* console.log(
           `General infomation:: ${JSON.stringify(serverResponse.data)}`
         ); */

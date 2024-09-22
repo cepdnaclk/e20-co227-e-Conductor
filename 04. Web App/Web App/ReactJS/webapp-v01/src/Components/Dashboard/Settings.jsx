@@ -13,12 +13,12 @@ import {
 import MenuItem from "@mui/material/MenuItem";
 import { MuiTelInput } from "mui-tel-input";
 import { Col, Container, Row } from "react-bootstrap";
-import { Request } from "../../APIs/NodeBackend";
 import { AndroidSwitch } from "../InputItems/Switches";
 import { ToastAlert } from "../MyNotifications/WindowAlerts";
 import RadioInput from "../InputItems/RadioInput";
 import { SweetOTP } from "../MyNotifications/SweetInputs";
 import "./Components.css";
+import { postData } from "../../APIs/NodeBackend2";
 
 // User Types
 const userTypes = ["passenger", "employee", "owner"];
@@ -97,17 +97,11 @@ function Settings({ language, setLoading }) {
   // API to get user Data from backend
   useEffect(() => {
     const fetch = async (userID) => {
-      // Creating data object
-      const data = {
-        type: "Req5",
-        data: userID,
-      };
-
-      //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+      console.log("Request all data of user", userID);
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "users");
+        const serverResponse = await postData("users/req5", userID);
         //console.log(`Server Response::`, serverResponse.data);
         setUserData(serverResponse.data);
       } catch (error) {
@@ -446,18 +440,12 @@ function Settings({ language, setLoading }) {
   };
 
   // API to request availability of newly updated data
-  const chkAvailability = async (values) => {
-    // Creating data object
-    const data = {
-      type: "Req6",
-      data: values,
-    };
-
-    //console.log(`request message::   type: ${data.type}  data: ${JSON.stringify(data.data)}`);
+  const chkAvailability = async (data) => {
+    console.log("Checking availability of the user ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "users");
+      const serverResponse = await postData("users/req6", data);
       //console.log(`Server Response:: user availability:${serverResponse.data}`);
       setIsValid(serverResponse.data);
     } catch (error) {
@@ -473,18 +461,12 @@ function Settings({ language, setLoading }) {
   };
 
   // API to verify OTP
-  const verifyOTP = async (values) => {
-    // Creating data object
-    const data = {
-      type: "verify",
-      data: values,
-    };
-
-    //console.log(`request message::  type: ${data.type} data: ${JSON.stringify(data.data)}`);
+  const verifyOTP = async (data) => {
+    console.log("Verifying OTP. ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "OTP");
+      const serverResponse = await postData("OTP/verify", data);
       //console.log(`OTP status:${serverResponse.data}`);
       if (serverResponse.data) {
         console.log("Verified");
@@ -510,17 +492,12 @@ function Settings({ language, setLoading }) {
   };
 
   // Function to get the OTP from server
-  const requestOTP = async (values) => {
-    // Creating data object
-    const data = {
-      type: "request",
-      data: values,
-    };
-    //console.log(`request OTP:: type: ${data.type}  data: ${JSON.stringify(data.data)}`);
+  const requestOTP = async (data) => {
+    console.log("Request OTP ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "OTP");
+      const serverResponse = await postData("OTP/request", data);
 
       // Need to handle if needed
       if (serverResponse.data === "success") {
@@ -541,17 +518,12 @@ function Settings({ language, setLoading }) {
   };
 
   // Function to get the OTP from server
-  const updateData = async (values) => {
-    // Creating data object
-    const data = {
-      type: "Req7",
-      data: values,
-    };
-    //console.log(`request message::   type: ${data.type}      data: ${JSON.stringify(data.data)}`);
+  const updateData = async (data) => {
+    console.log("Request to updating data ", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "users");
+      const serverResponse = await postData("users/req7", data);
       //console.log(`ServerResposne: ${JSON.stringify(serverResponse.data)}`);
       if (serverResponse.data === "success") {
         console.log("Infomation is updated successfully.");

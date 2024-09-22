@@ -11,17 +11,15 @@ import {
   StartMarker,
   ToMarker,
 } from "./AdvancedMarkers";
+import { GetRequest } from "../../APIs/NodeBackend";
 import Texts from "../InputItems/Texts";
 import useLiveLocation from "../SessionData/useLiveLocation";
 import Directions from "./Directions";
-import regions from "../../Utils/regions.json";
-import { getData } from "../../APIs/NodeBackend2";
-import { ToastAlert } from "../MyNotifications/WindowAlerts";
 
 // Default center location - Colombo Sri Lanka
 const center = { lat: 6.927218696598834, lng: 79.86022185737559 };
 
-/* // Sri Lanka Border
+// Sri Lanka Border
 const border = {
   north: 9.908972567284216,
   south: 5.927144834513064,
@@ -29,32 +27,11 @@ const border = {
   west: 79.6900346440906,
 };
 
-// Temporary area id for the map
-const AREA_ID = 10;
- */
 // Unwanted POIs - Bus Stops
 /* const mapStyles = [{
   featureType: "transit.station.bus",
   stylers: [{ visibility: "off" }],
 }]; */
-
-function findingVisibleAreas({ north, south, east, west }) {
-  const visibleAreas = [];
-  //console.log(`Camera:: \nNorth: ${north}\nSouth: ${south}\nEast: ${east}\nWest: ${west}`);
-
-  regions.forEach((region) => {
-    if (
-      region.margins.south < north && // region's southern boundary is above the northern boundary
-      region.margins.west < east && // region's western boundary is left of the eastern boundary
-      region.margins.east > west && // region's eastern boundary is right of the western boundary
-      region.margins.north > south // region's northern boundary is below the southern boundary
-    ) {
-      visibleAreas.push(region.areaId);
-    }
-  });
-
-  return visibleAreas;
-}
 
 export default function GoogleMaps({
   page,
@@ -93,9 +70,7 @@ export default function GoogleMaps({
   };
 
   // Variable to hold bus stops
-  const [busStops, setBusStops] = useState(
-    JSON.parse(sessionStorage.getItem("busStopLocations")) || []
-  );
+  const [busStops, setBusStops] = useState([]);
 
   // variable to store map border
   const [camera, setCamera] = useState({});
@@ -103,67 +78,108 @@ export default function GoogleMaps({
   // Variable to hold current zoom level
   const [zoom, setZoom] = useState(13);
 
-  // Variable to hold the saved area numbers during the map is open
-  const [savedAreas, setSavedAreas] = useState(
-    JSON.parse(sessionStorage.getItem("areas")) || []
+  // Variable to hold maximum and minimum bounds of map
+  const [bounds, setBounds] = useState(
+    JSON.parse(sessionStorage.getItem("bounds")) || {
+      bNorth: 0,
+      bSouth: 0,
+      bEast: 0,
+      bWest: 0,
+    }
   );
 
-  // API Call Function
-  const fetch = async (areas) => {
-    try {
-      const sessionData = await getData("busstops/locations", areas);
-      //console.log(`BusStops:: ${JSON.stringify(sessionData.data)}`);
-      const points = sessionData.data;
-      if (points.length > 0) {
-        Store(points, areas);
-      } else {
-        console.log("No data");
-      }
-    } catch (error) {
-      console.log(`error in fetching bus stops`);
-      ToastAlert({
-        type: "warning",
-        title: "Your connection is unstable.\nPlease reload page again.",
-      });
-    }
-  };
-
-  // Storing algorithm
-  const Store = (points, area) => {
-    let storedData = busStops;
-    let storedAreas = savedAreas;
-    //console.log("StoredData:: ", storedData);
-    //console.log("SavedAreas:: ", storedAreas);
-
-    storedData = [...storedData, ...points];
-    storedAreas = [...storedAreas, ...area];
-    //console.log("updated list: ", storedData);
-    //console.log("updated areas: ", storedAreas);
-
-    sessionStorage.setItem("busStopLocations", JSON.stringify(storedData));
-    sessionStorage.setItem("areas", JSON.stringify(storedAreas));
-    setBusStops(storedData);
-    setSavedAreas(storedAreas);
-  };
-
-  // Finding the newly added areas
+  /* Need to implement an alternative fetching mechanism */
+  // Fetching bus stops API
   useEffect(() => {
-    if (zoom > 13) {
-      // Finding visible areas
-      const visibleAreas = findingVisibleAreas(camera);
-      //console.log("Visible areas: ", visibleAreas);
+    // Storing algorithm
+    const Store = (points) => {
+      let storedData =
+        JSON.parse(sessionStorage.getItem("busStopLocations")) || [];
+      //console.log('StoredData:: ', JSON.stringify(storedData));
 
-      const newAreas = visibleAreas.filter(
-        (area) => !savedAreas.includes(area)
-      );
-      //console.log("New areas: ", newAreas);
+      const idList = storedData.map((point) => point.id);
+      //console.log('idList: ', JSON.stringify(idList));
 
-      if (newAreas.length > 0) {
-        fetch(newAreas);
+      const newPoints = points.filter((point) => !idList.includes(point.id));
+      //console.log('newPoints: ', JSON.stringify(newPoints));
+
+      storedData = [...storedData, ...newPoints];
+      //console.log('updated list: ',JSON.stringify(storedData));
+
+      sessionStorage.setItem("busStopLocations", JSON.stringify(storedData));
+      sessionStorage.setItem("bound", JSON.stringify(bounds));
+      setBusStops(storedData);
+    };
+
+    // API Call Function
+    const fetch = async (margins) => {
+      try {
+        const sessionData = await GetRequest(margins, "busstops/locations");
+        //console.log(`BusStops:: ${JSON.stringify(sessionData.data)}`);
+        const points = sessionData.data;
+        if (points.length > 0) {
+          Store(points);
+        } else {
+          console.log("No data");
+        }
+      } catch (error) {
+        console.log(`error in fetching bus stops`);
+      }
+    };
+
+    //console.log('Fetching');
+    fetch(camera);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bounds]);
+
+  // Finding the overall captured map area
+  useEffect(() => {
+    let newBound = {};
+    const { bNorth, bSouth, bEast, bWest } = bounds;
+    const { north, south, east, west } = camera;
+    //console.log(JSON.stringify(camera), '\n\n', JSON.stringify(border));
+
+    // Update according to the visible zoom level and the Sri Lanka border
+    if (
+      zoom > 13 &&
+      east > border.west &&
+      west < border.east &&
+      north > border.south &&
+      south < border.north
+    ) {
+      //console.log("updating...");
+
+      // Checking north bound
+      newBound.bNorth = bNorth < north || bNorth === 0 ? north : bNorth;
+
+      // Checking south bound
+      newBound.bSouth = bSouth > south || bSouth === 0 ? south : bSouth;
+
+      // Checking east bound
+      newBound.bEast = bEast < east || bEast === 0 ? east : bEast;
+
+      // Checking west bound
+      newBound.bWest = bWest > west || bWest === 0 ? west : bWest;
+
+      // update bounds
+      const keys = ["bNorth", "bSouth", "bEast", "bWest"];
+
+      let update = false;
+
+      keys.forEach((key) => {
+        //console.log(`bound: ${bounds[key]} , newBound: ${newBound[key]}`);
+        if (bounds[key] !== newBound[key]) {
+          update = true;
+          //console.log(`${bounds[key]} != ${newBound[key]} need to be updated!`);
+        }
+      });
+
+      if (update) {
+        setBounds(newBound);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [camera, zoom]);
+  }, [camera]);
 
   // Show targets
   useEffect(() => {
@@ -220,8 +236,6 @@ export default function GoogleMaps({
               center={target.active ? target.coordinates : null}
               zoom={target.active ? 16 : null}
               onCenterChanged={() => {
-                /* console.log("center changed");
-                console.log("Target: ", target); */
                 setTarget({ ...target, active: false });
               }}
               fullscreenControl={false}
@@ -249,7 +263,7 @@ export default function GoogleMaps({
                       setInfoWindow({
                         state: true,
                         position: place.location,
-                        label: place.name,
+                        label: place.name.split(",")[0],
                         body: splitedName(place.routes, place.name),
                       });
                     }}

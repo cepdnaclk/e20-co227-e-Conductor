@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { db } from "../db.js";
+import { db } from "../../db.js";
 
 export const callUsers = (req, res, next) => {
   const { type, data } = req.body;

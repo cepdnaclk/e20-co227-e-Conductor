@@ -10,11 +10,13 @@ const API_BASE_URL = process.env.REACT_APP_LOCAL_BACKEND_URL;
 //const API_BASE_URL = process.env.REACT_APP_RAILWAY_DEMO_BACKEND_URL;
 
 // Get data from backend
-export async function getData(page) {
+export async function getData(page, sendData) {
   try {
     const destination = `${API_BASE_URL}/${page}`;
-    //console.log(`Fetching data from: ${destination}`);
-    const response = await axios.get(destination);
+    //console.log(`Fetching data from: ${destination} with ${sendData}`);
+    const response = await axios.get(destination, {
+      params: { data: sendData },
+    });
     return response;
   } catch (error) {
     console.error("There was an error fetching the data!", error);
@@ -23,7 +25,7 @@ export async function getData(page) {
 }
 
 // Update data in backend
-export async function updateData(sendData, page) {
+export async function updateData(page, sendData) {
   try {
     const destination = `${API_BASE_URL}/${page}`;
     //console.log(`Updating data in: ${destination}`);
@@ -35,12 +37,14 @@ export async function updateData(sendData, page) {
   }
 }
 
-// Add new data in backend
-export async function addData(sendData, page) {
+// Post new data to backend
+export async function postData(page, sendData) {
   try {
     const destination = `${API_BASE_URL}/${page}`;
-    //console.log(`Adding new data in: ${destination}`);
-    const response = await axios.post(destination, sendData);
+    console.log(
+      `Posting new data in: ${destination} data: ${JSON.stringify(sendData)}`
+    );
+    const response = await axios.post(destination, { data: sendData });
     return response;
   } catch (error) {
     console.error("Adding data error!", error);
@@ -49,9 +53,9 @@ export async function addData(sendData, page) {
 }
 
 // Add new data in backend -- Need to midify
-export async function deleteData(sendData, page) {
+export async function deleteData(page, sendData) {
   try {
-    const destination = `${API_BASE_URL}/api/${page}`;
+    const destination = `${API_BASE_URL}/${page}`;
     //console.log(`Deleting excisting data in: ${destination}`);
     const response = await axios.delete(destination, { data: sendData });
     return response;

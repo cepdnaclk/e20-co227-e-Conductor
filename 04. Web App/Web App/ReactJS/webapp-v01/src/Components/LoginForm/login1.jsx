@@ -5,10 +5,10 @@ import "react-phone-input-2/lib/style.css";
 import { GoPasskeyFill } from "react-icons/go";
 import { FcGoogle } from "react-icons/fc";
 import { handleNotifications } from "../MyNotifications/FloatingNotifications";
-import { Request } from "../../APIs/NodeBackend";
 import { getSessionData } from "../SessionData/Sessions";
 import "./login1.css";
 import { Link } from "react-router-dom";
+import { postData } from "../../APIs/NodeBackend2";
 
 function Login({
   data,
@@ -85,17 +85,12 @@ function Login({
   };
 
   // Use effect for get the user id and email from our server
-  const requestUserDetails = async (value) => {
-    // Creating data object
-    const data = {
-      type: "Req1", // User validation message
-      data: value, // Mobile number of the user
-    };
-    //console.log(`request message::   type: ${data.type}      data: ${data.data}`);
+  const requestUserDetails = async (data) => {
+    //console.log("request user details:: data:", data);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "users");
+      const serverResponse = await postData("users/req1", data);
       if (serverResponse.status === 200) {
         const { userID, email, userType, empType } = serverResponse.data;
         //console.log(`ServerUserId:: ${userID}    ServerUserEmail:: ${email}     serverUserType: ${userType}    serverEmpType: ${empType}`);
