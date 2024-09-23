@@ -2,14 +2,65 @@ import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
 // Check availability of new data
-const Req6 = (req, res, next) => {
+const Req6 = async (req, res, next) => {
   const { data } = req.body;
 
   console.log("\nREQ 6:: Checking availability of the user's new data.", data);
 
   const sql = `SELECT userID FROM USERS WHERE userID != ? AND (email = ? OR mobile = ? OR nic = ?)`;
 
-  db.query(
+  try {
+    // Finding other users with same data
+    const [result] = await db.query(sql, [
+      data.userID,
+      data.email,
+      data.mobile,
+      data.nic,
+    ]);
+    console.log(
+      `Entry searched successfully!\nUsers: ${JSON.stringify(result)}`
+    );
+
+    if (result.length > 0) {
+      console.log("User currently in use! Cannot proceed with request!");
+      return res.status(226).send("invalid");
+    }
+
+    console.log("Details are available to use!");
+
+    const sql2 = `SELECT email, mobile, nic FROM USERS WHERE userID = ?`;
+    const [result2] = await db.query(sql2, [data.userID]);
+
+    const { email, mobile } = result2[0]; // userID is unique
+    console.log(`Current contact details:: email: ${email} mobile: ${mobile}`);
+
+    // Determine what has changed
+    if (email !== data.email && mobile !== data.mobile) {
+      console.log("Email or mobile both are changed");
+      return res.status(200).send("emailMobile");
+    }
+
+    if (email !== data.email) {
+      console.log("Email has changed");
+      return res.status(200).send("email");
+    }
+
+    if (mobile !== data.mobile) {
+      console.log("Mobile has changed");
+      return res.status(200).send("mobile");
+    }
+
+    console.log("unchanged");
+    res.status(200).send("noChange");
+  } catch (err) {
+    console.error("Database error:", err.message);
+    next(createHttpError(503, "Database connection failed!"));
+  }
+};
+
+export default Req6;
+
+/* db.query(
     sql,
     [data.userID, data.email, data.mobile, data.nic],
     (err, result) => {
@@ -65,7 +116,4 @@ const Req6 = (req, res, next) => {
         }
       }
     }
-  );
-};
-
-export default Req6;
+  ); */

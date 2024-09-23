@@ -2,7 +2,7 @@ import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
 // Save registed data into db
-const Req3 = (req, res, next) => {
+const Req3 = async (req, res, next) => {
   const { data } = req.body;
   console.log("\nREQ 3:: Registering new user!", data);
 
@@ -98,15 +98,14 @@ const Req3 = (req, res, next) => {
   }
 
   // DB connection
-  db.query(sql, [values], (err, result) => {
-    if (err) {
-      console.log(err.message + "\n");
-      next(createHttpError(503, "Database connection is failed!"));
-    } else {
-      console.log("Entry added successfully!\n\n");
-      res.status(201).json("success");
-    }
-  });
+  try {
+    await db.query(sql, [values]);
+    console.log("Entry added successfully!\n\n");
+    res.status(201).json("success");
+  } catch (err) {
+    console.log(err.message + "\n");
+    next(createHttpError(503, "Database connection failed!"));
+  }
 };
 
 export default Req3;

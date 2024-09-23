@@ -2,7 +2,7 @@ import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
 // Requesting transaction history from db
-const getTransactions = (req, res, next) => {
+const getTransactions = async (req, res, next) => {
   const { data } = req.query;
   console.log("Trans1:: Request Transaction History of user: ", data);
 
@@ -30,7 +30,27 @@ const getTransactions = (req, res, next) => {
             u.userID, u.credits;
         `;
 
-  db.query(query, data, (err, results) => {
+  try {
+    const [results] = await db.query(query, data);
+
+    // Data available
+    if (results.length > 0) {
+      console.log(`Server Replies to ${data} as`, results[0].result);
+      res.status(200).json(results[0].result);
+    } else {
+      // Data not available
+      console.log(`Transaction not found with ID: ${data}`);
+      next(createHttpError(404, "Transaction not found!"));
+    }
+  } catch (err) {
+    console.error("Error executing query:", err);
+    next(createHttpError(503, "Database connection failed!"));
+  }
+};
+
+export default getTransactions;
+
+/* db.query(query, data, (err, results) => {
     if (err) {
       console.error("Error executing query:", err);
       next(createHttpError(503, "Database connection is failed!"));
@@ -46,7 +66,4 @@ const getTransactions = (req, res, next) => {
       console.log(`Transaction not found with ID: ${data}`);
       next(createHttpError(404, "Transaction not found!"));
     }
-  });
-};
-
-export default getTransactions;
+  }); */

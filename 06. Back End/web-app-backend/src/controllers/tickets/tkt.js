@@ -1,13 +1,7 @@
 app.post("/tickets", (req, res) => {
     const { type, data } = req.body;
-  
-    
-    if (type === "Tkt1") {
-      
-    }
-  
     // Requesting specific ticket (===>Check userID also)
-    else if (type === "Tkt2") {
+    if (type === "Tkt2") {
       console.log(
         `Invoice Request:: type: ${type}  Ref.No.: ${JSON.stringify(data)}`
       );
@@ -71,90 +65,8 @@ app.post("/tickets", (req, res) => {
       });
     }
   
-    // Requesting ticket confirmation (Ticked is purchased by the user)
-    // ===> Send reply to the frontend as 'success' if purchasing is successfull. Otherwise reply as 'error'.
-    // ===> Also need to write a suitable query to store the new ticket infomation to the 'ticket' table
-    else if (type === "Tkt3") {
-      console.log(
-        `\nInvoice Request:: type: ${type}  Ticket info.: ${JSON.stringify(
-          data
-        )}\n`
-      );
-      
-      let totalPrice = parseFloat(data.price) * data.full + (parseFloat(data.price) / 2) * data.half;
-      let discount = totalPrice * (data.discount / 100);  
-  
-      const sql = `SELECT credits FROM USERS WHERE userID = ?`;
-      db.query(sql, data.userID, (err, result) => {    
-        if (err) {
-          console.log(err.message);
-          return res.json("error");
-        } else {
-          if (result[0].credits >= totalPrice) {
-            const sql1 = `UPDATE USERS SET credits = credits - ? WHERE userID = ?`;
-            const values1 = [totalPrice, data.userID];
-  
-            db.query(sql1, values1, (err1, result1) => {
-              if (err1) {
-                console.log(err1.message);
-                return res.json("error");
-              } else {
-                console.log("Credits updated successfully!");
-                const sql2 = `INSERT INTO TRANSACTION (userID, amount, date, time, type) VALUES (?)`;
-                const values2 = [
-                  data.userID,
-                  totalPrice,
-                  data.issuedDate,
-                  data.issuedTime,
-                  "Payment",
-                ];
-  
-                db.query(sql2, [values2], (err2, result2) => {
-                  if (err2) {
-                    console.log(err2.message);
-                    return res.json("error");
-                  } else {
-                    const sql3 = `INSERT INTO TICKET (passengerID,issuedDate,issuedTime,jrnDate,jrnStartTime,jrnEndTime,fromLocation,toLocation,distance,half,full,ticketPrice,seatNos,status,scheduleID,transID,discount) VALUES (?)`;
-  
-                    const values3 = [
-                      data.userID,
-                      data.issuedDate,
-                      data.issuedTime,
-                      data.date,
-                      data.aproxDepT,
-                      data.aproxAriT,
-                      data.from.id,
-                      data.to.id,
-                      JSON.stringify(parseFloat(data.journey)),
-                      data.half,
-                      data.full,
-                      totalPrice,
-                      JSON.stringify(data.seatNos),
-                      "Available",
-                      data.shceduleId,
-                      result2.insertId,
-                      discount,
-                    ];
-  
-                    db.query(sql3, [values3], (err3, result3) => {
-                      if (err3) {
-                        console.log(err3.message);
-                        return res.json("error");
-                      } else {
-                        console.log("Ticket added successfully!");
-                        return res.json("success");
-                      }
-                    });
-                  }
-                });
-              }
-            });
-          } else {
-            res.json("Insufficient");
-          }
-        }
-      });
-    } else if (type === "Tkt4") {
+    
+    else if (type === "Tkt4") {
       console.log(`Available ticket Request:: type: ${type}  userId:${data}`);
   
       const sql1 = `SELECT * FROM TICKET WHERE passengerID = ? AND status = 'Available'`;

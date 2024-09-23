@@ -2,7 +2,7 @@ import { db } from "../../db.js";
 import createHttpError from "http-errors";
 
 // Requesting ticket history from db
-const Tkt1 = (req, res, next) => {
+const Tkt1 = async (req, res, next) => {
   const { data } = req.body;
 
   console.log("\nTkt1:: Requesting ticket history of ", data);
@@ -36,7 +36,29 @@ const Tkt1 = (req, res, next) => {
           GROUP BY passengerID;
         `;
 
-  db.query(query, data, (err, results) => {
+  try {
+    const [results] = await db.query(query, data);
+
+    if (results.length > 0) {
+      console.log("All Tickets: ", results[0].result);
+      res.status(200).json(results[0].result);
+    } else {
+      const serverResponse = {
+        available: 0,
+        tickets: [],
+      };
+      console.log("All Tickets: ", serverResponse);
+      res.status(200).json(serverResponse);
+    }
+  } catch (err) {
+    console.error("Error in finding ticket history:", err);
+    next(createHttpError(503, "Database connection failed!"));
+  }
+};
+
+export default Tkt1;
+
+/* db.query(query, data, (err, results) => {
     if (err) {
       console.error("Error in finding ticket history:", err);
       next(createHttpError(503, "Database connection is failed!"));
@@ -55,7 +77,4 @@ const Tkt1 = (req, res, next) => {
       console.log(`Tickets not found belongs to userID: ${data}`);
       next(createHttpError(500, "Tickets Error!"));
     }
-  });
-};
-
-export default Tkt1;
+  }); */

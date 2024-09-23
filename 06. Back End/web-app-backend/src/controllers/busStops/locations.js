@@ -20,15 +20,15 @@ const BusStopLocations = async (req, res, next) => {
         BUSSTOP_LOCATIONS.areaNumber IN (?);
   `;
 
-  db.query(sql, [data], (err, result) => {
-    if (err) {
-      console.log(err.message);
-      next(createHttpError(503, "Database connection is failed!"));
-    } else {
-      console.log("Selected Bus Stops", result);
-      res.status(200).json(result);
-    }
-  });
+  try {
+    const [result] = await db.query(sql, [data]);
+
+    console.log("Selected Bus Stops", result);
+    res.status(200).json(result);
+  } catch (error) {
+    console.log(err.message);
+    next(createHttpError(503, "Database connection is failed!"));
+  }
 };
 
 export default BusStopLocations;

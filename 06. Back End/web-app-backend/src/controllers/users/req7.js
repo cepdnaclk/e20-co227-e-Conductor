@@ -2,7 +2,7 @@ import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
 // Update db with userData, after verification in settings page
-const Req7 = (req, res, next) => {
+const Req7 = async (req, res, next) => {
   const { data } = req.body;
   console.log("\nREQ 7:: Updating excisting user:", data);
   const sql = `UPDATE USERS SET userType=?, empType=?, fName=?, lName=?, email=?, mobile=?, nic=?, birthDay=?, ntc=?, licence=?, accName=?, accNo=?, 
@@ -26,7 +26,19 @@ const Req7 = (req, res, next) => {
     data.userID,
   ];
 
-  db.query(sql, updateData, (err, result) => {
+  try {
+    const [result] = await db.query(sql, updateData);
+    console.log("ServerResponse: success");
+    res.status(200).json("success");
+  } catch (err) {
+    console.log(err.message + "\n\n");
+    next(createHttpError(503, "Database connection failed!"));
+  }
+};
+
+export default Req7;
+
+/* db.query(sql, updateData, (err, result) => {
     if (err) {
       console.log(err.message + "\n\n");
       next(createHttpError(503, "Database connection is failed!"));
@@ -34,7 +46,4 @@ const Req7 = (req, res, next) => {
       console.log("ServerResponse: success");
       res.status(200).json("success");
     }
-  });
-};
-
-export default Req7;
+  }); */

@@ -40,22 +40,43 @@ async function sendOTP(email, OTP) {
 }
 
 // Save OTP in the database, either updating or inserting it
-async function saveOTP(OTP, email, mobile, res, next) {
-  try {
-    const check_sql = `
-      INSERT INTO OTP_TABLE (email, contactNo, otp) 
-      VALUES (?, ?, ?) 
-      ON DUPLICATE KEY UPDATE otp = VALUES(otp);
-    `;
+function saveOTP(OTP, email, mobile, res, next) {
+  const check_sql = `SELECT otpID FROM OTP_TABLE WHERE contactNo = ? AND email = ?`;
 
-    await db.query(check_sql, [email, mobile, OTP]);
+  db.query(check_sql, [mobile, email], (err, result) => {
+    // Previous otp space available
+    if (result.length > 0) {
+      console.log("OTP ID: ", result[0].otpID);
+      const update_otp_sql = `UPDATE OTP_TABLE SET otp = ? WHERE otpID = ?`;
+      const values = [OTP, result[0].otpID];
 
-    console.log("OTP saved successfully!");
-    res.status(201).send("success");
-  } catch (error) {
-    console.log(error);
-    next(createHttpError(502, "OTP is failed!"));
-  }
+      db.query(update_otp_sql, values, (err) => {
+        if (err) {
+          console.log(err);
+          next(createHttpError(502, "OTP is failed!"));
+        } else {
+          console.log("OTP updated successfully!");
+          res.status(201).send("success");
+        }
+      });
+    }
+
+    // No previous otps
+    else {
+      const new_entry_sql = `INSERT INTO OTP_TABLE (otp, contactNo, email) VALUES (?)`;
+      const values = [OTP, mobile, email];
+
+      db.query(new_entry_sql, [values], (err) => {
+        if (err) {
+          console.log(err);
+          next(createHttpError(502, "OTP is failed!"));
+        } else {
+          console.log("OTP added successfully!");
+          res.status(201).send("success");
+        }
+      });
+    }
+  });
 }
 
 /* END POINT HANDLING */
@@ -78,7 +99,7 @@ export const login = async (req, res, next) => {
       OTP:: ${OTP}\n
     `);
 
-    await saveOTP(OTP, email, mobile, res, next);
+    saveOTP(OTP, email, mobile, res, next);
   } catch (error) {
     console.error("Error occurred during OTP processing:", error);
     next(createHttpError(500, "Internal server error"));
@@ -103,7 +124,7 @@ export const signup = async (req, res, next) => {
       OTP:: ${OTP}\n
     `);
 
-    await saveOTP(OTP, email, mobile, res, next);
+    saveOTP(OTP, email, mobile, res, next);
   } catch (error) {
     console.error("Error occurred during OTP processing:", error);
     next(createHttpError(500, "Internal server error"));
@@ -138,7 +159,7 @@ export const request = async (req, res, next) => {
       OTP:: ${OTP}\n
     `);
 
-    await saveOTP(OTP, email, mobile, res, next);
+    saveOTP(OTP, email, mobile, res, next);
   } catch (error) {
     console.error("Error occurred during OTP processing:", error);
     next(createHttpError(500, "Internal server error"));
@@ -153,17 +174,17 @@ export const verify = async (req, res, next) => {
     `\nVerify user \nmobile: ${mobile}  email: ${email}  OTP: ${value} Origin: ${origin}\n`
   );
 
-  try {
-    const sql = `SELECT otp FROM OTP_TABLE WHERE email = ? AND contactNo = ? limit 1`;
+  const sql = `SELECT otp FROM OTP_TABLE WHERE email = ? AND contactNo = ? limit 1`;
 
-    const [response] = await db.query(sql, [email, mobile]);
-
-    console.log(`ServerOTP:${response[0].otp} | UserOTP:${value}`);
-    const reply = value === response[0].otp ? "true" : "false";
-    console.log("Verification is passed: ", reply);
-    res.status(200).send(reply);
-  } catch (error) {
-    console.log(err);
-    next(createHttpError(502, "Database connection is failed!"));
-  }
+  db.query(sql, [email, mobile], (err, response) => {
+    if (err) {
+      console.log(err);
+      next(createHttpError(502, "Database connection is failed!"));
+    } else {
+      console.log(`ServerOTP:${response[0].otp} | UserOTP:${value}`);
+      const reply = value === response[0].otp ? "true" : "false";
+      console.log("Verification is passed: ", reply);
+      res.status(200).send(reply);
+    }
+  });
 };

@@ -30,12 +30,12 @@ export default function BusList({
   // Fetch schedule information from node backend
   useEffect(() => {
     const fetch = async (data) => {
-      console.log("Requesting bus schedules: ", data);
+      //console.log("Requesting bus schedules: ", data);
 
       try {
         setLoading(true); // Enabling spinner
         const serverResponse = await postData("schedule/sdl1", data);
-        console.log("serverResponse:: ", serverResponse.data);
+        //console.log("Available Buses:: ", serverResponse.data);
         setBuses(serverResponse.data);
       } catch (error) {
         console.error("Error fetching schedule:", error);
@@ -74,10 +74,10 @@ export default function BusList({
     // Update booking data
     setBookingData({
       ...bookingData,
-      shceduleId: id,
+      scheduleId: id,
       aproxDepT: departure,
       aproxAriT: arrival,
-      price: price,
+      unitPrice: price,
       journey: journey,
     });
 
