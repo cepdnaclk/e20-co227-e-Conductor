@@ -7,7 +7,6 @@ const Tkt1 = async (req, res, next) => {
 
   console.log("\nTkt1:: Requesting ticket history of ", data);
 
-  // Edit here with suitable query
   const query = `
           SELECT 
             JSON_OBJECT(

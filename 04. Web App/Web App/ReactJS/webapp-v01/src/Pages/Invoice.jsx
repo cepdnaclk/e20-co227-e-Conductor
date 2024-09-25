@@ -1,16 +1,25 @@
-import React, { useRef, useEffect, useState } from 'react';
-import Invoice from '../Components/Invoice/Invioce';
-import { useReactToPrint } from 'react-to-print';
-import { AppBar, Badge, Box, Grid, IconButton, Toolbar, Typography } from '@mui/material';
-import PrintIcon from '@mui/icons-material/Print';
-import DownloadIcon from '@mui/icons-material/Download';
-import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import { useNavigate } from 'react-router-dom';
-import { Request } from '../APIs/NodeBackend';
-import { OnceFadeIn } from '../Components/Animations/Entrance.Once';
+import React, { useRef, useEffect, useState } from "react";
+import Invoice from "../Components/Invoice/Invioce";
+import { useReactToPrint } from "react-to-print";
+import {
+  AppBar,
+  Badge,
+  Box,
+  Grid,
+  IconButton,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import PrintIcon from "@mui/icons-material/Print";
+import DownloadIcon from "@mui/icons-material/Download";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import { useNavigate } from "react-router-dom";
+import { OnceFadeIn } from "../Components/Animations/Entrance.Once";
+import { ToastAlert } from "../Components/MyNotifications/WindowAlerts";
+import { getData } from "../APIs/NodeBackend2";
 
 export default function InvoicePage({ language, setLoading }) {
   // Sheet sizes
@@ -18,29 +27,32 @@ export default function InvoicePage({ language, setLoading }) {
   const A4_HEIGHT = 297 * 3.7795275591; // in cm -> px
 
   // Getting Ticket Id
-  const ticketNo = JSON.parse(sessionStorage.getItem('TicketNo'));
+  const ticketNo = JSON.parse(sessionStorage.getItem("TicketNo"));
 
   // Ticket data
   const [data, setData] = useState({});
 
   // Requesting transaction data from node backend
-  const getData = async (value) => {
-    // Creating data object
-    const data = {
-      type: 'Tkt2',   // Get invoice infomation from backend
-      data: value
-    }
-    //console.log(`Request message::   type: ${data.type}      data: ${data.data}`);
+  const getInfo = async (sendData) => {
+    //console.log('Request ticket data: ', data);
 
     try {
-        setLoading(true);  // Enabling spinner
-        const serverResponse = await Request(data, 'tickets');
-        //console.log(`Invoice Data:: ${JSON.stringify(serverResponse.data)}`);
-        setData(serverResponse.data);
+      setLoading(true); // Enabling spinner
+      const serverResponse = await getData("tickets/tkt2", sendData);
+      //console.log(`Invoice Data:: ${JSON.stringify(serverResponse.data)}`);
+      setData(serverResponse.data);
     } catch (error) {
-        console.error('Error fetching invoice data:', error);
+      console.error("Error fetching invoice data:", error);
+      ToastAlert({
+        type: "error",
+        title: "Failed to load the ticket!",
+        position: "bottom-end",
+        onClose: setTimeout(() => {
+          navigate("/avtickets");
+        }, 3001),
+      });
     } finally {
-        setLoading(false);  // Disabling spinner
+      setLoading(false); // Disabling spinner
     }
   };
 
@@ -51,29 +63,32 @@ export default function InvoicePage({ language, setLoading }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userID = JSON.parse(localStorage.getItem('userId')) || JSON.parse(sessionStorage.getItem('userId'));
-    getData({refNo:ticketNo, userID});
+    const userID =
+      JSON.parse(localStorage.getItem("userId")) ||
+      JSON.parse(sessionStorage.getItem("userId"));
+    getInfo({ refNo: ticketNo, userID });
 
     const handleResize = () => {
       const viewportWidth = window.innerWidth;
-      const scaleFactor =  (viewportWidth < A4_WIDTH) ? (viewportWidth / A4_WIDTH) : 1;
+      const scaleFactor =
+        viewportWidth < A4_WIDTH ? viewportWidth / A4_WIDTH : 1;
       setScale(scaleFactor);
     };
 
     handleResize(); // Initial call to set scale based on initial window size
-    window.addEventListener('resize', handleResize); // Adjust scale on window resize
+    window.addEventListener("resize", handleResize); // Adjust scale on window resize
 
-    return () => window.removeEventListener('resize', handleResize);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => window.removeEventListener("resize", handleResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Manual Zooming
   const handleZoom = (e) => {
     // ZoomIn => Increase size
     //console.log(`${e} is clicked`);
-    let newScale = (e === 'zoomIn' ? scale+0.1 : scale-0.1);
-    setScale((newScale > 0.5 && newScale < 2.1) ? newScale : scale);
-  }
+    let newScale = e === "zoomIn" ? scale + 0.1 : scale - 0.1;
+    setScale(newScale > 0.5 && newScale < 2.1 ? newScale : scale);
+  };
 
   // Handle Printing
   const componentRef = useRef();
@@ -85,37 +100,57 @@ export default function InvoicePage({ language, setLoading }) {
   const handleDownload = async () => {
     const element = componentRef.current;
     const canvas = await html2canvas(element);
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'px', [A4_WIDTH, A4_HEIGHT]);
-    pdf.addImage(imgData, 'PNG', 0, 0, A4_WIDTH, A4_HEIGHT);
-    pdf.save('invoice.pdf');
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "px", [A4_WIDTH, A4_HEIGHT]);
+    pdf.addImage(imgData, "PNG", 0, 0, A4_WIDTH, A4_HEIGHT);
+    pdf.save("invoice.pdf");
   };
 
   return ticketNo === null ? (
-    navigate('/forbidden')
+    navigate("/notfound")
   ) : (
     <OnceFadeIn duration={500}>
-      <Box sx={{ flexGrow: 1, width: '100vw', height: '100vh', overflow: 'hidden'}}>
-        <AppBar position="sticky" sx={{ bgcolor: 'rgb(0,0,0,0.8)', width: '100vw', border:'none' }}>
-          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+        }}
+      >
+        <AppBar
+          position="sticky"
+          sx={{ bgcolor: "rgb(0,0,0,0.8)", width: "100vw", border: "none" }}
+        >
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
             <Grid>
-              <Typography sx={{fontFamily:'Open Sans', fontWeight:'bold', fontSize:'16px'}}>
+              <Typography
+                sx={{
+                  fontFamily: "Open Sans",
+                  fontWeight: "bold",
+                  fontSize: "16px",
+                }}
+              >
                 Invoice.pdf
               </Typography>
             </Grid>
 
-            <Grid sx={{
-              width: 'auto',
-              display:'flex',
-              justifyContent:'space-around',
-              alignItems: 'center',
-              gap:'5px',
-            }}>
+            <Grid
+              sx={{
+                width: "auto",
+                display: "flex",
+                justifyContent: "space-around",
+                alignItems: "center",
+                gap: "5px",
+              }}
+            >
               <IconButton
                 size="small"
                 color="inherit"
-                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-                onClick={()=>{handleZoom('zoomIn')}}
+                sx={{ "&:hover": { bgcolor: "rgb(204,204,204,0.2)" } }}
+                onClick={() => {
+                  handleZoom("zoomIn");
+                }}
               >
                 <Badge>
                   <AddIcon />
@@ -125,47 +160,55 @@ export default function InvoicePage({ language, setLoading }) {
               <Typography
                 //onInput={false}
                 sx={{
-                  width:'60px', 
-                  height: '22px',
-                  color:'white', 
-                  fontFamily:'Open Sans',
-                  fontSize:'14px',
-                  fontWeight:'bold',
-                  bgcolor:'rgb(0,0,0,0.9)',
-                  textAlign:'center'
+                  width: "60px",
+                  height: "22px",
+                  color: "white",
+                  fontFamily: "Open Sans",
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  bgcolor: "rgb(0,0,0,0.9)",
+                  textAlign: "center",
                 }}
               >
                 {(scale * 100).toFixed(0)}%
               </Typography>
-                        
+
               <IconButton
                 size="small"
                 color="inherit"
-                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
-                onClick={()=>{handleZoom('zoomOut')}}
+                sx={{ "&:hover": { bgcolor: "rgb(204,204,204,0.2)" } }}
+                onClick={() => {
+                  handleZoom("zoomOut");
+                }}
               >
                 <Badge>
                   <RemoveIcon />
                 </Badge>
               </IconButton>
             </Grid>
-            
-            <Grid sx={{width:'80px', display:'flex',justifyContent:'space-between'}}>
+
+            <Grid
+              sx={{
+                width: "80px",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <IconButton
                 size="small"
                 color="inherit"
-                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                sx={{ "&:hover": { bgcolor: "rgb(204,204,204,0.2)" } }}
                 onClick={handleDownload}
               >
                 <Badge>
                   <DownloadIcon />
                 </Badge>
               </IconButton>
-                        
+
               <IconButton
                 size="small"
                 color="inherit"
-                sx={{ '&:hover': { bgcolor: 'rgb(204,204,204,0.2)' } }}
+                sx={{ "&:hover": { bgcolor: "rgb(204,204,204,0.2)" } }}
                 onClick={handlePrint}
               >
                 <Badge>
@@ -179,20 +222,20 @@ export default function InvoicePage({ language, setLoading }) {
         <Grid
           container
           sx={{
-            display: 'flex',
-            justifyContent: 'space-around',
-            width: '100%',
-            height: '100%',
-            background: '#666666',
-            overflow: 'auto',
-            pt:'5px'
+            display: "flex",
+            justifyContent: "space-around",
+            width: "100%",
+            height: "100%",
+            background: "#666666",
+            overflow: "auto",
+            pt: "5px",
           }}
         >
           <div
             ref={componentRef}
             style={{
               transform: `scale(${scale})`,
-              transformOrigin:'top left'
+              transformOrigin: "top left",
             }}
           >
             <Invoice data={data} />

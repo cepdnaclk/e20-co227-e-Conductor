@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 
 const tkt3 = async (req, res, next) => {
   const { data } = req.body;
+  console.log("\nTkt3:: Ticket details: ", data);
   const totalCost = parseFloat(data.totalPrice);
   const seatNumbers = data.seatNos;
 
@@ -86,7 +87,7 @@ const tkt3 = async (req, res, next) => {
       data.aproxAriT,
       data.from.id,
       data.to.id,
-      parseFloat(data.journey.split(" ")[0]),
+      data.journey,
       data.half,
       data.full,
       data.unitPrice,

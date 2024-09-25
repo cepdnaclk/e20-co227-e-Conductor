@@ -97,7 +97,7 @@ export const updateLogs = async (req, res, next) => {
   const data = req.body;
 
   console.log(
-    `\n\nChecking availabilty of user session:: Searching about ${data.userID} on ${data.session.MAC}/${data.session.browser}`
+    `\nChecking availabilty of user session:: Searching about ${data.userID} on ${data.session.MAC}/${data.session.browser}`
   );
 
   const connection = await db.getConnection();

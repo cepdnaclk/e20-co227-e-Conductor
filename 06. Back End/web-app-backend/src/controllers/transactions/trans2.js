@@ -1,63 +1,99 @@
-else if (type === "Trans2") {
-    console.log(`Confirm refund: Trans2`);
+import { db } from "../../db.js";
+import createHttpError from "http-errors";
 
-    const sql1 = `SELECT passengerID FROM TICKET WHERE ticketNo = ?`;
+// Requesting ticket history from db
+const trans2 = async (req, res, next) => {
+  const { data } = req.body;
+  console.log("\nTrans2:: Refund Confirmation: ", data);
 
-    db.query(sql1, parseInt(data.refNo), (err1, result1) => {
-      if (err1) {
-        console.log(err1.message);
-        return res.json("error");
-      } else {
-        const sql2 = `UPDATE USERS SET credits = credits + ? WHERE userID = ?`;
-        const data2 = [data.refund, result1[0].passengerID];
+  let connection;
 
-        db.query(sql2, data2, (err2, result2) => {
-          if (err2) {
-            console.log(err2.message);
-            return res.json("error");
-          } else {
-            if (result2.changedRows < 1) {
-              return res.json("error");
-            } else {
-              const sql3 = `UPDATE TICKET SET status = 'Refunded' WHERE ticketNo = ?`;
+  try {
+    // Step 0: Get a connection and begin a transaction
+    connection = await db.getConnection();
+    await connection.beginTransaction();
 
-              db.query(sql3, parseInt(data.refNo), (err3, result3) => {
-                if (err3) {
-                  console.log(err3.message);
-                  return res.json("error");
-                } else {
-                  const sql4 = `INSERT INTO TRANSACTION (userID, amount, date, time, refNo, type) VALUES (?)`;
+    const ticketNo = parseInt(data.refNo);
 
-                  const data4 = [
-                    result1[0].passengerID,
-                    data.refund,
-                    data.cancelDate,
-                    data.cancelTime,
-                    data.refNo,
-                    "Refund",
-                  ];
+    // Step 1: Get passenger ID and seatNos from ticket
+    const sql1 = `SELECT passengerID, seatNos, scheduleID FROM TICKET WHERE ticketNo = ?`;
+    const [result1] = await connection.query(sql1, ticketNo);
+    if (result1.length === 0) {
+      console.log("Ticket not found!");
+      throw createHttpError(404, "Ticket not found");
+    }
 
-                  db.query(sql4, [data4], (err4, result4) => {
-                    if (err4) {
-                      console.log(err4.message);
-                      return res.json("error");
-                    } else {
-                      return res.json("success");
-                    }
-                  });
-                }
-              });
-            }
-          }
-        });
-      }
-    });
+    const { passengerID, seatNos, scheduleID } = result1[0];
+    console.log("Ticket Details", result1[0]);
 
-  } else if (type === "Trans3") {
-    console.log(`new request: ${JSON.stringify(data)}`);
-    res.json("0000025");
-  } else if (type === "Trans4") {
-    console.log(`new request: ${JSON.stringify(data)}`);
-    res.json("success");
+    // Step 2: Update credits in the user's account
+    const sql2 = `UPDATE USERS SET credits = credits + ? WHERE userID = ?`;
+    const data2 = [data.refund, passengerID];
+    const [result2] = await connection.query(sql2, data2);
+
+    if (result2.changedRows == 0) {
+      console.log("User not found!");
+      throw createHttpError(404, "User not found");
+    }
+
+    console.log("Credits updated successfully!");
+
+    // Step 3: Update ticket status to "Refunded"
+    const sql3 = `UPDATE TICKET SET status = 'Refunded' WHERE ticketNo = ?`;
+    await connection.query(sql3, ticketNo);
+
+    console.log("Ticket Updated!");
+
+    // Step 4: Insert a new transaction record
+    const sql4 = `INSERT INTO TRANSACTION (userID, amount, date, time, refNo, type) VALUES (?)`;
+    const data4 = [
+      passengerID,
+      data.refund,
+      data.cancelDate,
+      data.cancelTime,
+      data.refNo,
+      "Refund",
+    ];
+    await connection.query(sql4, [data4]);
+
+    console.log("Transaction Added!");
+
+    // Step 5: Get booked seats from schedule
+    const sql5 = `SELECT bookedSeats FROM SCHEDULE WHERE scheduleID = ?`;
+    const [result5] = await connection.query(sql5, [scheduleID]);
+    if (result5.length == 0 || !result5[0].bookedSeats) {
+      console.log("Schedule not found!");
+      throw createHttpError(404, "Schedule not found");
+    }
+
+    console.log("Booked Seats :", result5[0].bookedSeats);
+    console.log("Removed Seats:", seatNos);
+
+    // Remove the seats in seatNosToRemove from bookedSeats
+    const updatedSeats = result5[0].bookedSeats.filter(
+      (seat) => !seatNos.includes(seat)
+    );
+
+    console.log("Updated Seats: ", updatedSeats);
+
+    // Step 6: Update schedule
+    const sql6 = `UPDATE SCHEDULE SET bookedSeats = ? WHERE scheduleID = ?`;
+    await connection.query(sql6, [JSON.stringify(updatedSeats), scheduleID]);
+
+    // Step 7: Commit the transaction
+    await connection.commit();
+    console.log("Refund Completed!");
+    res.status(200).send("success");
+  } catch (error) {
+    if (connection) {
+      await connection.rollback(); // Roll back any changes if error occurs
+    }
+    next(error); // Pass the error to the Express error handl
+  } finally {
+    if (connection) {
+      connection.release(); // Release the connection back to the pool
+    }
   }
-});
+};
+
+export default trans2;

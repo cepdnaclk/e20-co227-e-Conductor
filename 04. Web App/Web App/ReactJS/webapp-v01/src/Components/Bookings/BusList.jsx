@@ -35,7 +35,7 @@ export default function BusList({
       try {
         setLoading(true); // Enabling spinner
         const serverResponse = await postData("schedule/sdl1", data);
-        //console.log("Available Buses:: ", serverResponse.data);
+        console.log("Available Buses:: ", serverResponse.data);
         setBuses(serverResponse.data);
       } catch (error) {
         console.error("Error fetching schedule:", error);
@@ -65,24 +65,27 @@ export default function BusList({
 
   // Handle Continue Button
   const handleNext = (e) => {
+    //console.log("Schedule ID: ", e.target.id);
+    //console.log("Busses: ", buses);
     //console.log("TypeOf(item): "+ typeof(buses[0].id) + "TYpeOf(e)"+ typeof(e.target.id));
-    const bus = buses.filter((item) => item.id === e.target.id)[0];
-    const { id, departure, arrival, price, journey, seats, booked } = bus;
+    const bus = buses.filter(
+      (item) => parseInt(item.id) === parseInt(e.target.id)
+    )[0];
     sessionStorage.setItem("bus", JSON.stringify(bus));
-    //console.log('bus: '+JSON.stringify(bus));
+    //console.log("Selected Bus: ", bus);
 
     // Update booking data
     setBookingData({
       ...bookingData,
-      scheduleId: id,
-      aproxDepT: departure,
-      aproxAriT: arrival,
-      unitPrice: price,
-      journey: journey,
+      scheduleId: bus?.id,
+      aproxDepT: bus?.departure,
+      aproxAriT: bus?.arrival,
+      unitPrice: bus?.price,
+      journey: bus?.journey,
     });
 
     // Update seat infomation
-    setSeats({ seats, booked });
+    setSeats({ seats: bus?.seats, booked: bus?.booked });
 
     // Goto next step
     //console.log('Goto visual step 3');

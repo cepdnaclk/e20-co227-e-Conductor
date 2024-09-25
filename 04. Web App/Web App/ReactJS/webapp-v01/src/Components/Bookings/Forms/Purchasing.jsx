@@ -27,12 +27,12 @@ export default function Purchasing({
 
       const total = parseFloat(calAdultPrice()) + parseFloat(calChildPrice());
 
-      console.log("User personal data request for ticket: ", { userId, total });
+      //console.log("User personal data request for ticket: ", { userId, total });
 
       try {
         setLoading(true); // Enabling spinner
         const serverResponse = await postData("users/req8", { userId, total });
-        console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
+        //console.log(`serverResponse:: ${JSON.stringify(serverResponse.data)}`);
         const { name, mobile, email, totalPrice, discount } =
           serverResponse.data;
 
@@ -88,12 +88,12 @@ export default function Purchasing({
 
   // API to send billing infomation
   const requestConfirmation = async (data) => {
-    console.log("Confirming ticket: ", data);
+    //console.log("Confirming ticket: ", data);
 
     try {
       setLoading(true); // Enabling spinner
       const serverResponse = await postData("tickets/tkt3", data);
-      console.log("Ticket Payment: ", serverResponse.data);
+      //console.log("Ticket Payment: ", serverResponse.data);
       if (serverResponse.data === "success") {
         ToastAlert({
           type: "success",

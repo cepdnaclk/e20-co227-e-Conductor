@@ -2,16 +2,21 @@ import { Box, Card, Grid } from "@mui/material";
 import Texts from "../Components/InputItems/Texts";
 import React, { useEffect, useState } from "react";
 import GoogleMaps from "../Components/Map/GoogleMaps";
-import { GetRequest, Request } from "../APIs/NodeBackend";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { OnceFlyInX, OnceZoomIn } from "../Components/Animations/Entrance.Once";
+import { getData } from "../APIs/NodeBackend2";
+import { ToastAlert } from "../Components/MyNotifications/WindowAlerts";
+import useDateAndTime from "../Utils/useDateAndTime";
 
 // Time step size
 const TIME_STEP = 1000;
 
 export default function Tracking({ setLoading, language }) {
+  const navigate = useNavigate();
+  const { time } = useDateAndTime();
+
   // Calculating current time
-  const [now, setNow] = useState("");
+  //const [now, setNow] = useState("");
 
   // Get ticket ID and userID
   const userID =
@@ -45,31 +50,35 @@ export default function Tracking({ setLoading, language }) {
     const fetch = async () => {
       // Creating data object
       const data = {
-        type: "Tkt6", // Requesting tracing details
-        data: {
-          ticketNo: ticketID,
-          userID: userID,
-        },
+        ticketNo: ticketID,
+        userID: userID,
       };
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "tickets");
+        const serverResponse = await getData("tickets/tkt6", data);
         const { availability, routePoints, busInfo, destination } =
           serverResponse.data;
-        //console.log(`Tracking availability: ${availability}\nRoutes: ${JSON.stringify(routePoints)} \nbusInfo: ${JSON.stringify(busInfo)}\ndestination:${JSON.stringify(destination)}`);
+        console.log("Tracking Info", serverResponse.data);
         setStatus({
           loading: false,
-          available: availability === "true" ? true : false,
+          available: availability,
         });
 
-        if (availability === "true") {
+        if (availability) {
           setBusInfo(busInfo);
           setRoute(routePoints);
           setDestPoint(destination);
         }
       } catch (error) {
         console.log(`Error in fetching tracking data!`);
+        ToastAlert({
+          type: "error",
+          title: "Failed to load the ticket!",
+          onClose: setTimeout(() => {
+            navigate("/avtickets");
+          }, 3001),
+        });
       } finally {
         setLoading(false); // Disabling spinner
       }
@@ -91,9 +100,9 @@ export default function Tracking({ setLoading, language }) {
       //console.log(`Bus Number: ${data}`);
 
       try {
-        const serverResponse = await GetRequest(data, "tracking/bus");
+        const serverResponse = await getData("tracking/bus", data);
         if (isMounted) {
-          //console.log(`Live location: ${JSON.stringify(serverResponse.data)}`);
+          console.log(`Live location: ${JSON.stringify(serverResponse.data)}`);
           setLiveLocation(serverResponse.data);
         }
       } catch (error) {
@@ -118,17 +127,17 @@ export default function Tracking({ setLoading, language }) {
 
     const fetchEstimationDetails = async () => {
       // Updating current time
-      const d = new Date();
+      /* const d = new Date();
       const hours = d.getHours().toString().padStart(2, "0");
       const minutes = d.getMinutes().toString().padStart(2, "0");
-      setNow(`${hours}:${minutes}`);
+      setNow(`${hours}:${minutes}`); */
 
       const data = {
         userID: userID,
         ticketID: ticketID,
       };
       try {
-        const response = await GetRequest(data, "tracking/estm");
+        const response = await getData("tracking/estm", data);
         if (isMounted) {
           setEstmData(response.data);
         }
@@ -187,7 +196,7 @@ export default function Tracking({ setLoading, language }) {
               </Grid>
 
               <Grid textAlign={"center"} item xs={12} sm={6} lg={3}>
-                {now > estmData.fromArT ? (
+                {time > estmData.fromArT ? (
                   <>
                     <Texts fontColor="white" variant={"h5"}>
                       {estmData.toArT} Hrs

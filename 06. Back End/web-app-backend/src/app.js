@@ -17,6 +17,7 @@ import transactionRouter from "./routes/transactions.js";
 import scheduleRouter from "./routes/schedule.js";
 import ticketsRouter from "./routes/tickets.js";
 import busStopRouter from "./routes/busStops.js";
+import trackingRouter from "./routes/tracking.js";
 import feedbackRouter from "./routes/feedback.js";
 
 // express middlewares
@@ -75,6 +76,9 @@ app.use("/tickets", ticketsRouter);
 
 // Bus Stops
 app.use("/busstops", busStopRouter);
+
+// Tracking
+app.use("/tracking", trackingRouter);
 
 // Feedbacks
 app.use("/feedback/get", feedbackRouter);
