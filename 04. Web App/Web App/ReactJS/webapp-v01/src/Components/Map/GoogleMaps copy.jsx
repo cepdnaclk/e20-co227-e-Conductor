@@ -8,6 +8,7 @@ import {
   FromMarker,
   LocationMarker,
   PersonMarker,
+  StartMarker,
   ToMarker,
 } from "./AdvancedMarkers";
 import Texts from "../InputItems/Texts";
@@ -27,8 +28,8 @@ const border = {
   east: 81.8873002690906,
   west: 79.6900346440906,
 };
-*/
 
+*/
 // Unwanted POIs - Bus Stops
 /* const mapStyles = [{
   featureType: "transit.station.bus",
@@ -58,8 +59,8 @@ export default function GoogleMaps({
   from,
   to,
   busData,
+  routeLocations,
   estmData,
-  trackingState,
   busLocation,
   myBusesLocation,
   generalData,
@@ -200,8 +201,6 @@ export default function GoogleMaps({
     return `${routes}\n${nameParts[1].trim()}\n${nameParts[2].trim()}`;
   };
 
-  //console.log("Location Tracking State: ", trackingState);
-
   return (
     <Box width="100%" height="100%">
       <APIProvider
@@ -325,7 +324,7 @@ export default function GoogleMaps({
                           />
                         )}
 
-                        {/* Rendering FROM, and TO locations */}
+                        {/* Rendering FROM, TO, and START locations */}
                         {!!busData?.from && (
                           <FromMarker
                             title={busData.from?.name}
@@ -335,7 +334,7 @@ export default function GoogleMaps({
                                 state: true,
                                 position: busData.from?.location,
                                 label: `Origin: ${busData.from?.name}`,
-                                body: `Arrived at: ${estmData.arrrivalA}\nRoute: ${busData.route}`,
+                                body: `Arrived at: ${estmData.fromArT} Hrs\nRoute: ${busData.route}`,
                               });
                             }}
                           />
@@ -349,25 +348,46 @@ export default function GoogleMaps({
                                 state: true,
                                 position: busData.to?.location,
                                 label: `Destination: ${busData.to?.name}`,
-                                body: `Arrived at: ${estmData.arrivalB}\nRoute: ${busData.route}`,
+                                body: `Arrived at: ${estmData.toArT} Hrs\nRoute: ${busData.route}`,
+                              });
+                            }}
+                          />
+                        )}
+                        {!!busData?.start && (
+                          <StartMarker
+                            title={busData.start?.name}
+                            position={busData.start?.location}
+                            onClick={() => {
+                              setInfoWindow({
+                                state: true,
+                                position: busData.start?.location,
+                                label: `Starting point: ${busData.start?.name}`,
+                                body: `Departure at: ${busData.startT} Hrs\nRoute: ${busData.route}`,
                               });
                             }}
                           />
                         )}
 
                         {/* Rendering path */}
-                        <Directions
-                          point1={busLocation}
-                          point2={
-                            trackingState === "pre"
-                              ? busData.from?.location
-                              : busData.to?.location
-                          }
-                          polylineOptions={{
-                            strokeOpacity: 1,
-                            strokeWeight: 5,
-                          }}
-                        />
+                        {routeLocations.length > 1 &&
+                          routeLocations.map((point, index) => {
+                            if (index < routeLocations.length - 1) {
+                              return (
+                                <Directions
+                                  key={index}
+                                  point1={routeLocations[index]}
+                                  point2={routeLocations[index + 1]}
+                                  polylineOptions={{
+                                    strokeColor: "#FF0000",
+                                    strokeOpacity: 0.7,
+                                    strokeWeight: 5,
+                                  }}
+                                />
+                              );
+                            } else {
+                              return null;
+                            }
+                          })}
                       </>
                     );
                   }

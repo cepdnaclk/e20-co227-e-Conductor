@@ -21,7 +21,8 @@ const Tkt6 = async (req, res, next) => {
                       ROUTE.start AS startPoint, 
                       ROUTE.end AS endPoint, 
                       JSON_OBJECT('name', fromStop.name, 'location', JSON_OBJECT('lat', fromStop.lat, 'lng', fromStop.lng)) AS 'from', 
-                      JSON_OBJECT('name', toStop.name, 'location', JSON_OBJECT('lat', toStop.lat, 'lng', toStop.lng)) AS 'to'
+                      JSON_OBJECT('name', toStop.name, 'location', JSON_OBJECT('lat', toStop.lat, 'lng', toStop.lng)) AS 'to',
+                      JSON_OBJECT('name', startName.name, 'location', JSON_OBJECT('lat', startStop.lat, 'lng', startStop.lng)) AS 'start'
                   FROM 
                       TICKET 
                   JOIN
@@ -34,6 +35,10 @@ const Tkt6 = async (req, res, next) => {
                       BUSSTOP_NAMES fromStop ON TICKET.fromLocation = fromStop.nameID 
                   JOIN 
                       BUSSTOP_NAMES toStop ON TICKET.toLocation = toStop.nameID
+                  JOIN
+                      BUSSTOP_LOCATIONS startStop ON SCHEDULE.startLocation = startStop.locationID
+                  JOIN
+                      BUSSTOP_NAMES startName ON startStop.nameID = startName.nameID
                   WHERE 
                       TICKET.ticketNo = ? AND TICKET.passengerID = ?;
                 `;
@@ -74,13 +79,19 @@ const Tkt6 = async (req, res, next) => {
       startT: result[0].departureTime,
       from: result[0].from,
       to: result[0].to,
+      start: result[0].start,
     };
 
     // Make an algorithm to find the connecting points
     //console.log("\nFrom: ", result[0].from);
     //console.log("To: ", result[0].to);
 
-    const sendData = { availability, busInfo };
+    const routePoints = await connectingPoints(
+      result[0].start.location,
+      result[0].to.location
+    );
+
+    const sendData = { availability, busInfo, routePoints };
 
     console.log("Send Data: ", sendData);
     res.status(200).json(sendData);

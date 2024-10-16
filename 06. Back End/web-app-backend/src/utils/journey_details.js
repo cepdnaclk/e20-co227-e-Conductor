@@ -1,5 +1,6 @@
 import { Client } from "@googlemaps/google-maps-services-js";
 import env from "dotenv";
+import moment from "moment";
 
 env.config();
 
@@ -20,21 +21,11 @@ export const journeyDetails = async (
   console.log("Time: ", time); // Time in 'HH:mm'
 
   try {
-    // Split the provided date and time
-    const dateParts = date.split("-"); // Split the date into year, month, day
-    const timeParts = time.split(":"); // Split the time into hours and minutes
-
-    // Create a JavaScript Date object with the provided date and time
-    const departureDate = new Date(
-      parseInt(dateParts[0]), // Year
-      parseInt(dateParts[1]) - 1, // Month (0-indexed in JS)
-      parseInt(dateParts[2]), // Day
-      parseInt(timeParts[0]), // Hours
-      parseInt(timeParts[1]) // Minutes
-    );
+    // Create a Moment.js object with the provided date and time
+    const departureDate = moment(`${date} ${time}`, "YYYY-MM-DD HH:mm");
 
     // Convert to UNIX timestamp (seconds since epoch)
-    const departureTime = Math.floor(departureDate.getTime() / 1000);
+    const departureTime = departureDate.unix();
 
     // 1. Calculate journey from startLocation to fromLocation
     const fromResponse = await client.directions({
@@ -48,7 +39,18 @@ export const journeyDetails = async (
       },
     });
 
-    const fromLeg = fromResponse.data.routes[0].legs[0];
+    let fromLeg;
+    if (!fromResponse.data.routes[0] || !fromResponse.data.routes[0].legs[0]) {
+      fromLeg = {
+        time: departureDate.format("h:mm A"), // Format time as '2:45 PM'
+        distance: 0,
+      };
+    } else {
+      fromLeg = {
+        time: fromResponse.data.routes[0].legs[0].arrival_time.text,
+        distance: fromResponse.data.routes[0].legs[0].distance?.value,
+      };
+    }
 
     // 2. Calculate journey from startLocation to toLocation
     const toResponse = await client.directions({
@@ -62,18 +64,26 @@ export const journeyDetails = async (
       },
     });
 
-    const toLeg = toResponse.data.routes[0].legs[0];
+    let toLeg;
+    if (!toResponse.data.routes[0] || !toResponse.data.routes[0].legs[0]) {
+      toLeg = { time: departureDate.format("h:mm A"), distance: 0 }; // Format time as '2:45 PM'
+    } else {
+      toLeg = {
+        time: toResponse.data.routes[0].legs[0].arrival_time.text,
+        distance: toResponse.data.routes[0].legs[0].distance?.value,
+      };
+    }
 
-    const distance = 0.001 * (toLeg.distance.value - fromLeg.distance.value);
+    const distance = 0.001 * (toLeg.distance - fromLeg.distance); // Convert distance from meters to kilometers
 
     console.log(
-      `From: ${fromLeg.distance.value}  To: ${toLeg.distance.value}  Distance: ${distance}`
+      `From: ${fromLeg.distance} To: ${toLeg.distance} Distance: ${distance}`
     );
 
     // Return all calculated details
     return {
-      departureTime: fromLeg.arrival_time ? fromLeg.arrival_time.text : "N/A",
-      arrivalTime: toLeg.arrival_time ? toLeg.arrival_time.text : "N/A",
+      departureTime: fromLeg.time,
+      arrivalTime: toLeg.time,
       distance,
     };
   } catch (err) {

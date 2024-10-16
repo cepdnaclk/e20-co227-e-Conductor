@@ -1,7 +1,7 @@
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useState } from "react";
 
-export default function Directions({ point1, point2, polylineOptions }) {
+export default function useDirections({ point1, point2 }) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
   const [dirService, setDirService] = useState(
@@ -20,7 +20,6 @@ export default function Directions({ point1, point2, polylineOptions }) {
         map,
         suppressMarkers: true,
         preserveViewport: true,
-        polylineOptions: polylineOptions,
       })
     );
 
@@ -41,7 +40,7 @@ export default function Directions({ point1, point2, polylineOptions }) {
       })
       .then((response) => {
         dirRender.setDirections(response);
-        //console.log("routes: ", response.routes);
+        console.log("routes: ", response.routes);
       });
   }, [dirService, dirRender, point1, point2]);
 
