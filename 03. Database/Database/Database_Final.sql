@@ -142,3 +142,21 @@ CREATE TABLE BUS_LOCATIONS (
       lng DECIMAL(21, 18) NOT NULL,
       speed FLOAT NOT NULL
 );
+
+// ACTIVITY
+CREATE TABLE ACTIVITY (
+      activityID INT AUTO_INCREMENT PRIMARY KEY, 
+      vehicleID INT NOT NULL, 
+      ownerID INT NOT NULL, 
+      date VARCHAR(11) NOT NULL, 
+      rides INT DEFAULT 0, 
+      canceled INT DEFAULT 0, 
+      replaced INT DEFAULT 0, 
+      bookings INT DEFAULT 0, 
+      refund INT DEFAULT 0, 
+      receivedMoney DECIMAL(10, 2) DEFAULT 0.00, 
+      refundMoney DECIMAL(10, 2) DEFAULT 0.00, 
+      earning DECIMAL(10, 2) DEFAULT 0.00, 
+      FOREIGN KEY (vehicleID) REFERENCES VEHICLE(vehicleID), 
+      FOREIGN KEY (ownerID) REFERENCES USERS(userID)
+);
