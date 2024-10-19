@@ -38,7 +38,7 @@ import { ToastAlert } from "../MyNotifications/WindowAlerts";
 import AlertDialog from "../DialogBox/AlertDialog";
 import SingleInputDialog from "../DialogBox/SingleInputDialog";
 import { ViewFlyInX } from "../Animations/Entrance.View";
-import { getData } from "../../APIs/NodeBackend2";
+import { getData, updateData } from "../../APIs/NodeBackend2";
 
 // Months list
 const MONTHS = [
@@ -420,7 +420,7 @@ function ScheduleCard({ details, handleAction }) {
 
 // Main function
 export default function BusDetail({ language, setLoading }) {
-  const busId = JSON.parse(sessionStorage.getItem("busId"));
+  const busId = JSON.parse(sessionStorage.getItem("busID"));
 
   // Variable to hold bus general details
   const [details, setDetails] = useState({
@@ -469,7 +469,7 @@ export default function BusDetail({ language, setLoading }) {
   // Handling schedule
   const handleSchedule = (event, newValue) => {
     setOffset(newValue);
-    console.log(newValue);
+    //console.log(newValue);
   };
 
   // Handling actions
@@ -483,9 +483,13 @@ export default function BusDetail({ language, setLoading }) {
     const data = {
       busId: busId,
       type: value || "week",
+      DATE,
+      MONTH,
+      YEAR,
     };
 
     try {
+      console.log("Sending Date: ", data);
       const serverResponse = await getData("bus/income", data);
       const { xLabels, refundData, receivedData, earningData } =
         serverResponse.data;
@@ -499,6 +503,10 @@ export default function BusDetail({ language, setLoading }) {
       });
     } catch (error) {
       console.log("Error in income data!");
+      ToastAlert({
+        type: "warning",
+        title: "Something went wrong! Please try again!",
+      });
     }
   };
 
@@ -514,19 +522,29 @@ export default function BusDetail({ language, setLoading }) {
       //console.log(`Schedule on ${JSON.stringify(data)}:: ${JSON.stringify(serverResponse.data)}`);
       setScheduleList({ loaded: true, schedules: serverResponse.data });
     } catch (error) {
-      console.log("Érror in schedule data!");
+      console.log("Error in schedule data!");
+      ToastAlert({
+        type: "warning",
+        title: "Something went wrong! Please try again!",
+      });
     }
   };
 
   // API to fetch general data
   const GetBusData = async () => {
+    const data = { busId, MONTH, YEAR };
+
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await getData("bus/general", busId);
+      const serverResponse = await getData("bus/general", data);
       //console.log('Bus details: ', JSON.stringify(serverResponse.data));
       setDetails({ loaded: true, data: serverResponse.data });
     } catch (error) {
       console.log("Error in fetching bus data!");
+      ToastAlert({
+        type: "warning",
+        title: "Something went wrong! Please try again!",
+      });
     } finally {
       setLoading(false); // Disabling spinner
     }
@@ -543,7 +561,7 @@ export default function BusDetail({ language, setLoading }) {
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await getData("bus/schedule/update", data);
+      const serverResponse = await updateData("bus/schedule", data);
       setLoading(false); // Disabling spinner
       if (serverResponse.data === "success") {
         ToastAlert({
@@ -673,13 +691,13 @@ export default function BusDetail({ language, setLoading }) {
             <Grid item xs={12} sm={6} textAlign={{ xs: "center", sm: "end" }}>
               <ButtonGroup variant="outlined" sx={{ height: "30px" }}>
                 <Button onClick={handleIncome} id="year">
-                  Year
+                  1Y
                 </Button>
                 <Button onClick={handleIncome} id="month">
-                  Month
+                  1M
                 </Button>
                 <Button onClick={handleIncome} id="week">
-                  Week
+                  7D
                 </Button>
               </ButtonGroup>
             </Grid>
@@ -813,9 +831,8 @@ export default function BusDetail({ language, setLoading }) {
                 {scheduleList.loaded ? (
                   scheduleList.schedules.length > 0 &&
                   scheduleList.schedules.map((schedule, index) => (
-                    <ViewFlyInX>
+                    <ViewFlyInX key={schedule.id}>
                       <ScheduleCard
-                        key={schedule.id}
                         details={schedule}
                         handleAction={handleAction}
                       />

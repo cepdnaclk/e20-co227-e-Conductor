@@ -1,0 +1,288 @@
+// Related to transaction table
+app.post("/transactions", (req, res) => {
+  const { type, data } = req.body;
+
+  if (type === "Trans3") {
+    console.log(`new request: ${JSON.stringify(data)}`);
+    res.json("0000025");
+  } else if (type === "Trans4") {
+    console.log(`new request: ${JSON.stringify(data)}`);
+    res.json("success");
+  }
+});
+
+// Other Authentication services (NEED TO DISCUSS)
+app.post("/other", (req, res) => {
+  const { type, data } = req.body;
+  console.log(
+    `New Request::  type: ${type}    Mobile Number: ${JSON.stringify(data)}`
+  );
+  let userData = {};
+
+  if (type === "google") {
+    console.log("Google Authentication");
+    // Verify user, then fetch userData from db and send back to the frontend
+    const mobile = 94111111111;
+
+    // This is a tempary query
+    const sql = `SELECT userID, userType, empType, email 
+             FROM users
+             WHERE mobile = ?`;
+
+    db.query(sql, mobile, (err, result) => {
+      if (err) {
+        console.log(err.message + "\n\n");
+        userData.status = "error";
+        res.json(userData); // Reply with 'error' in case of an error
+      } else {
+        console.log(
+          `Entry searched successfully!\nUsers: ${JSON.stringify(result)}`
+        );
+        if (result.length > 0) {
+          userData = result[0];
+          userData.status = "success";
+        } else {
+          userData.status = "invalid";
+        }
+
+        console.log(`Server replies as ${JSON.stringify(userData)}\n\n`);
+        res.json(userData);
+      }
+    });
+  } else {
+    console.log("Request Not Found!");
+    userData.status = "error";
+    res.json(userData);
+    //return res.status(404).json('Request Not Found!');
+  }
+});
+
+// ========================================================= Here onward => Booking Related Requests =====================================================================
+
+// Getting route infomation
+app.get("/routes/availability", (req, res) => {
+  const { origin, destination } = req.body;
+  console.log(
+    `Trip from ${JSON.stringify(origin)} to ${JSON.stringify(destination)}`
+  );
+  res.json("true");
+});
+
+app.get("/income/general", (req, res) => {
+  console.log("Requesting income/general data");
+  const incomeData = {
+    earning: { amount: 50000, increment: 25 },
+    withdraw: { amount: 20000, increment: -10 },
+    balance: { amount: 30000, increment: 10 },
+    credits: { amount: 40000, increment: 10 },
+  };
+  res.json(incomeData);
+});
+
+app.get("/income/summary", (req, res) => {
+  console.log("Requesting Summary");
+  const SUM = [
+    { data: [1, 2, 5, 38, 5], label: "NA-1234" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1354" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5645" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5685" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5646" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1534" },
+    { data: [1, 2, 5, 38, 5], label: "NA-1654" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5845" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5885" },
+    { data: [1, 2, 5, 38, 5], label: "NC-5686" },
+  ];
+  res.json(SUM);
+});
+
+app.get("/income/income", (req, res) => {
+  const graphData = [
+    { id: 0, value: 10, label: "NA-1234" },
+    { id: 1, value: 15, label: "NA-1354" },
+    { id: 2, value: 20, label: "NC-5645" },
+    { id: 4, value: 10, label: "NA-1284" },
+    { id: 5, value: 15, label: "NA-1364" },
+    { id: 6, value: 20, label: "NC-5945" },
+    { id: 7, value: 10, label: "NA-1634" },
+    { id: 8, value: 15, label: "NA-1854" },
+    { id: 9, value: 20, label: "NC-5845" },
+  ];
+  res.json({ graphData, earning: 500000 });
+});
+
+app.get("/feedback/get", (req, res) => {
+  // Dummy data
+  const TESTIMONIALS = [
+    {
+      id: 1,
+      name: "Edlin Noar",
+      userType: "Bus Owner",
+      rating: 4.9,
+      note: "Fusce consequat. Nulla nisl. Nunc nisl.",
+    },
+    {
+      id: 2,
+      name: "Clyde McGeachey",
+      userType: "Employee",
+      rating: 3.8,
+      note: "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\nSuspendisse potenti. Cras in purus eu magna vulputate luctus.\n\nCum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    },
+    {
+      id: 3,
+      name: "Bengt Wozencroft",
+      userType: "Bus Owner",
+      rating: 2.6,
+      note: "In quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.\n\nMaecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
+    },
+    {
+      id: 4,
+      name: "Marsha Kuhnhardt",
+      userType: "Employee",
+      rating: 3.5,
+      note: "In congue. Etiam justo. Etiam pretium iaculis justo.\n\nIn hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.\n\nNulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.",
+    },
+    {
+      id: 5,
+      name: "Martica Folder",
+      userType: "Passenger",
+      rating: 0.7,
+      note: "Praesent blandit. Nam nulla. Integer pede justo, lacinia eget, tincidunt eget, tempus vel, pede.\n\nMorbi porttitor lorem id ligula. Suspendisse ornare consequat lectus. In est risus, auctor sed, tristique in, tempus sit amet, sem.",
+    },
+    {
+      id: 6,
+      name: "Giff Pepperd",
+      userType: "Passenger",
+      rating: 4.9,
+      note: "Sed sagittis. Nam congue, risus semper porta volutpat, quam pede lobortis ligula, sit amet eleifend pede libero quis orci. Nullam molestie nibh in lectus.\n\nPellentesque at nulla. Suspendisse potenti. Cras in purus eu magna vulputate luctus.\n\nCum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
+    },
+    {
+      id: 7,
+      name: "Nady Bothie",
+      userType: "Passenger",
+      rating: 2.3,
+      note: "Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+    },
+    {
+      id: 8,
+      name: "Kristy McCleary",
+      userType: "Passenger",
+      rating: 0.7,
+      note: "Integer tincidunt ante vel ipsum. Praesent blandit lacinia erat. Vestibulum sed magna at nunc commodo placerat.",
+    },
+    {
+      id: 9,
+      name: "Sloane Matyushonok",
+      userType: "Passenger",
+      rating: 4.4,
+      note: "Nullam sit amet turpis elementum ligula vehicula consequat. Morbi a ipsum. Integer a nibh.\n\nIn quis justo. Maecenas rhoncus aliquam lacus. Morbi quis tortor id nulla ultrices aliquet.\n\nMaecenas leo odio, condimentum id, luctus nec, molestie sed, justo. Pellentesque viverra pede ac diam. Cras pellentesque volutpat dui.",
+    },
+    {
+      id: 10,
+      name: "Demetris Preist",
+      userType: "Employee",
+      rating: 1.0,
+      note: "Maecenas tristique, est et tempus semper, est quam pharetra magna, ac consequat metus sapien ut nunc. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Mauris viverra diam vitae quam. Suspendisse potenti.\n\nNullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.\n\nMorbi non lectus. Aliquam sit amet diam in magna bibendum imperdiet. Nullam orci pede, venenatis non, sodales sed, tincidunt eu, felis.",
+    },
+  ];
+
+  console.log("Requesting feedbacks");
+  res.json(TESTIMONIALS);
+});
+
+app.get("/feedback/new", (req, res) => {
+  console.log("New feedback recieved");
+  res.json("success");
+});
+
+app.get("/feedback/message", (req, res) => {
+  console.log("New message recieved");
+  res.json("success");
+});
+
+app.get("/news/all", (req, res) => {
+  console.log("Requesting News");
+  const newsItems = [
+    {
+      title: "Summer Sale: 50% Off on All Tickets!",
+      description:
+        "Enjoy a massive discount on all our bus tickets this summer. Book your tickets now and save 50% on your journey!",
+      date: "August 10, 2024",
+      image: "https://picsum.photos/100/100", // Replace with actual image URL
+      link: "/offers/summer-sale",
+    },
+    {
+      title: "New Routes Added!",
+      description:
+        "We are excited to announce new routes in the western region. Explore new destinations with our expanded network.",
+      date: "August 8, 2024",
+      image: "https://picsum.photos/120/140",
+      link: "/news/new-routes",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/160/150",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/150/170",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/10/150",
+      link: "/offers/member-discount",
+    },
+    {
+      title: "Exclusive Offer for Members",
+      description:
+        "Our members enjoy an exclusive 10% discount on all bookings. Join our membership program today!",
+      date: "August 5, 2024",
+      image: "https://picsum.photos/150/10",
+      link: "/offers/member-discount",
+    },
+    // Add more news items here...
+  ];
+  res.json(newsItems);
+});
+
+app.get("/team", (req, res) => {
+  console.log("Requesting Team infomation");
+  const teamMembers = [
+    {
+      name: "John Doe",
+      title: "CEO",
+      bio: "John is the visionary behind eConductor.",
+      avatar: "https://picsum.photos/150/100",
+    },
+    {
+      name: "Jane Smith",
+      title: "CTO",
+      bio: "Jane leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/170/100",
+    },
+    {
+      name: "Bat Man",
+      title: "Director",
+      bio: "Johnathen leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/100/190",
+    },
+    {
+      name: "Anne Eater",
+      title: "Director",
+      bio: "Anne leads the technology team with a focus on innovation.",
+      avatar: "https://picsum.photos/100/10",
+    },
+  ];
+  res.json(teamMembers);
+});

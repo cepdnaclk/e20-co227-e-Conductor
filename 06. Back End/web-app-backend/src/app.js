@@ -18,6 +18,8 @@ import scheduleRouter from "./routes/schedule.js";
 import ticketsRouter from "./routes/tickets.js";
 import busStopRouter from "./routes/busStops.js";
 import trackingRouter from "./routes/tracking.js";
+import incomeRouter from "./routes/income.js";
+import busRouter from "./routes/bus.js";
 import feedbackRouter from "./routes/feedback.js";
 
 // express middlewares
@@ -79,6 +81,12 @@ app.use("/busstops", busStopRouter);
 
 // Tracking
 app.use("/tracking", trackingRouter);
+
+// Income
+app.use("/income", incomeRouter);
+
+// My Buses
+app.use("/bus", busRouter);
 
 // Feedbacks
 app.use("/feedback/get", feedbackRouter);

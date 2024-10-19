@@ -187,9 +187,11 @@ export default function GoogleMaps({
   // Function to find the bus informations
   const busInfo = (regNo) => {
     if (generalData.length > 0) {
-      const details = generalData.filter((bus) => bus.regNo === regNo);
-      console.log("Filterd bus details: ", JSON.stringify(details[0]));
-      return `${details[0].route}\n${details[0].routeType}\nDriver: ${details[0].driver}\nConductor: ${details[0].conductor}`;
+      const details = generalData.filter((bus) => bus.regNo === regNo)[0];
+      //console.log("Filterd bus details: ", JSON.stringify(details));
+      return details.status === "parked"
+        ? "Parked"
+        : `${details.route}\n${details.routeType}\nDriver: ${details.driver}\nConductor: ${details.conductor}`;
     }
     return null;
   };
@@ -385,7 +387,7 @@ export default function GoogleMaps({
                               onClick={() => {
                                 setInfoWindow({
                                   state: true,
-                                  position: bus.location,
+                                  position: bus?.location,
                                   label: bus.regNo,
                                   body: busInfo(bus.regNo),
                                 });
@@ -418,7 +420,11 @@ export default function GoogleMaps({
                     setInfoWindow({ ...infoWindow, state: false });
                   }}
                 >
-                  <Texts whiteSpace="pre-wrap" fontWeight="normal">
+                  <Texts
+                    whiteSpace="pre-wrap"
+                    fontWeight="normal"
+                    fontSize="12px"
+                  >
                     {infoWindow?.body}
                   </Texts>
                 </InfoWindow>

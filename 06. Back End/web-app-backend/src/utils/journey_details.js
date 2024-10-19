@@ -66,11 +66,16 @@ export const journeyDetails = async (
 
     let toLeg;
     if (!toResponse.data.routes[0] || !toResponse.data.routes[0].legs[0]) {
-      toLeg = { time: departureDate.format("h:mm A"), distance: 0 }; // Format time as '2:45 PM'
+      toLeg = {
+        time: departureDate.format("h:mm A"),
+        distance: 0,
+        duration: 0,
+      }; // Format time as '2:45 PM'
     } else {
       toLeg = {
         time: toResponse.data.routes[0].legs[0].arrival_time.text,
         distance: toResponse.data.routes[0].legs[0].distance?.value,
+        duration: toResponse.data.routes[0].legs[0].duration?.text,
       };
     }
 
@@ -85,6 +90,7 @@ export const journeyDetails = async (
       departureTime: fromLeg.time,
       arrivalTime: toLeg.time,
       distance,
+      duration: toLeg.duration,
     };
   } catch (err) {
     // Handle errors
