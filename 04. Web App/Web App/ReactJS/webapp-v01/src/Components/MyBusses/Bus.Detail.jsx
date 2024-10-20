@@ -21,6 +21,8 @@ import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import WarningIcon from "@mui/icons-material/Warning";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import FiberNewIcon from "@mui/icons-material/FiberNew";
 import PublishedWithChangesIcon from "@mui/icons-material/PublishedWithChanges";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 import FlashOnIcon from "@mui/icons-material/FlashOn";
@@ -39,6 +41,7 @@ import AlertDialog from "../DialogBox/AlertDialog";
 import SingleInputDialog from "../DialogBox/SingleInputDialog";
 import { ViewFlyInX } from "../Animations/Entrance.View";
 import { getData, updateData } from "../../APIs/NodeBackend2";
+import useDateAndTime from "../../Utils/useDateAndTime";
 
 // Months list
 const MONTHS = [
@@ -106,6 +109,8 @@ export function QuickCard({ amount, increment, title, icon }) {
 
 // Function to create a schedule card
 function ScheduleCard({ details, handleAction }) {
+  const { date, time } = useDateAndTime();
+
   // Variable to hold the action dialog box state
   const [actionDialog, setActionDialog] = useState({
     open: false,
@@ -131,7 +136,7 @@ function ScheduleCard({ details, handleAction }) {
   // Managing action
   const manageAction = (action) => {
     if (action !== "close") {
-      handleAction({ id: actionDialog.id, action });
+      handleAction({ id: actionDialog.id, action, other: { date, time } });
     }
     setActionDialog((prev) => ({ ...prev, open: false }));
   };
@@ -154,7 +159,11 @@ function ScheduleCard({ details, handleAction }) {
   const manageCancel = () => {
     //console.log(`Schedule ${activeDialog.id} is canceled`);
     setsubDialog("");
-    handleAction({ id: activeDialog.id, action: "cancel" });
+    handleAction({
+      id: activeDialog.id,
+      action: "cancel",
+      other: { date, time },
+    });
     setActiveDialog((prev) => ({ ...prev, open: false }));
   };
 
@@ -162,6 +171,28 @@ function ScheduleCard({ details, handleAction }) {
     <Card sx={{ height: "fit-content", width: "100%" }}>
       {(() => {
         switch (details.status) {
+          case "completed": {
+            return (
+              <Box
+                width={"100%"}
+                bgcolor={"#f2e6d9"}
+                height={"42px"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                padding={"0 20px"}
+              >
+                <Box display={"flex"} alignItems={"center"}>
+                  <TaskAltIcon
+                    sx={{ color: "#aa753c", mr: "10px", fontSize: "19px" }}
+                  />
+                  <Texts fontColor="#aa753c">Completed</Texts>
+                </Box>
+                <Texts fontColor="#aa753c">{details.passengers} Bookings</Texts>
+              </Box>
+            );
+          }
+
           case "pending": {
             return (
               <Box
@@ -279,7 +310,30 @@ function ScheduleCard({ details, handleAction }) {
                     sx={{ color: "#b000e6", mr: "10px", fontSize: "19px" }}
                   />
                   <Texts fontColor="#b000e6">
-                    Replaced with {details.other.repVehiNum}
+                    Replaced with {details.linkedVehiNum}
+                  </Texts>
+                </Box>
+              </Box>
+            );
+          }
+
+          case "extra": {
+            return (
+              <Box
+                width={"100%"}
+                bgcolor={"#e6ffff"}
+                height={"42px"}
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                padding={"0 20px"}
+              >
+                <Box display={"flex"} alignItems={"center"}>
+                  <FiberNewIcon
+                    sx={{ color: "#006666", mr: "10px", fontSize: "19px" }}
+                  />
+                  <Texts fontColor="#006666">
+                    Additional schedule from {details.linkedVehiNum}
                   </Texts>
                 </Box>
               </Box>
@@ -489,7 +543,7 @@ export default function BusDetail({ language, setLoading }) {
     };
 
     try {
-      console.log("Sending Date: ", data);
+      //console.log("Sending Date: ", data);
       const serverResponse = await getData("bus/income", data);
       const { xLabels, refundData, receivedData, earningData } =
         serverResponse.data;
@@ -514,7 +568,7 @@ export default function BusDetail({ language, setLoading }) {
   const GetSchedules = async (offset = 0) => {
     const data = {
       busId,
-      baseDate: today,
+      baseDate: `${YEAR}-${MONTH}-${DATE}`,
       offset: offset,
     };
     try {
@@ -553,9 +607,8 @@ export default function BusDetail({ language, setLoading }) {
   // API to update schedule data
   const updateScedule = async ({ id, action, other }) => {
     const data = {
-      busId: busId,
       scheduleID: id,
-      action: action,
+      action,
       other: other || null,
     };
 
@@ -829,15 +882,18 @@ export default function BusDetail({ language, setLoading }) {
                 flexDirection={"column"}
               >
                 {scheduleList.loaded ? (
-                  scheduleList.schedules.length > 0 &&
-                  scheduleList.schedules.map((schedule, index) => (
-                    <ViewFlyInX key={schedule.id}>
-                      <ScheduleCard
-                        details={schedule}
-                        handleAction={handleAction}
-                      />
-                    </ViewFlyInX>
-                  ))
+                  scheduleList.schedules.length > 0 ? (
+                    scheduleList.schedules.map((schedule, index) => (
+                      <ViewFlyInX key={schedule.id}>
+                        <ScheduleCard
+                          details={schedule}
+                          handleAction={handleAction}
+                        />
+                      </ViewFlyInX>
+                    ))
+                  ) : (
+                    <Texts textAlign="center">No Schedules!</Texts>
+                  )
                 ) : (
                   <Skeleton
                     sx={{
@@ -880,7 +936,7 @@ export default function BusDetail({ language, setLoading }) {
                   <DemoItem>
                     <DateCalendar
                       sx={{ width: "100%", m: 0, p: 0, height: "310px" }}
-                      defaultValue={dayjs(today)}
+                      value={dayjs(today)}
                       readOnly
                     />
                   </DemoItem>

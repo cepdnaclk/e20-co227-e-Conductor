@@ -35,11 +35,6 @@ export const getInfo = async (req, res, next) => {
 
     const [result] = await db.query(sql, data);
 
-    if (result.length < 1) {
-      console.log(`Vehicle not found with ownerID: ${data}`);
-      throw createHttpError(404, "Vehicle not found!");
-    }
-
     // Vehicles are available
     console.log("Vehicles: ", result);
     res.status(200).json(result);
@@ -182,9 +177,7 @@ export const addInfo = async (req, res, next) => {
             vrlExp = ?, 
             insuranceId = ?, 
             VRL_Id = ?,
-            rating = '0.0',
-            rides = 0,
-            earning = '0.00'
+            rating = '0.0'
         WHERE 
             ownerID = ? AND vehicleRegNo = ?;
       `;
@@ -219,11 +212,9 @@ export const addInfo = async (req, res, next) => {
           insuranceId, 
           VRL_Id, 
           rating,
-          rides,
-          earning, 
           status
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0.0', 0, '0.00', 'active');
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '0.0', 'active');
       `;
       const insertValues = [
         data.regNo,
@@ -248,25 +239,3 @@ export const addInfo = async (req, res, next) => {
     next(createHttpError(503, "Database connection is failed!"));
   }
 };
-
-/* const sql = `
-      SELECT 
-          CAST(vehicleID AS CHAR) AS id,
-          vehicleRegNo AS regNo,
-          serviceType AS service,
-          seats,
-          rides, 
-          earning,
-          rating,
-          insuranceExp,
-          vrlExp AS VRL_Exp,
-          ntcRegNo AS ntc,
-          serviceType AS service,
-          org,
-          insuranceId,
-          VRL_Id
-      FROM 
-          VEHICLE
-      WHERE 
-          ownerID = ? AND status = 'active';
-    `; */

@@ -59,13 +59,30 @@ const trans2 = async (req, res, next) => {
     console.log("Transaction Added!");
 
     // Step 5: Get booked seats from schedule
-    const sql5 = `SELECT bookedSeats FROM SCHEDULE WHERE scheduleID = ?`;
+    const sql5 = `
+        SELECT 
+            s.bookedSeats,
+            s.vehicleID,
+            s.date,
+            s.status,
+            s.linkedBus,
+            a.ownerID AS actualOwner,
+            l.ownerID AS linkedOwner
+        FROM 
+            SCHEDULE s
+        JOIN
+            VEHICLE a ON a.vehicleID = s.vehicleID
+        LEFT JOIN
+            VEHICLE l ON l.vehicleID = s.linkedBus
+        WHERE 
+            s.scheduleID = ?
+    `;
     const [result5] = await connection.query(sql5, [scheduleID]);
     if (result5.length == 0 || !result5[0].bookedSeats) {
       console.log("Schedule not found!");
       throw createHttpError(404, "Schedule not found");
     }
-
+    console.log("Schedule Data: ", result5[0]);
     console.log("Booked Seats :", result5[0].bookedSeats);
     console.log("Removed Seats:", seatNos);
 
@@ -79,6 +96,47 @@ const trans2 = async (req, res, next) => {
     // Step 6: Update schedule
     const sql6 = `UPDATE SCHEDULE SET bookedSeats = ? WHERE scheduleID = ?`;
     await connection.query(sql6, [JSON.stringify(updatedSeats), scheduleID]);
+
+    // Step 7: Update owner credits
+    let vehicle, owner;
+    if (result5[0].status === "replace") {
+      vehicle = result5[0].linkedBus;
+      owner = result5[0].linkedOwner;
+    } else {
+      vehicle = result5[0].vehicleID;
+      owner = result5[0].actualOwner;
+    }
+
+    const sql7 = `
+        UPDATE ACTIVITY a
+        JOIN USERS u ON u.userID = ?
+        SET 
+            a.refund = a.refund + 1,
+            a.refundMoney = a.refundMoney + ?,
+            u.credits = u.credits - ?
+        WHERE
+            a.vehicleID = ? AND a.date = ?
+    `;
+
+    const data7 = [owner, data.refund, data.refund, vehicle, result5[0].date];
+
+    await connection.query(sql7, data7);
+
+    console.log("Owner Account Updated!");
+
+    // Step 8: Add new transaction
+    const data8 = [
+      owner,
+      data.refund,
+      data.cancelDate,
+      data.cancelTime,
+      data.refNo,
+      "Debit",
+    ];
+
+    await connection.query(sql4, [data8]);
+
+    console.log("New Transaction Added!");
 
     // Step 7: Commit the transaction
     await connection.commit();

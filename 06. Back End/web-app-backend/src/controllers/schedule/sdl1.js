@@ -97,7 +97,7 @@ const Sdl1 = async (req, res, next) => {
       JOIN
           BUSSTOP_LOCATIONS b ON b.locationID = s.startLocation
       WHERE 
-          r.routeNo IN (?) AND s.date = ?;
+          r.routeNo IN (?) AND s.date = ? AND s.status != 'cancel';
     `;
 
     const [results] = await db.query(sql3, [commonRoutes, data.date]);

@@ -5,6 +5,7 @@ const tkt3 = async (req, res, next) => {
   const { data } = req.body;
   console.log("\nTkt3:: Ticket details: ", data);
   const totalCost = parseFloat(data.totalPrice);
+  const actualCost = parseFloat(data.discount) + totalCost;
   const seatNumbers = data.seatNos;
 
   let connection;
@@ -33,7 +34,9 @@ const tkt3 = async (req, res, next) => {
 
     // Step 2: Get already booked seats from the SCHEDULE table and validate
     const [scheduleResult] = await connection.query(
-      `SELECT bookedSeats FROM SCHEDULE WHERE scheduleID = ?`,
+      ` SELECT bookedSeats, vehicleID, linkedBus, status
+        FROM SCHEDULE 
+        WHERE scheduleID = ? AND status != "cancel"`,
       [data.scheduleId]
     );
     console.log("ScheduleResults: ", scheduleResult);
@@ -99,7 +102,94 @@ const tkt3 = async (req, res, next) => {
       data.discount,
     ]);
 
-    // Step 8: Commit the transaction
+    // Step 8: Find company share
+    const [companyShare] = await connection.query(
+      `SELECT value FROM GENERAL WHERE item = 'companyShare';`
+    );
+    const ownerShare = (
+      actualCost *
+      (100 - companyShare[0].value) *
+      0.01
+    ).toFixed(2);
+    console.log("Company Share: ", companyShare[0].value);
+    console.log("Owner Share: ", ownerShare);
+
+    // Step 9: Update owner share and owner credits
+    let vehicle;
+    if (scheduleResult[0].status === "replace") {
+      vehicle = scheduleResult[0].linkedBus;
+    } else {
+      vehicle = scheduleResult[0].vehicleID;
+    }
+
+    const [findOwner] = await connection.query(
+      `SELECT ownerID FROM VEHICLE WHERE vehicleID = ?`,
+      [vehicle]
+    );
+
+    const [findActivity] = await connection.query(
+      `SELECT activityID FROM ACTIVITY WHERE vehicleID = ? AND date = ?`,
+      [vehicle, data.date]
+    );
+
+    console.log("Activity: ", findActivity, "   Owner: ", findOwner[0].ownerID);
+
+    if (findActivity.length === 0) {
+      console.log("New activity is added!");
+      const add = `
+          INSERT INTO ACTIVITY (
+              vehicleID, 
+              ownerID, 
+              date, 
+              rides, 
+              canceled, 
+              replaced, 
+              bookings, 
+              refund, 
+              receivedMoney, 
+              refundMoney
+          ) 
+          VALUES (?, ?, ?, 0, 0, 0, 1, 0, ?, 0);
+      `;
+
+      const newVal = [vehicle, findOwner[0].ownerID, data.date, ownerShare];
+
+      await connection.query(add, newVal);
+
+      await connection.query(
+        `UPDATE USERS SET credits = credits + ? WHERE userID = ?`,
+        [ownerShare, findOwner[0].ownerID]
+      );
+    } else {
+      const updateShare = `
+          UPDATE ACTIVITY a
+          JOIN USERS u ON u.userID = a.ownerID
+          SET 
+              a.bookings = a.bookings + 1,
+              a.receivedMoney = a.receivedMoney + ?,
+              u.credits = u.credits + ?
+          WHERE a.activityID = ? AND a.date = ?
+      `;
+
+      await connection.query(updateShare, [
+        ownerShare,
+        ownerShare,
+        findActivity[0].activityID,
+        data.date,
+      ]);
+    }
+
+    // Step 10: Add transaction records
+    const [transaction2] = await connection.query(insertTransaction, [
+      findOwner[0].ownerID,
+      ownerShare,
+      data.issuedDate,
+      data.issuedTime,
+      "Credit",
+    ]);
+    console.log("Transaction table updated! id:", transaction2);
+
+    // Step 11: Commit the transaction
     await connection.commit();
     res.status(200).send("success");
   } catch (err) {
