@@ -68,48 +68,6 @@ app.get("/routes/availability", (req, res) => {
   res.json("true");
 });
 
-app.get("/income/general", (req, res) => {
-  console.log("Requesting income/general data");
-  const incomeData = {
-    earning: { amount: 50000, increment: 25 },
-    withdraw: { amount: 20000, increment: -10 },
-    balance: { amount: 30000, increment: 10 },
-    credits: { amount: 40000, increment: 10 },
-  };
-  res.json(incomeData);
-});
-
-app.get("/income/summary", (req, res) => {
-  console.log("Requesting Summary");
-  const SUM = [
-    { data: [1, 2, 5, 38, 5], label: "NA-1234" },
-    { data: [1, 2, 5, 38, 5], label: "NA-1354" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5645" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5685" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5646" },
-    { data: [1, 2, 5, 38, 5], label: "NA-1534" },
-    { data: [1, 2, 5, 38, 5], label: "NA-1654" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5845" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5885" },
-    { data: [1, 2, 5, 38, 5], label: "NC-5686" },
-  ];
-  res.json(SUM);
-});
-
-app.get("/income/income", (req, res) => {
-  const graphData = [
-    { id: 0, value: 10, label: "NA-1234" },
-    { id: 1, value: 15, label: "NA-1354" },
-    { id: 2, value: 20, label: "NC-5645" },
-    { id: 4, value: 10, label: "NA-1284" },
-    { id: 5, value: 15, label: "NA-1364" },
-    { id: 6, value: 20, label: "NC-5945" },
-    { id: 7, value: 10, label: "NA-1634" },
-    { id: 8, value: 15, label: "NA-1854" },
-    { id: 9, value: 20, label: "NC-5845" },
-  ];
-  res.json({ graphData, earning: 500000 });
-});
 
 app.get("/feedback/get", (req, res) => {
   // Dummy data

@@ -97,7 +97,7 @@ export function QuickCard({ amount, increment, title, icon }) {
         gap={"15px"}
       >
         <Texts variant={"h4"}>{parseInt(amount).toLocaleString()}</Texts>
-        <Comparator increment={increment} />
+        {increment && <Comparator increment={increment} />}
       </Box>
 
       <Texts fontColor="textSecondary">

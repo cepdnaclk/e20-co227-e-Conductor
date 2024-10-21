@@ -19,11 +19,15 @@ import { LineChart } from "@mui/x-charts";
 import { Skeleton, Tooltip } from "@mui/joy";
 import CachedIcon from "@mui/icons-material/Cached";
 import { ViewZoomIn } from "../Animations/Entrance.View";
-import { getData } from "../../APIs/NodeBackend2";
 import { ToastAlert } from "../MyNotifications/WindowAlerts";
+import { getData } from "../../APIs/NodeBackend2";
+import useDateAndTime from "../../Utils/useDateAndTime";
 
 // Today
 const TODAY = new Date();
+const YEAR = TODAY.getFullYear();
+const MONTH = TODAY.getMonth() + 1;
+const DATE = TODAY.getDate();
 const getDay = (day) => {
   const days = [
     "Sunday",
@@ -43,6 +47,7 @@ const OFFSET = 20 + 5 + 5; // fontsize + top + bottom
 const LENGTH = 180; // Length of a legend key
 
 export default function Earnings({ setLoading, language }) {
+  const { date } = useDateAndTime();
   const [rows, setRows] = useState(0);
   const containerRef = useRef(null);
   const userID =
@@ -88,16 +93,17 @@ export default function Earnings({ setLoading, language }) {
 
   // API to fetch general data
   const getGeneral = async () => {
+    const data = { userID, YEAR, MONTH, DATE };
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await getData("income/general", userID);
+      const serverResponse = await getData("income/general", data);
       //console.log('Income Data General: ', serverResponse.data);
       setGeneral({ loaded: true, data: serverResponse.data });
     } catch (error) {
       console.log("Error in fetching general data!");
       ToastAlert({
         type: "error",
-        title: "Error in fetching general data!\nPlease reload page again.",
+        title: "Something went wrong!\nPlease reload page again.",
       });
     } finally {
       setLoading(false); // Disabling spinner
@@ -109,6 +115,9 @@ export default function Earnings({ setLoading, language }) {
     const data = {
       userID,
       type: value,
+      YEAR,
+      MONTH,
+      DATE,
     };
 
     try {
@@ -119,17 +128,14 @@ export default function Earnings({ setLoading, language }) {
       console.log("Error in fetching income summary!");
       ToastAlert({
         type: "error",
-        title: "Error in fetching income summary!\nPlease reload page again.",
+        title: "Something went wrong!\nPlease reload page again.",
       });
     }
   };
 
   // API to fetch summary data
   const getIncome = async () => {
-    const data = {
-      userID,
-      date: TODAY.toLocaleDateString(),
-    };
+    const data = { userID, date };
     try {
       const serverResponse = await getData("income/income", data);
       //console.log('Income Data Income: ', serverResponse.data);
@@ -140,6 +146,10 @@ export default function Earnings({ setLoading, language }) {
       });
     } catch (error) {
       console.log("Error in fetching general data!");
+      ToastAlert({
+        type: "error",
+        title: "Something went wrong!\nPlease reload page again.",
+      });
     }
   };
 
@@ -226,9 +236,9 @@ export default function Earnings({ setLoading, language }) {
               <Grid item>
                 <ViewZoomIn delay={400}>
                   <QuickCard
-                    title={"Credits (LKR)"}
-                    amount={general.data.credits.amount}
-                    increment={general.data.credits.increment}
+                    title={"Withdrawable Amount (LKR)"}
+                    amount={general.data.withdrawable.amount}
+                    increment={null}
                     icon={
                       <LocalAtmOutlinedIcon
                         sx={{ color: "#04aa6d", fontSize: "25px" }}
@@ -258,12 +268,9 @@ export default function Earnings({ setLoading, language }) {
               >
                 <Box display={"flex"} alignItems={"center"} gap={1}>
                   <Texts fontColor="textSecondary" variant={"h6"}>
-                    {`${TODAY.getFullYear()}-${String(
-                      TODAY.getMonth() + 1
-                    ).padStart(2, "0")}-${String(TODAY.getDate()).padStart(
-                      2,
-                      "0"
-                    )} | ${getDay(TODAY.getDay())}`}
+                    {`${YEAR}-${String(MONTH).padStart(2, "0")}-${String(
+                      DATE
+                    ).padStart(2, "0")} | ${getDay(TODAY.getDay())}`}
                   </Texts>
                   <Tooltip title={"Refresh"}>
                     <IconButton color="primary" onClick={handleReload}>

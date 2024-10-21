@@ -1,8 +1,9 @@
 import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
-function findIncrement(currentValue, lastValue) {
+export function findIncrement(currentValue, lastValue) {
   let increment;
+  //console.log("Last Value: ", lastValue, "Current Value: ", currentValue);
   if (lastValue != 0) {
     increment = (
       ((parseFloat(currentValue) - parseFloat(lastValue)) /
