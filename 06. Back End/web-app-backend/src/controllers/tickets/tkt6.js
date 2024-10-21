@@ -2,7 +2,7 @@
 
 import createHttpError from "http-errors";
 import { db } from "../../db.js";
-import connectingPoints from "../../utils/connectingpoints.js";
+//import connectingPoints from "../../utils/connectingpoints.js";
 
 const Tkt6 = async (req, res, next) => {
   const { ticketNo, userID } = req.query.data;
