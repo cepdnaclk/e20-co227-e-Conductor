@@ -4,13 +4,11 @@ import {
   deleteLog,
   getLogs,
   updateLogs,
-  userLogs,
-} from "../controllers/userLogs.js";
+} from "../controllers/usersLogs/userLogs.js";
 
 const router = express.Router();
 
-router.post("/", userLogs);
-//router.post("/", addLogs);
+router.post("/", addLogs);
 
 router.delete("/", deleteLog);
 

@@ -14,6 +14,13 @@ import userLogsRouter from "./routes/userLogs.js";
 import otpRouter from "./routes/otp.js";
 import usersRouter from "./routes/users.js";
 import transactionRouter from "./routes/transactions.js";
+import scheduleRouter from "./routes/schedule.js";
+import ticketsRouter from "./routes/tickets.js";
+import busStopRouter from "./routes/busStops.js";
+import trackingRouter from "./routes/tracking.js";
+import incomeRouter from "./routes/income.js";
+import busRouter from "./routes/bus.js";
+import feedbackRouter from "./routes/feedback.js";
 
 // express middlewares
 const app = express();
@@ -52,7 +59,7 @@ app.use("/test", testRouter);
 app.use("/mac", macRouter);
 
 // UserLogs
-app.use("/logs/users", userLogsRouter);
+app.use("/logs", userLogsRouter);
 
 // OTP handling
 app.use("/OTP", otpRouter);
@@ -62,6 +69,27 @@ app.use("/users", usersRouter);
 
 // Transactions
 app.use("/transactions", transactionRouter);
+
+// Bus Stops
+app.use("/schedule", scheduleRouter);
+
+// Tickets
+app.use("/tickets", ticketsRouter);
+
+// Bus Stops
+app.use("/busstops", busStopRouter);
+
+// Tracking
+app.use("/tracking", trackingRouter);
+
+// Income
+app.use("/income", incomeRouter);
+
+// My Buses
+app.use("/bus", busRouter);
+
+// Feedbacks
+app.use("/feedback/get", feedbackRouter);
 
 /* --------------------------------------------------------------- */
 

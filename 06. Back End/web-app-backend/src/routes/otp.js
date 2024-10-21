@@ -1,8 +1,14 @@
 import express from "express";
-import { otp } from "../controllers/otp.js";
+import { login, signup, request, verify } from "../controllers/otp/otp.js";
 
 const router = express.Router();
 
-router.post("/", otp);
+router.post("/login", login);
+
+router.post("/signup", signup);
+
+router.post("/request", request);
+
+router.post("/verify", verify);
 
 export default router;

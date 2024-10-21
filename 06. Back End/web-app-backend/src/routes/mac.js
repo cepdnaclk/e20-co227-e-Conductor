@@ -1,8 +1,8 @@
 import express from "express";
-import { getMac } from "../controllers/mac.js";
+import { getMac } from "../controllers/mac/mac.js";
 
 const router = express.Router();
 
-router.post("/", getMac);
+router.get("/", getMac);
 
 export default router;

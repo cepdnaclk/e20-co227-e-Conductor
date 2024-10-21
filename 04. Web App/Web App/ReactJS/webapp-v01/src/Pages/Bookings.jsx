@@ -23,9 +23,10 @@ const bookingFrom = {
   journey: "",
   full: "",
   half: "",
-  price: "",
-  shceduleId: "",
+  unitPrice: "",
+  totalPrice: "",
   discount: "0",
+  scheduleId: "",
 };
 
 // Steps to the stepper

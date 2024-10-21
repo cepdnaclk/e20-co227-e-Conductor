@@ -2,16 +2,31 @@ import { Box, Card, Grid } from "@mui/material";
 import Texts from "../Components/InputItems/Texts";
 import React, { useEffect, useState } from "react";
 import GoogleMaps from "../Components/Map/GoogleMaps";
-import { GetRequest, Request } from "../APIs/NodeBackend";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { OnceFlyInX, OnceZoomIn } from "../Components/Animations/Entrance.Once";
+import { getData } from "../APIs/NodeBackend2";
+import { ToastAlert } from "../Components/MyNotifications/WindowAlerts";
+import getDistanceAndDuration from "../Components/Map/getDistanceAndDuration";
 
 // Time step size
-const TIME_STEP = 1000;
+const TIME_STEP = 5000; // im ms
+const TOLARANCE = 100; // in meters
+
+function convertDistance(distance) {
+  let d;
+
+  if (distance < 0) {
+    d = "N/A";
+  } else if (distance < 1000) {
+    d = `${distance.toFixed(2)} m`;
+  } else {
+    d = `${(distance * 0.001).toFixed(2)} km`;
+  }
+  return d;
+}
 
 export default function Tracking({ setLoading, language }) {
-  // Calculating current time
-  const [now, setNow] = useState("");
+  const navigate = useNavigate();
 
   // Get ticket ID and userID
   const userID =
@@ -20,7 +35,8 @@ export default function Tracking({ setLoading, language }) {
   const ticketID = JSON.parse(sessionStorage.getItem("TicketID"));
 
   // Variable to hold the destination point
-  const [destPoint, setDestPoint] = useState({ lat: 0, lng: 0 });
+  const [trackingState, setTrackingState] = useState(); // (pre, post)
+  const [tracking, setTracking] = useState(true);
 
   // Variable to hold tracking availability
   const [status, setStatus] = useState({
@@ -34,42 +50,46 @@ export default function Tracking({ setLoading, language }) {
   // Variable to hold bus Live location
   const [liveLocation, setLiveLocation] = useState({});
 
-  // Variable to hold the route points
-  const [route, setRoute] = useState([]);
-
   // Variable to hold the estimated data
-  const [estmData, setEstmData] = useState({});
+  const [estmData, setEstmData] = useState({
+    distanceA: 0,
+    distanceB: 0,
+    distance: 0,
+    durationA: "0",
+    durationB: "0",
+  });
 
   // Fetching busInfo and route points from the backend
   useEffect(() => {
     const fetch = async () => {
       // Creating data object
       const data = {
-        type: "Tkt6", // Requesting tracing details
-        data: {
-          ticketNo: ticketID,
-          userID: userID,
-        },
+        ticketNo: ticketID,
+        userID: userID,
       };
 
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "tickets");
-        const { availability, routePoints, busInfo, destination } =
-          serverResponse.data;
-        //console.log(`Tracking availability: ${availability}\nRoutes: ${JSON.stringify(routePoints)} \nbusInfo: ${JSON.stringify(busInfo)}\ndestination:${JSON.stringify(destination)}`);
+        const serverResponse = await getData("tickets/tkt6", data);
+        const { availability, busInfo } = serverResponse.data;
+        //console.log("Tracking Info", serverResponse.data);
         setStatus({
           loading: false,
-          available: availability === "true" ? true : false,
+          available: availability,
         });
 
-        if (availability === "true") {
+        if (availability) {
           setBusInfo(busInfo);
-          setRoute(routePoints);
-          setDestPoint(destination);
         }
       } catch (error) {
         console.log(`Error in fetching tracking data!`);
+        ToastAlert({
+          type: "error",
+          title: "Failed to load the ticket!",
+          onClose: setTimeout(() => {
+            navigate("/avtickets");
+          }, 3001),
+        });
       } finally {
         setLoading(false); // Disabling spinner
       }
@@ -79,9 +99,9 @@ export default function Tracking({ setLoading, language }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetching bus live location
+  // Fetching bus live location and estimations
   useEffect(() => {
-    if (!status.available) return;
+    if ((!status.loading && !status.available) || !tracking) return;
 
     let isMounted = true; // To handle cleanup
 
@@ -91,63 +111,73 @@ export default function Tracking({ setLoading, language }) {
       //console.log(`Bus Number: ${data}`);
 
       try {
-        const serverResponse = await GetRequest(data, "tracking/bus");
+        const serverResponse = await getData("tracking/bus", data);
+        //console.log("Prev Location:", liveLocation);
         if (isMounted) {
           //console.log(`Live location: ${JSON.stringify(serverResponse.data)}`);
-          setLiveLocation(serverResponse.data);
+          const location = serverResponse.data;
+
+          // Set Live Location
+          setLiveLocation(location);
+
+          // Estimations
+          //console.log("origin:", location);
+          //console.log("pointA:", busInfo?.from?.location);
+          //console.log("pointB:", busInfo?.to?.location);
+
+          const result = await getDistanceAndDuration(
+            location,
+            busInfo?.from?.location,
+            busInfo?.to?.location
+          );
+          if (Object.keys(result).length === 5) {
+            setEstmData(result);
+          }
         }
       } catch (error) {
         console.error("Error in getting bus live location!", error);
       }
     };
 
-    const intervalId = setInterval(fetchLocation, TIME_STEP);
+    const intervalId = setInterval(() => {
+      if (tracking) {
+        fetchLocation();
+      } else {
+        clearInterval(intervalId);
+        console.log("Stopping location tracking!");
+      }
+    }, TIME_STEP);
 
     return () => {
       isMounted = false;
       clearInterval(intervalId); // Clean up interval on component unmount
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status.available]);
+  }, [status.available, tracking]);
 
-  // Fetching estimation details
+  // Update tracking state
   useEffect(() => {
-    if (!status.loading && !status.available) return;
+    //console.log("estmData:", estmData);
 
-    let isMounted = true;
+    const { distanceA, distanceB, distance } = estmData;
 
-    const fetchEstimationDetails = async () => {
-      // Updating current time
-      const d = new Date();
-      const hours = d.getHours().toString().padStart(2, "0");
-      const minutes = d.getMinutes().toString().padStart(2, "0");
-      setNow(`${hours}:${minutes}`);
+    const trackingAccess =
+      distanceB - distanceA > distance - TOLARANCE ? "pre" : "post";
+    const invAccess = distanceA - distanceB > distance + TOLARANCE;
 
-      const data = {
-        userID: userID,
-        ticketID: ticketID,
-      };
-      try {
-        const response = await GetRequest(data, "tracking/estm");
-        if (isMounted) {
-          setEstmData(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching estimation details:", error);
-      }
-    };
+    //console.log("Tracking Access: ", trackingAccess);
+    //console.log("Page Access: ", invAccess);
 
-    const estimationIntervalId = setInterval(
-      fetchEstimationDetails,
-      TIME_STEP * 10
-    );
+    setTrackingState(trackingAccess);
+    setTracking(!invAccess);
+    if (tracking && invAccess) {
+      //console.log("Tracking Ends.");
+      navigate("/avtickets");
+      // Add some feedback method when ride is completed
+    }
 
-    return () => {
-      isMounted = false;
-      clearInterval(estimationIntervalId);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
+  }, [estmData]);
 
   return (
     !status?.loading &&
@@ -158,7 +188,7 @@ export default function Tracking({ setLoading, language }) {
         bgcolor={"ghostwhite"}
         padding={"20px"}
       >
-        <OnceFlyInX>
+        <OnceFlyInX sx={{ width: "100%" }}>
           <Card
             sx={{
               width: "calc(100%)",
@@ -173,39 +203,30 @@ export default function Tracking({ setLoading, language }) {
                 <Texts fontColor="white" variant={"h5"}>
                   {busInfo.route}
                 </Texts>
-                <Texts fontColor="white">
-                  {busInfo.regNo} | {busInfo.org} | {busInfo.service} |{" "}
-                  {busInfo.routeType}{" "}
+                <Texts fontColor="white" whiteSpace="normal">
+                  {busInfo.regNo} | {busInfo.org} | {busInfo.service}
                 </Texts>
               </Grid>
 
               <Grid textAlign={"center"} item xs={12} sm={6} lg={3}>
                 <Texts fontColor="white" variant={"h5"}>
-                  {estmData.speed} km/h
+                  {trackingState === "pre"
+                    ? convertDistance(estmData?.distanceA || 0)
+                    : convertDistance(estmData?.distanceB || 0)}
                 </Texts>
-                <Texts fontColor="white">Bus Speed</Texts>
+                <Texts fontColor="white">Remaining Distance</Texts>
               </Grid>
 
               <Grid textAlign={"center"} item xs={12} sm={6} lg={3}>
-                {now > estmData.fromArT ? (
-                  <>
-                    <Texts fontColor="white" variant={"h5"}>
-                      {estmData.toArT} Hrs
-                    </Texts>
-                    <Texts fontColor="white">
-                      Estimated Arrival Time (Destination)
-                    </Texts>
-                  </>
-                ) : (
-                  <>
-                    <Texts fontColor="white" variant={"h5"}>
-                      {estmData.fromArT} Hrs
-                    </Texts>
-                    <Texts fontColor="white">
-                      Estimated Arrival Time (Origin)
-                    </Texts>
-                  </>
-                )}
+                <Texts fontColor="white" variant={"h5"}>
+                  {trackingState === "pre"
+                    ? estmData?.durationA
+                    : estmData?.durationB}
+                </Texts>
+                <Texts fontColor="white">
+                  Estimated Arrival Time
+                  {trackingState === "pre" ? " (Origin)" : " (Destination)"}
+                </Texts>
               </Grid>
             </Grid>
           </Card>
@@ -224,9 +245,9 @@ export default function Tracking({ setLoading, language }) {
               <GoogleMaps
                 page={"busTracking"}
                 busData={busInfo}
-                routeLocations={route}
                 busLocation={liveLocation}
                 estmData={estmData}
+                trackingState={trackingState}
               />
             )}
           </Card>
@@ -239,7 +260,7 @@ export default function Tracking({ setLoading, language }) {
         bgcolor={"ghostwhite"}
         padding={"20px"}
       >
-        <Navigate to={"/forbidden"} />
+        <Navigate to={"/avtickets"} />
       </Box>
     ))
   );

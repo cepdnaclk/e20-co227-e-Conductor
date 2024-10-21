@@ -11,13 +11,13 @@ import React, { useEffect, useRef, useState } from "react";
 import TicketCard from "../Components/Card/TicketCard";
 import Texts from "../Components/InputItems/Texts";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Request } from "../APIs/NodeBackend";
-import { handleNotifications } from "../Components/MyNotifications/FloatingNotifications";
 import HighlightOffTwoToneIcon from "@mui/icons-material/HighlightOffTwoTone";
 import { ToastAlert } from "../Components/MyNotifications/WindowAlerts";
 import { Link, useNavigate } from "react-router-dom";
 import { OnceFadeIn } from "../Components/Animations/Entrance.Once";
 import { ViewFlyInY } from "../Components/Animations/Entrance.View";
+import { postData } from "../APIs/NodeBackend2";
+import useDateAndTime from "../Utils/useDateAndTime";
 
 function ConfirmBox({ data, open, handleClose, handleAgree }) {
   const descriptionElementRef = useRef(null);
@@ -103,6 +103,7 @@ export default function AvailableTickets({ language, setLoading }) {
     JSON.parse(localStorage.getItem("userId")) ||
     JSON.parse(sessionStorage.getItem("userId"));
   const navigate = useNavigate();
+  const { date, time } = useDateAndTime();
 
   // Variable to hold ticket infomations
   const [tickets, setTickets] = useState([]);
@@ -116,22 +117,16 @@ export default function AvailableTickets({ language, setLoading }) {
   // API call to request available ticket infomation
   useEffect(() => {
     const fetch = async (userId) => {
-      const data = {
-        type: "Tkt4", // Requesting available ticket infomation
-        data: userId,
-      };
-
       try {
         setLoading(true); // Enabling spinner
-        const serverResponse = await Request(data, "tickets");
+        const serverResponse = await postData("tickets/tkt4", userId);
         //console.log('Server Response: ', JSON.stringify(serverResponse.data));
         setTickets(serverResponse.data);
       } catch (error) {
         console.log(`error in fetching available tickets`, error);
-        handleNotifications({
+        ToastAlert({
           type: "warning",
-          title: "Network Issue!",
-          body: "Try Again!",
+          title: "Your connection is unstable.\nPlease reload page again.",
         });
       } finally {
         setLoading(false); // Disabling spinner
@@ -150,34 +145,27 @@ export default function AvailableTickets({ language, setLoading }) {
         setOpen(true);
       }
     } catch (error) {
-      handleNotifications({
-        type: "Error",
-        title: "Something went wrong!",
-        body: "Try Again!",
+      ToastAlert({
+        type: "error",
+        title: "Something went wrong!\nPlease reload page again.",
       });
     }
   }, [formData]);
 
   // API call for Requesting refund details
-  const requestRefund = async (values) => {
-    const data = {
-      type: "Tkt5",
-      data: values,
-    };
-
-    //console.log(`New Request: type: ${data.type}  data:${JSON.stringify(data.data)}`);
+  const requestRefund = async (data) => {
+    //console.log(`New Request: data:${JSON.stringify(data.data)}`);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "tickets");
-      console.log(`Server Response: ${JSON.stringify(serverResponse.data)}`);
+      const serverResponse = await postData("tickets/tkt5", data);
+      console.log(`Refund Data: ${JSON.stringify(serverResponse.data)}`);
       setFormData(serverResponse.data);
     } catch (error) {
       console.log(`error in fetching refund infomation`, error);
-      handleNotifications({
+      ToastAlert({
         type: "warning",
-        title: "Network Issue!",
-        body: "Try Again!",
+        title: "Your connection is unstable.\nPlease reload page again.",
       });
     } finally {
       setLoading(false); // Disabling spinner
@@ -186,32 +174,23 @@ export default function AvailableTickets({ language, setLoading }) {
 
   // Handling cancel button
   const handleCancel = (refNo) => {
-    const date = new Date();
     //console.log(`Cancel button is clicked ${refNo} on ${date.toLocaleDateString()} at ${date.toLocaleTimeString()}`);
     requestRefund({
-      cancelDate: `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()}`,
-      cancelTime: `${date.getHours()}:${date.getMinutes()}`,
+      cancelDate: date,
+      cancelTime: time,
       refNo: refNo,
       userId: userId,
     });
   };
 
   // API call to Confirm refund request
-  const confirmRefund = async (values) => {
-    const data = {
-      type: "Trans2",
-      data: values,
-    };
-
-    //console.log(`Confirm Refund. Data: ${JSON.stringify(data.data)}`);
+  const confirmRefund = async (data) => {
+    console.log(`Confirm Refund. Data: ${JSON.stringify(data.data)}`);
 
     try {
       setLoading(true); // Enabling spinner
-      const serverResponse = await Request(data, "transactions");
+      const serverResponse = await postData("transactions", data);
       //console.log(`Server Response:: ${JSON.stringify(serverResponse.data)}`);
-      setLoading(false); // Disabling spinner
 
       if (serverResponse.data === "success") {
         ToastAlert({
@@ -221,19 +200,17 @@ export default function AvailableTickets({ language, setLoading }) {
           onClose: refresh,
         });
       } else {
-        ToastAlert({
-          type: "error",
-          title: "Somthing went wrong. try again!",
-          onClose: refresh,
-        });
+        console.log("Error in refund");
       }
     } catch (error) {
       console.log(`error in confirming refund infomation`, error);
-      handleNotifications({
-        type: "warning",
-        title: "Network Issue!",
-        body: "Try Again!",
+      ToastAlert({
+        type: "error",
+        title: "Somthing went wrong. try again!",
+        onClose: refresh,
       });
+    } finally {
+      setLoading(false); // Disabling spinner
     }
   };
 

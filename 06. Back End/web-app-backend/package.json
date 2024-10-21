@@ -19,6 +19,7 @@
     "getmac": "^6.6.0",
     "http-errors": "^2.0.0",
     "macaddress": "^0.5.3",
+    "moment": "^2.30.1",
     "mysql2": "^3.11.3",
     "nodemailer": "^6.9.15",
     "otp-generator": "^4.0.1"
