@@ -64,6 +64,7 @@ export default function Earnings({ setLoading, language }) {
   const [summary, setSummary] = useState({
     loaded: false,
     data: [],
+    xLabels: [],
   });
 
   // Variable to hold the today income
@@ -122,8 +123,12 @@ export default function Earnings({ setLoading, language }) {
 
     try {
       const serverResponse = await getData("income/summary", data);
-      //console.log('Income Data Summary: ', serverResponse.data);
-      setSummary({ loaded: true, data: serverResponse.data });
+      //console.log("Income Data Summary: ", serverResponse.data);
+      setSummary({
+        loaded: true,
+        data: serverResponse.data.points,
+        xLabels: serverResponse.data.xLabels,
+      });
     } catch (error) {
       console.log("Error in fetching income summary!");
       ToastAlert({
@@ -165,6 +170,8 @@ export default function Earnings({ setLoading, language }) {
     setIncome({ ...income, loaded: false });
     getIncome();
   };
+
+  //console.log("Summary: ", summary);
 
   return (
     <Paper
@@ -321,13 +328,13 @@ export default function Earnings({ setLoading, language }) {
                 >
                   <ButtonGroup variant="outlined" sx={{ height: "30px" }}>
                     <Button onClick={handleChange} id="year">
-                      Year
+                      1Y
                     </Button>
                     <Button onClick={handleChange} id="month">
-                      Month
+                      1M
                     </Button>
                     <Button onClick={handleChange} id="week">
-                      Week
+                      7D
                     </Button>
                   </ButtonGroup>
                 </Grid>
@@ -344,14 +351,14 @@ export default function Earnings({ setLoading, language }) {
                 {summary.loaded ? (
                   <LineChart
                     series={summary.data}
-                    slotProps={{
+                    /* slotProps={{
                       legend: {
                         position: { horizontal: "middle", vertical: "bottom" },
                       },
-                    }}
+                    }} */
                     height={BASE_HEIGHT + rows * OFFSET}
                     margin={{ bottom: 30 + rows * OFFSET }}
-                    xAxis={[{ scaleType: "point", data: [1, 2, 3, 4, 5] }]}
+                    xAxis={[{ scaleType: "point", data: summary.xLabels }]}
                   />
                 ) : (
                   <Skeleton

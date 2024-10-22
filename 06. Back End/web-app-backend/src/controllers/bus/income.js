@@ -1,9 +1,10 @@
 import createHttpError from "http-errors";
 import { db } from "../../db.js";
 
-function adjustDate(year, month, date, adjustmentType) {
+export function adjustDate(year, month, date, adjustmentType) {
   let originalDate = new Date(year, month - 1, date); // Month is 0-indexed in JS
 
+  console.log("Original Date: ", originalDate);
   // Adjust the date based on the type of adjustment
   switch (adjustmentType) {
     case "year":
@@ -13,7 +14,7 @@ function adjustDate(year, month, date, adjustmentType) {
       originalDate.setMonth(originalDate.getMonth() - 1);
       break;
     case "week":
-      originalDate.setDate(originalDate.getDate() - 7);
+      originalDate.setDate(originalDate.getDate() - 6);
       break;
     default:
       console.error("Invalid adjustment type provided.");
