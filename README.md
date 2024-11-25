@@ -1,9 +1,5 @@
----
-layout: home
-permalink: index.html
+# e-Conductor
 
-repository-name: e20-co227-e-Conductor
-title: e-Conductor
 ---
 
 ## Team
