@@ -29,7 +29,15 @@ The project allows students to choose technologies they are comfortable with. So
 
 ### Tasks
 
-## Store Owner Role
+## Conductor Role
+
+### Tasks
+
+## Bus Owner Role
+
+### Tasks
+
+## Admin Role
 
 ### Tasks
 
