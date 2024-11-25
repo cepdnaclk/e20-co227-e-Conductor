@@ -1,3 +1,10 @@
+---
+layout: home
+permalink: index.html
+
+repository-name: e20-co227-e-Conductor
+title: e-Conductor
+---
 # e-Conductor_V2.0
   Online Ticket booking App for expressway busses
 
