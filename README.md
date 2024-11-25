@@ -4,7 +4,7 @@
 
 ## Team
 
--  E/20/032, Bandara A.M.N.C., [email](e20032@eng.pdn.ac.lk)
+-  E/20/032, Bandara A.M.N.C., [Link Text](e20032@eng.pdn.ac.lk)
 -  E/20/035, Bandara K.C.H.N.A.W.M.R.C.J.N., [email](mailto:e20035@eng.pdn.ac.lk)
 -  E/20/133, Haththella H.A.D.T.N., [email](mailto:e20133@eng.pdn.ac.lk)
 -  E/20/157, Janakantha S.M.B.G., [email](mailto:e20157@eng.pdn.ac.lk)
