@@ -22,7 +22,7 @@ This system aims to streamline bus operations, enhance user convenience, and imp
 
 ---
 
-![e-Conductor Logo](./01. General/image.png)
+![e-Conductor Logo](01. General/image.png)
 
 ---
 
