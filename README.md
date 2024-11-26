@@ -22,6 +22,10 @@ This system aims to streamline bus operations, enhance user convenience, and imp
 
 ---
 
+![e-Conductor Logo](./01. General/image.jpg)
+
+---
+
 ## **Technology Stack**
 
 This project allows flexibility in the choice of technologies. Potential options include:  
