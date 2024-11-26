@@ -107,13 +107,6 @@ This project allows flexibility in the choice of technologies. Potential options
 
 ---
 
-## **Demonstration Video**
-
-You can view the demonstration video of the e-Conductor web app at:  
-[Download or View the Demo Video](path/to/video.mp4)  
-
----
-
 ## **Links**
 
 - [Project Repository](https://github.com/cepdnaclk/e20-co227-e-Conductor)  
